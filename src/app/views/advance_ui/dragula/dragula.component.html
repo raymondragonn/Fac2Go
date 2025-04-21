@@ -1,0 +1,136 @@
+<pagetitle [title]="'Dragula'" [subtitle]="'Advanced UI'" />
+
+<div class="row justify-content-center" cdkDropListGroup>
+  <div class="col-md-4 col-lg-4">
+    <div class="border-dashed border-theme-color rounded">
+      <div class="card bg-light">
+        <div class="card-body border-dashed-bottom border-theme-color">
+          <button type="button" class="btn btn-sm btn-outline-primary px-2 d-inline-flex align-items-center float-end">
+            <i class="iconoir-chat-bubble fs-14 me-1"></i>Message
+          </button>
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <img src="assets/images/users/avatar-1.jpg" alt=""
+                class="rounded-circle thumb-xxl mx-auto d-inline-block" />
+            </div>
+            <div class="flex-grow-1 ms-2 text-truncate">
+              <h5 class="m-0 fw-bold">Carol Maier</h5>
+              <p class="text-muted mb-0">&#64;carol</p>
+            </div>
+          </div>
+          <div class="row mt-3 align-items-center">
+            <div class="col-12">
+              <div class="text-muted mb-2 d-flex align-items-center">
+                <i class="iconoir-mail-out fs-20 me-1"></i><span class="text-body fw-semibold">Email :</span><a
+                  href="javascript:void(0);" class="text-primary text-decoration-underline">example&#64;example.com</a>
+              </div>
+              <div class="text-body d-flex align-items-center">
+                <i class="iconoir-phone fs-20 me-1 text-muted"></i><span class="text-body fw-semibold">Phone :</span> +1
+                123 456
+                789
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end card-body-->
+      </div>
+      <!--end card-->
+      <div id="list-1" class="p-3 pt-0" cdkDropList [cdkDropListData]="taskList1" (cdkDropListDropped)="drop($event)">
+        @for (item of taskList1; track item) {
+        <app-task-card [item]="item" cdkDrag />
+        }
+      </div>
+    </div>
+    <!--end div-->
+  </div>
+  <!--end col-->
+  <div class="col-md-4 col-lg-4">
+    <div class="border-dashed border-theme-color rounded">
+      <div class="card bg-light">
+        <div class="card-body border-dashed-bottom border-theme-color">
+          <button type="button" class="btn btn-sm btn-outline-primary px-2 d-inline-flex align-items-center float-end">
+            <i class="iconoir-chat-bubble fs-14 me-1"></i>Message
+          </button>
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <img src="assets/images/users/avatar-8.jpg" alt=""
+                class="rounded-circle thumb-xxl mx-auto d-inline-block" />
+            </div>
+            <div class="flex-grow-1 ms-2 text-truncate">
+              <h5 class="m-0 fw-bold">Thomas Milligan</h5>
+              <p class="text-muted mb-0">&#64;thomas</p>
+            </div>
+          </div>
+          <div class="row mt-3 align-items-center">
+            <div class="col-12">
+              <div class="text-muted mb-2 d-flex align-items-center">
+                <i class="iconoir-mail-out fs-20 me-1"></i><span class="text-body fw-semibold">Email :</span><a
+                  href="javascript:void(0);" class="text-primary text-decoration-underline">example&#64;example.com</a>
+              </div>
+              <div class="text-body d-flex align-items-center">
+                <i class="iconoir-phone fs-20 me-1 text-muted"></i><span class="text-body fw-semibold">Phone :</span> +1
+                123 456
+                789
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end card-body-->
+      </div>
+      <!--end card-->
+
+      <div id="list-2" class="p-3 pt-0" cdkDropList [cdkDropListData]="taskList2" (cdkDropListDropped)="drop($event)">
+        @for (item of taskList2; track item) {
+        <app-task-card [item]="item" cdkDrag />
+        }
+      </div>
+    </div>
+    <!--end div-->
+  </div>
+  <!--end col-->
+  <div class="col-md-4 col-lg-4">
+    <div class="border-dashed border-theme-color rounded">
+      <div class="card bg-light">
+        <div class="card-body border-dashed-bottom border-theme-color">
+          <button type="button" class="btn btn-sm btn-outline-primary px-2 d-inline-flex align-items-center float-end">
+            <i class="iconoir-chat-bubble fs-14 me-1"></i>Message
+          </button>
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <img src="assets/images/users/avatar-7.jpg" alt=""
+                class="rounded-circle thumb-xxl mx-auto d-inline-block" />
+            </div>
+            <div class="flex-grow-1 ms-2 text-truncate">
+              <h5 class="m-0 fw-bold">Juan Clark</h5>
+              <p class="text-muted mb-0">&#64;juan</p>
+            </div>
+          </div>
+          <div class="row mt-3 align-items-center">
+            <div class="col-12">
+              <div class="text-muted mb-2 d-flex align-items-center">
+                <i class="iconoir-mail-out fs-20 me-1"></i><span class="text-body fw-semibold">Email :</span><a
+                  href="javascript:void(0);" class="text-primary text-decoration-underline">example&#64;example.com</a>
+              </div>
+              <div class="text-body d-flex align-items-center">
+                <i class="iconoir-phone fs-20 me-1 text-muted"></i><span class="text-body fw-semibold">Phone :</span> +1
+                123 456
+                789
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end card-body-->
+      </div>
+      <!--end card-->
+      <div id="list-3" class="p-3 pt-0" cdkDropList [cdkDropListData]="taskList3" (cdkDropListDropped)="drop($event)">
+        @for (item of taskList3; track item) {
+        <app-task-card [item]="item" cdkDrag />
+        }
+      </div>
+
+    </div>
+    <!--end div-->
+  </div>
+  <!--end col-->
+</div>
+<!--end row-->

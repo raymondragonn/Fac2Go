@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="card-title">Balance Details</h4>
+      </div>
+      <!--end col-->
+      <div class="col-auto">
+        <div class="p-2 border-dashed border-theme-color rounded">
+          <h5 class="mt-1 mb-0 fw-medium">$82365.00</h5>
+          <small class="text-muted">Available</small>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  <div class="card-body pt-0">
+    <div id="balance" class="apex-charts">
+      <apx-chart
+        [chart]="balanceChart.chart!"
+        [plotOptions]="balanceChart.plotOptions!"
+        [dataLabels]="balanceChart.dataLabels!"
+        [stroke]="balanceChart.stroke!"
+        [series]="balanceChart.series!"
+        [legend]="balanceChart.legend!"
+        [labels]="balanceChart.labels!"
+        [colors]="balanceChart.colors!"
+      />
+    </div>
+    <div class="bg-light py-3 px-2 mb-0 mt-3 text-center rounded">
+      <h6 class="mb-0">
+        <i class="icofont-calendar fs-5 me-1"></i> 01 January 2024 to 31
+        December 2024
+      </h6>
+    </div>
+  </div>
+  <!--end card-body-->
+</div>

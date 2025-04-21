@@ -1,0 +1,102 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="card-title">Cash Flow</h4>
+      </div>
+      <!--end col-->
+      <div class="col-auto">
+        <div class="dropdown" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            ngbDropdownToggle
+            class="btn bt btn-light dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="icofont-calendar fs-5 me-1"></i>
+            Weekly<i class="las la-angle-down ms-1"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+            <a class="dropdown-item" href="javascript:void(0);">Today</a>
+            <a class="dropdown-item" href="javascript:void(0);">Weekly</a>
+            <a class="dropdown-item" href="javascript:void(0);">Monthly</a>
+            <a class="dropdown-item" href="javascript:void(0);">Yearly</a>
+          </div>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  <!--end card-header-->
+  <div class="card-body pt-0">
+    <div id="cashflow" class="apex-charts">
+      <apx-chart
+        [chart]="cashflowChart.chart!"
+        [plotOptions]="cashflowChart.plotOptions!"
+        [dataLabels]="cashflowChart.dataLabels!"
+        [stroke]="cashflowChart.stroke!"
+        [series]="cashflowChart.series!"
+        [legend]="cashflowChart.legend!"
+        [labels]="cashflowChart.labels!"
+        [colors]="cashflowChart.colors!"
+      />
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="text-center">
+          <p class="text-muted text-uppercase mb-0 fw-medium fs-13">Income</p>
+          <h5 class="mt-1 mb-0 fw-medium">76%</h5>
+        </div>
+      </div>
+      <!--end col-->
+      <div class="col-4">
+        <div class="text-center">
+          <p class="text-muted text-uppercase mb-0 fw-medium fs-13">Expense</p>
+          <h5 class="mt-1 mb-0 fw-medium">23%</h5>
+        </div>
+      </div>
+      <!--end col-->
+      <div class="col-4">
+        <div class="text-center">
+          <p class="text-muted text-uppercase mb-0 fw-medium fs-13">Other</p>
+          <h5 class="mt-1 mb-0 fw-medium">1%</h5>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+    <div class="text-center mx-auto">
+      <img
+        src="assets/images/extra/rabit.png"
+        alt=""
+        class="d-inline-block"
+        height="105"
+      />
+    </div>
+    <div class="card-bg position-relative z-0">
+      <div class="p-3 bg-primary-subtle rounded position-relative">
+        <div class="d-flex align-items-center">
+          <div
+            class="flex-shrink-0 bg-primary-subtle text-primary thumb-lg rounded-circle"
+          >
+            <i class="iconoir-bright-star fs-3"></i>
+          </div>
+          <div class="flex-grow-1 ms-2">
+            <h6 class="my-0 fw-normal text-dark fs-13 mb-0">
+              You have $1.53 remaining found over ...<a
+                href="javascript:void(0);"
+                class="text-primary fw-medium mb-0 text-decoration-underline"
+                >View Details</a
+              >
+            </h6>
+          </div>
+          <!--end media-body-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end card-body-->
+</div>

@@ -1,0 +1,75 @@
+<pagetitle title="Facturas Pendientes" />
+
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    <div class="card shadow-lg border-0 rounded-4">
+      <!-- Header de la Tarjeta -->
+      <div class="card-header bg-light mb-2">
+        <div class="row align-items-center">
+          <div class="d-flex justify-content-between pb-0 px-2 col">
+            <input class="datatable-input p-1 rounded-3" (input)="searchName($event)" placeholder="Buscar factura..."
+              type="text" name="search" title="Search within table" aria-controls="datatable_1" />
+            <button class="btn bg-white text-black" data-bs-toggle="modal" data-bs-target="#addUser">
+              <i class="fas fa-plus me-1"></i> Nueva Factura
+            </button>
+          </div>
+          <!--end col-->
+          <div class="col-auto">
+            <label>
+              <select (change)="onRowsChange($event)" class="datatable-selector p-1" name="per-page">
+                <option [value]="5">5</option>
+                <option [value]="10" selected="">10</option>
+                <option [value]="15">15</option>
+                <option [value]="20">20</option>
+                <option [value]="25">25</option>
+              </select>
+              <span style="color:black"> Facturas por página</span>
+            </label>
+          </div>
+          <!--end col-->
+
+        </div>
+        <!--end row-->
+      </div>
+      <!--end card-header-->
+
+      <!-- Cuerpo de la Tarjeta -->
+      <div class="card-body p-3">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-dark">
+              <tr>
+                <th>Fecha</th>
+                <th>No. Serie</th>
+                <th>Folio</th>
+                <th>UUID</th>
+                <th>Cliente</th>
+                <th>Medio de Pago</th>
+                <th>Concepto</th>
+                <th>Importe</th>
+                <th>IVA</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of invoiceData; track $index) {
+              <tr style="cursor:pointer" (click)="redirectionToDetail()">
+                <td>{{ item.date }}</td>
+                <td>{{ item.serie }}</td>
+                <td>{{ item.folio }}</td>
+                <td>{{ item.uuid }}</td>
+                <td>{{ item.cliente }}</td> 
+                <td>{{ item.medioPago }}</td>
+                <td>{{ item.concepto }}</td>
+                <td>${{ item.importe }}</td>
+                <td>${{ item.iva }}</td>
+                <td>${{ item.total }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

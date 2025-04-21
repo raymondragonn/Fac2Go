@@ -1,0 +1,142 @@
+//
+// Calendar
+// 
+
+.fc-event {
+  border-radius: 2px;
+  border: none;
+  cursor: move;
+  font-size: 13px;
+  margin: 5px;
+  padding: 7px 5px;
+  text-align: center;
+  background-color: white;
+  color: $dark;
+}
+
+.fc {
+  background-color: $light;
+  border-radius: 10px;
+  .fc-header-toolbar{
+    &.fc-toolbar {
+      .fc-toolbar-chunk{
+        h2{
+          font-size: 26px;
+          text-transform: uppercase;
+          color: $black;
+        }
+      }
+    }
+  }
+  .fc-toolbar{
+    &.fc-header-toolbar{
+      margin-bottom: $card-spacer-y;
+    }
+  }
+
+  .fc-col-header-cell-cushion{
+    padding: 10px 0;
+    color: var(--#{$prefix}body-color);
+  }
+  .fc-button{
+    font-size: $font-size-base;
+  }
+  .fc-button-primary{
+    background: white;
+    border: 1px solid var(--#{$prefix}border-color);
+    color: $black;
+    text-transform: capitalize;
+    text-shadow: none;
+    box-shadow: none;
+    &:hover{
+      background: $primary;
+      color: $black;
+      border-color: var(--#{$prefix}border-color);
+    }
+    &.active,
+    &:focus,
+    &:active{
+      text-shadow: none;
+      box-shadow: none;
+    }
+    &:disabled {
+      background: white;
+      color: $black;
+      border-color: var(--#{$prefix}border-color);
+      opacity: 1;
+    }
+    &:not(:disabled):active, 
+    &:not(:disabled).fc-button-active{
+      background: $primary;
+      color: $white;
+      border-color: var(--#{$prefix}border-color);
+      &:focus{
+        box-shadow: none;
+      }
+    }
+  }
+  .fc-daygrid-day-number{
+    color: var(--#{$prefix}body-color);
+    font-weight: 600;
+  }
+
+  .fc-daygrid-day {
+    &.fc-day-today {
+      background-color: transparent;
+      padding: 4px;
+      border-radius: 24px;
+      .fc-daygrid-day-frame {
+        background-color: rgba($white, 0.5);
+        border-radius: 10px;
+        .fc-daygrid-day-number {
+          font-size: 16px;
+          font-weight: 800;
+        }
+      }
+    }
+  }
+}
+
+.fc-license-message{
+  display: none;
+}
+
+.fc-theme-standard {
+  .fc-scrollgrid,
+  td, 
+  th{
+    border: 1px solid var(--#{$prefix}border-color);
+  }
+}
+
+.fc-day-other{
+  background-image: linear-gradient(-45deg, $card-bg 25%, transparent 25%, transparent 50%, $card-bg 50%, rgba($gray-900, 0.2) 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+}
+
+
+.fc-h-event {
+  .fc-event-main{
+    color: $dark;
+    font-weight: 500;
+  }
+}
+
+.fc-daygrid-dot-event {
+  .fc-event-title{
+    font-weight: 500;
+  }
+}
+.fc-direction-ltr,
+.fc-direction-rtl{
+  .fc-daygrid-event{
+    &.fc-event-start,
+    &.fc-event-end{
+      background-color: $dark;
+      box-shadow: $box-shadow-sm;
+      color: $white;
+      border-radius: 4px;
+    }
+  } 
+} 
+

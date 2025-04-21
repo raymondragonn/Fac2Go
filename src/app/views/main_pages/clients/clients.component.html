@@ -1,0 +1,223 @@
+<pagetitle [title]="'Clientes'" />
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light mb-2">
+                <div class="row align-items-center">
+                    <div class="d-flex justify-content-between pb-0 px-2 col">
+                        <input class="datatable-input p-1 rounded-3" (input)="searchName($event)"
+                            placeholder="Buscar cliente..." type="text" name="search" title="Search within table"
+                            aria-controls="datatable_1" />
+                        <button (click)="open(userModal)" class="btn bg-white text-black" data-bs-toggle="modal"
+                            data-bs-target="#addUser">
+                            <i class="fas fa-plus me-1"></i> Nuevo Cliente
+                        </button>
+                    </div>
+                    <!--end col-->
+                    <div class="col-auto">
+                        <label>
+                            <select (change)="onRowsChange($event)" class="datatable-selector p-1" name="per-page">
+                                <option [value]="5">5</option>
+                                <option [value]="10" selected="">10</option>
+                                <option [value]="15">15</option>
+                                <option [value]="20">20</option>
+                                <option [value]="25">25</option>
+                            </select>
+                            <span style="color:black"> Clientes por página</span>
+                        </label>
+                    </div>
+                    <!--end col-->
+
+                </div>
+                <!--end row-->
+            </div>
+            <!--end card-header-->
+            <div class="card-body pt-0">
+                <div class="table-responsive">
+                    <table class="table mb-0" id="datatable_1">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tipo de Cliente</th>
+                                <th>Nombre / Razón Social</th>
+                                <th>RFC</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
+                                <th>Representante Legal</th>
+                                <th>Fecha de Nacimiento</th>
+                                <th>CURP</th>
+                                <th class="text-end">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of clientsData; track $index) {
+                            <tr>
+                                <!-- Tipo de Cliente: Persona Física o Persona Moral -->
+                                <td>{{ item.tipoCliente }}</td>
+            
+                                <!-- Nombre o Razón Social -->
+                                <td class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1 text-truncate">
+                                            <h6 class="m-0">
+                                                {{ item.tipoCliente == 'Persona Física' ? 
+                                                    item.name + ' ' + item.apellidoPaterno + ' ' + item.apellidoMaterno : 
+                                                    item.razonSocial }}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </td>
+            
+                                <!-- RFC -->
+                                <td>{{ item.RFC }}</td>
+            
+                                <!-- Correo -->
+                                <td>
+                                    <a href="mailto:{{ item.email }}" class="text-body text-decoration-underline">{{ item.email }}</a>
+                                </td>
+            
+                                <!-- Teléfono -->
+                                <td>{{ item.phone }}</td>
+            
+                                <!-- Dirección -->
+                                <td>{{ item.direccion }}</td>
+            
+                                <!-- Representante Legal (solo para Personas Morales) -->
+                                <td>
+                                    {{ item.tipoCliente == 'Persona Moral' ? item.representanteLegal : '-' }}
+                                </td>
+            
+                                <!-- Fecha de Nacimiento (solo para Personas Físicas) -->
+                                <td>
+                                    {{ item.tipoCliente == 'Persona Física' ? item.date : '-' }}
+                                </td>
+            
+                                <!-- CURP (solo para Personas Físicas) -->
+                                <td>
+                                    {{ item.tipoCliente == 'Persona Física' ? item.CURP : '-' }}
+                                </td>
+            
+                                <!-- Acción: Editar y Eliminar -->
+                                <td class="text-end">
+                                    <a href="javascript:void(0);">
+                                        <i class="las la-pen text-secondary fs-18"></i>
+                                    </a>
+                                    <a href="javascript:void(0);">
+                                        <i class="las la-trash-alt text-secondary fs-18"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="10" style="text-align: center">
+                                    No results match your search query
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (totalEntries > 0) {
+                    <div class="d-flex justify-content-between mt-3 align-items-center">
+                        <div class="datatable-info">
+                            Mostrando {{ filteredEntries }} de {{ totalEntries }} clientes
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- end col -->
+</div>
+
+<ng-template #userModal let-modal class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUserLabel"
+    aria-hidden="true">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addUserLabel">Agregar Información De Usuario</h5>
+        <button type="button" class="btn-close" (click)="modal.close()" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group mb-2">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user text-muted thumb-xl rounded me-2 border-dashed"></i>
+                <div class="flex-grow-1 text-truncate">
+                    <label class="btn btn-primary text-black">
+                        Agregar Foto <input type="file" hidden="" />
+                    </label>
+                </div>
+                <!--end media body-->
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="fullName">Nombre</label>
+            <div class="input-group">
+                <span class="input-group-text" id="fullName"><i class="far fa-user"></i></span>
+                <input type="text" class="form-control" placeholder="Nombre" aria-label="FullName" />
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="apellidoP">Apellido Paterno</label>
+            <div class="input-group">
+                <span class="input-group-text" id="apellidoP"><i class="far fa-user"></i></span>
+                <input type="text" class="form-control" placeholder="Apellido Paterno" aria-label="FullName" />
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="apellidoM">Apellido Materno</label>
+            <div class="input-group">
+                <span class="input-group-text" id="apellidoM"><i class="far fa-user"></i></span>
+                <input type="text" class="form-control" placeholder="Apellido Materno" aria-label="FullName" />
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="email">Correo</label>
+            <div class="input-group">
+                <span class="input-group-text" id="email"><i class="far fa-envelope"></i></span>
+                <input type="email" class="form-control" placeholder="Email address" aria-label="email" />
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="rol">Rol</label>
+            <div class="input-group">
+                <span class="input-group-text" id="rol">
+                    <i class="fas fa-user-tag"></i>
+                </span>
+                <select class="form-control" id="rol" aria-label="rol">
+                    <option value="" disabled selected>Selecciona un rol</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Contador">Contador</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-2">
+                    <label for="ragisterDate">Fecha de Registro</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="ragisterDate"><i class="far fa-calendar"></i></span>
+                        <input type="text" class="form-control" placeholder="00/2024" aria-label="ragisterDate" />
+                    </div>
+                </div>
+            </div>
+            <!--end col-->
+            <div class="col-md-6">
+                <div class="mb-2">
+                    <label for="mobilleNo">Teléfono</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="mobilleNo"><i class="fas fa-phone"></i></span>
+                        <input type="text" class="form-control" placeholder="+1 234 567 890" aria-label="mobilleNo" />
+                    </div>
+                </div>
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary w-100">Nuevo Usuario</button>
+    </div>
+</ng-template>

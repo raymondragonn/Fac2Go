@@ -1,0 +1,95 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="card bg-welcome-img overflow-hidden">
+      <div class="card-body">
+        <div class="">
+          <h3 class="text-white fw-semibold fs-20 lh-base">
+            Upgrade you plan for <br />Great experience
+          </h3>
+          <a href="javascript:void(0);" class="btn btn-sm btn-danger"
+            >Upgarde Now</a
+          >
+          <img
+            src="assets/images/extra/fund.png"
+            alt=""
+            class="mb-n4 float-end"
+            height="107"
+          />
+        </div>
+      </div>
+      <!--end card-body-->
+    </div>
+    <!--end card-->
+  </div>
+  <!--end col-->
+  <div class="col-md-6">
+    <div class="card bg-globe-img">
+      <div class="card-body">
+        <div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fs-16 fw-semibold">Balance</span>
+            <form class="">
+              <div
+                class="dynamic-select"
+                [ngStyle]="{ width: width, height: height }"
+              >
+                <input
+                  type="hidden"
+                  name="dynamic-select"
+                  [value]="selectedValue"
+                />
+                <div
+                  class="dynamic-select-header"
+                  (click)="toggleOptions()"
+                  [ngClass]="{ 'dynamic-select-header-active': optionsVisible }"
+                >
+                  <img
+                    *ngIf="selectedValue?.img"
+                    [src]="selectedValue.img"
+                    [alt]="selectedValue.text"
+                  />
+                  {{ placeholder }}
+                </div>
+                <div class="dynamic-select-options" *ngIf="optionsVisible">
+                  <div
+                    *ngFor="let option of data"
+                    class="dynamic-select-option"
+                    (click)="selectOption(option)"
+                  >
+                    <img
+                      *ngIf="option.img"
+                      [src]="option.img"
+                      [alt]="option.text"
+                    />
+                    <span
+                      class="text-truncate"
+                      [ngStyle]="getImageStyle(option)"
+                      >{{ option.text }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <h4 class="my-2 fs-24 fw-semibold">
+            122.5692.00 <small class="font-14">BTC</small>
+          </h4>
+          <p class="mb-3 text-muted fw-semibold">
+            <span class="text-success"
+              ><i class="fas fa-arrow-up me-1"></i>11.1%</span
+            >
+            Outstanding balance boost
+          </p>
+          <button type="submit" class="btn btn-soft-primary me-1">
+            Transfer
+          </button>
+          <button type="button" class="btn btn-soft-danger">Request</button>
+        </div>
+      </div>
+      <!--end card-body-->
+    </div>
+    <!--end card-->
+  </div>
+  <!--end col-->
+</div>

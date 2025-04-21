@@ -1,0 +1,29 @@
+<pagetitle [title]="'Panel de Control'" />
+
+<div>
+  <div class="row justify-content-center">
+    <div class="col-lg-6 order-1 ">
+      <app-stats />
+      <div id="inline_calendar" appDatepicker></div>
+    </div>
+    <div class="col-lg-6 order-1 ">
+      <app-stats />
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-8 order-2">
+      <app-transaction-history />
+    </div>
+    <div class="col-lg-4 order-3">
+      <app-balance-detail />
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-7 order-4">
+      <app-report />
+    </div>
+    <div class="col-lg-5 order-5">
+      <app-exchange-rate />
+    </div>
+  </div>
+</div>

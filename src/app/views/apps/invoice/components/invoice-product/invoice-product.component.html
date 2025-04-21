@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="table-responsive project-invoice">
+      <table class="table table-bordered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Código</th>
+            <th>Descripción del producto</th>
+            <th>Unidades</th>
+            <th>Precio Unitario</th>
+            <th>Importe</th>
+          </tr>
+          <!--end tr-->
+        </thead>
+        <tbody>
+          @for (data of productList; track $index) {
+            <tr>
+              <td>{{ data.code }}</td>
+              <td>
+                <h5 class="mt-0 mb-1 fs-14">{{ data.title }}</h5>
+                <p class="mb-0 text-muted">{{ data.description }}</p>
+              </td>
+              <td>{{ data.quantity }}</td>
+              <td>{{ currency }}{{ data.unitPrice.toFixed(2) }}</td>
+              <td>{{ currency }}{{ data.amount.toFixed(2) }}</td>
+            </tr>
+            <!--end tr-->
+          }
+
+          <tr>
+            <td colspan="3" class="border-0"></td>
+            <td colspan="1" class="border-0 fs-14 text-dark">
+              <b>Sub Total</b>
+            </td>
+            <td class="border-0 fs-14 text-dark">
+              <b>{{ currency }}3,150.00</b>
+            </td>
+          </tr>
+          <!--end tr-->
+          <tr>
+            <th colspan="3" class="border-0"></th>
+            <td colspan="1" class="border-0 fs-14 text-dark">
+              <b>IVA</b>
+            </td>
+            <td class="border-0 fs-14 text-dark">
+              <b>{{ currency }}504.00</b>
+            </td>
+          </tr>
+          <!--end tr-->
+          <tr class="">
+            <th colspan="3" class="border-0"></th>
+            <td colspan="1" class="border-0 fs-14"><b>Total</b></td>
+            <td class="border-0 fs-14">
+              <b>{{ currency }}3654.00</b>
+            </td>
+          </tr>
+          <!--end tr-->
+        </tbody>
+      </table>
+      <!--end table-->
+    </div>
+    <!--end /div-->
+  </div>
+  <!--end col-->
+</div>
+<!--end row-->

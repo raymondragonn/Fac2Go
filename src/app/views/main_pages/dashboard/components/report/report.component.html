@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="card-title">Report</h4>
+      </div>
+      <!--end col-->
+      <div class="col-auto">
+        <div class="dropdown" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            ngbDropdownToggle
+            class="btn bt btn-light dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="icofont-calendar fs-5 me-1"></i> This Month<i
+              class="las la-angle-down ms-1"
+            ></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+            <a class="dropdown-item" href="javascript:void(0);">Today</a>
+            <a class="dropdown-item" href="javascript:void(0);">Last Week</a>
+            <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
+            <a class="dropdown-item" href="javascript:void(0);">This Year</a>
+          </div>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  <!--end card-header-->
+  <div class="card-body pt-0">
+    <div id="reports" class="apex-charts pill-bar">
+      <apx-chart
+        [chart]="ReportChart.chart!"
+        [plotOptions]="ReportChart.plotOptions!"
+        [dataLabels]="ReportChart.dataLabels!"
+        [stroke]="ReportChart.stroke!"
+        [series]="ReportChart.series!"
+        [legend]="ReportChart.legend!"
+        [labels]="ReportChart.labels!"
+        [colors]="ReportChart.colors!"
+      />
+    </div>
+  </div>
+  <!--end card-body-->
+</div>

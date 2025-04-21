@@ -1,0 +1,66 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="card-title">Send Money</h4>
+      </div>
+      <!--end col-->
+      <div class="col-auto">
+        <div class="dropdown">
+          <a href="javascript:void(0);" class="btn bt btn-light">
+            <i class="icofont-contact-add fs-5 me-1"></i> Add Member
+          </a>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  <!--end card-header-->
+  <div class="card-body pt-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <tbody>
+          @for (item of sendMoneyData; track $index) {
+            <tr class="">
+              <td class="px-0">
+                <div class="d-flex align-items-center">
+                  <img
+                    [src]="item.avatar"
+                    height="36"
+                    class="me-2 align-self-center rounded"
+                    alt="..."
+                  />
+                  <div class="flex-grow-1 text-truncate">
+                    <h6 class="m-0 text-truncate">{{ item.name }}</h6>
+                    <a
+                      href="javascript:void(0);"
+                      class="font-12 text-muted text-decoration-underline"
+                      >{{ item.id }}</a
+                    >
+                  </div>
+                  <!--end media body-->
+                </div>
+                <!--end media-->
+              </td>
+              <td class="px-0 text-end">
+                <span
+                  class="text-primary ps-2 align-self-center text-end fw-medium"
+                  >{{ item.amount }}</span
+                >
+              </td>
+              <td class="px-0 text-end">
+                <a href="javascript:void(0);" class="text-body"
+                  ><i class="las la-sync-alt"></i
+                ></a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <!--end table-->
+    </div>
+    <!--end /div-->
+  </div>
+  <!--end card-body-->
+</div>

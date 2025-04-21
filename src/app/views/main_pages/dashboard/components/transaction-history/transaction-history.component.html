@@ -1,0 +1,93 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="card-title">Transaction History</h4>
+      </div>
+      <!--end col-->
+      <div class="col-auto">
+        <div class="dropdown" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            ngbDropdownToggle
+            class="btn bt btn-light dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="icofont-calendar fs-5 me-1"></i> This Month<i
+              class="las la-angle-down ms-1"
+            ></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+            <a class="dropdown-item" href="javascript:void(0);">Today</a>
+            <a class="dropdown-item" href="javascript:void(0);">Last Week</a>
+            <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
+            <a class="dropdown-item" href="javascript:void(0);">This Year</a>
+          </div>
+        </div>
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  <!--end card-header-->
+  <div class="card-body pt-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="border-top-0">Transaction</th>
+            <th class="border-top-0">Date</th>
+            <th class="border-top-0">AApprox</th>
+            <th class="border-top-0">Status</th>
+            <th class="border-top-0">Action</th>
+          </tr>
+          <!--end tr-->
+        </thead>
+        <tbody>
+          @for (item of transaction; track $index) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img
+                    [src]="item.avatar"
+                    height="40"
+                    class="me-3 align-self-center rounded"
+                    alt="..."
+                  />
+                  <div class="flex-grow-1 text-truncate">
+                    <h6 class="m-0">{{ item.transaction }}</h6>
+                    <a href="javascript:void(0);" class="fs-12 text-primary"
+                      >ID: {{ item.id }}</a
+                    >
+                  </div>
+                  <!--end media body-->
+                </div>
+              </td>
+              <td>{{ item.date }}</td>
+              <td>$560</td>
+              <td>
+                <span
+                  class="badge {{ item.statusBadge }} fs-11 fw-medium px-2"
+                  >{{ item.status }}</span
+                >
+              </td>
+              <td>
+                <a href="javascript:void(0);"
+                  ><i class="las la-print text-secondary fs-18"></i
+                ></a>
+                <a href="javascript:void(0);"
+                  ><i class="las la-trash-alt text-secondary fs-18"></i
+                ></a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <!--end table-->
+    </div>
+    <!--end /div-->
+  </div>
+  <!--end card-body-->
+</div>

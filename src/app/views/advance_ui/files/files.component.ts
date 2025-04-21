@@ -1,0 +1,28 @@
+import { Component } from '@angular/core'
+import { AudioList, DocumentList, FolderList, ImageList } from './data'
+import {
+  NgbDropdownModule,
+  NgbNavModule,
+  NgbProgressbarModule,
+} from '@ng-bootstrap/ng-bootstrap'
+import { CommonModule } from '@angular/common'
+import { PagetitleComponent } from '../../../components/pagetitle/pagetitle.component'
+
+@Component({
+  selector: 'app-files',
+  imports: [
+    NgbProgressbarModule,
+    CommonModule,
+    NgbNavModule,
+    NgbDropdownModule,
+    PagetitleComponent,
+  ],
+  templateUrl: './files.component.html',
+  styles: ``,
+})
+export class FilesComponent {
+  folders = FolderList
+  documents = DocumentList
+  images = ImageList
+  audioData = AudioList
+}

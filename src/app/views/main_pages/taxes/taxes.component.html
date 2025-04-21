@@ -1,0 +1,184 @@
+<pagetitle [title]="'Taxess'" />
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 class="card-title">Taxes Details</h4>
+          </div>
+          <!--end col-->
+          <div class="col-auto">
+            <button
+              class="btn bg-primary text-white"
+              (click)="open(rateModal)"
+              data-bs-toggle="modal"
+              data-bs-target="#addRate"
+            >
+              <i class="fas fa-plus me-1"></i> Add Rate
+            </button>
+          </div>
+          <!--end col-->
+        </div>
+        <!--end row-->
+      </div>
+      <!--end card-header-->
+      <div class="card-body pt-0">
+        <div class="d-flex justify-content-between pb-1 px-1">
+          <label>
+            <select
+              (change)="onRowsChange($event)"
+              class="datatable-selector p-1"
+              name="per-page"
+            >
+              <option [value]="5">5</option>
+              <option [value]="10" selected="">10</option>
+              <option [value]="15">15</option>
+              <option [value]="20">20</option>
+              <option [value]="25">25</option>
+            </select>
+            entries per page
+          </label>
+          <input
+            class="datatable-input p-1"
+            (input)="searchName($event)"
+            placeholder="Search..."
+            type="text"
+            name="search"
+            title="Search within table"
+            aria-controls="datatable_1"
+          />
+        </div>
+
+        <div class="table-responsive">
+          <table class="table mb-0" id="datatable_1">
+            <thead class="table-light">
+              <tr>
+                <th sortable="">Tax Rate (Band)</th>
+                <th>Tax Rate</th>
+                <th>Taxable Income 22/23</th>
+                <th>Taxable Income23/24</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of taxesData; track $index) {
+                <tr>
+                  <td>{{ item.description }}</td>
+                  <td>{{ item.rate }}</td>
+                  <td>{{ item.range1 }}</td>
+                  <td>{{ item.range2 }}</td>
+                  <td class="text-end">
+                    <a href="javascript:void(0);"
+                      ><i class="las la-pen text-secondary fs-18"></i
+                    ></a>
+                    <a href="javascript:void(0);"
+                      ><i class="las la-trash-alt text-secondary fs-18"></i
+                    ></a>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" style="text-align: center">
+                    No results match your search query
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          @if (totalEntries >= 0) {
+            <div class="d-flex justify-content-between mt-3 align-items-center">
+              <div class="datatable-info">
+                Showing {{ filteredEntries }} of {{ totalEntries }} entries
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+
+<ng-template
+  let-modal
+  #rateModal
+  class="modal fade"
+  id="addRate"
+  tabindex="-1"
+  aria-labelledby="addRateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-header">
+    <h5 class="modal-title" id="addRateLabel">Add Rate Detail</h5>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="modal.dismiss()"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-2">
+      <label for="rateTitle">Tax Rate</label>
+      <div class="input-group">
+        <span class="input-group-text" id="rateTitle"
+          ><i class="fas fa-heading"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Name"
+          aria-label="rateTitle"
+        />
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="rate">Rate %</label>
+      <div class="input-group">
+        <span class="input-group-text" id="rate"
+          ><i class="far fa-percent"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="0%"
+          aria-label="rate"
+        />
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="incomeSince">Taxable Income Since</label>
+      <div class="input-group">
+        <span class="input-group-text" id="incomeSince"
+          ><i class="far fa-calendar"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="$0000 24/25"
+          aria-label="incomeSince"
+        />
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="incomeSince2">Taxable Income Since 2</label>
+      <div class="input-group">
+        <span class="input-group-text" id="incomeSince2"
+          ><i class="far fa-calendar"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="$0000 24/25"
+          aria-label="incomeSince2"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary w-100">Add New Rate</button>
+  </div>
+</ng-template>

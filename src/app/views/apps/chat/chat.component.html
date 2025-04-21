@@ -1,0 +1,9 @@
+<pagetitle [title]="'Chat'" [subtitle]="'Apps'" />
+
+<div class="row">
+  <div class="col-12">
+    <chat-contact (profileDetail)="receiveDataFromChild($event)" />
+
+    <chat-message [profileDetail]="profileDetail" />
+  </div>
+</div>
