@@ -13,12 +13,12 @@ import { Router, RouterLink } from '@angular/router'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-confirm-register-client',
   imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,NgbAlertModule],
-  templateUrl: './register.component.html',
+  templateUrl: './confirm-register-client.component.html',
   styles: ``,
 })
-export class RegisterComponent {
+export class ConfirmRegisterClientComponent {
   fieldTextType!: boolean
   fieldTextType1!: boolean
   signupForm!: UntypedFormGroup
@@ -30,7 +30,7 @@ export class RegisterComponent {
   constructor(private serviceAuth: AuthService, private router: Router) {
     this.signupForm = this.fb.group(
       {
-        username: ['', [Validators.required]],
+        name: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
         confirmpwd: ['', [Validators.required]],
@@ -67,7 +67,7 @@ export class RegisterComponent {
         this.showAlert = true
         setTimeout(() => {
           this.showAlert = false;
-          this.router.navigate(['/auth/login-admin']);
+          this.router.navigate(['']);
         }, 3000);
         
       

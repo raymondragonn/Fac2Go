@@ -556,9 +556,9 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: 'iconoir-fingerprint-lock-circle',
     subMenu: [
       {
-        key: 'log-in',
+        key: 'login-admin',
         label: 'Log in',
-        url: '/auth/log-in',
+        url: '/auth/login-admin',
         parentKey: 'autenticacion',
       },
       {

@@ -13,12 +13,12 @@ import { Router, RouterLink } from '@angular/router'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-user',
   imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,NgbAlertModule],
-  templateUrl: './register.component.html',
+  templateUrl: './register-user.component.html',
   styles: ``,
 })
-export class RegisterComponent {
+export class RegisterUserComponent {
   fieldTextType!: boolean
   fieldTextType1!: boolean
   signupForm!: UntypedFormGroup
@@ -30,17 +30,11 @@ export class RegisterComponent {
   constructor(private serviceAuth: AuthService, private router: Router) {
     this.signupForm = this.fb.group(
       {
+        name: ['', [Validators.required]],
         username: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
         confirmpwd: ['', [Validators.required]],
-        number: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
-          ],
-        ],
       },
       { validators: this.validateAreEqual }
     )
@@ -62,12 +56,12 @@ export class RegisterComponent {
     this.submitted = true
     if(this.signupForm.valid){
       console.log("Formulario Valido")
-      this.serviceAuth.registerUser({username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
+      this.serviceAuth.registerUser({name: this.signupForm.value.name, username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
         this.signupForm.reset();
         this.showAlert = true
         setTimeout(() => {
           this.showAlert = false;
-          this.router.navigate(['/auth/login-admin']);
+          this.router.navigate(['/auth/login-user']);
         }, 3000);
         
       

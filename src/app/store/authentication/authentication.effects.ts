@@ -38,7 +38,7 @@ export class AuthenticationEffects {
       ofType(logout),
       exhaustMap(() => {
         this.AuthenticationService.logout()
-        this.router.navigate(['/auth/log-in'])
+        this.router.navigate(['/auth/login-admin'])
         return of(logoutSuccess())
       })
     )

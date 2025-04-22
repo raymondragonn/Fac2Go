@@ -5,6 +5,7 @@ import { Error500Component } from './views/auth/error500/error500.component'
 import { MaintenanceComponent } from './views/auth/maintenance/maintenance.component'
 import { inject } from '@angular/core'
 import { AuthenticationService } from './core/service/auth.service'
+import { LoginClientComponent } from './views/auth/login-client/login-client.component'
 
 export const routes: Routes = [
   {
@@ -20,7 +21,7 @@ export const routes: Routes = [
         const currentUser = inject(AuthenticationService).session
         const router: Router = inject(Router)
         if (currentUser) return true
-        const urlTree: UrlTree = router.parseUrl('/auth/log-in')
+        const urlTree: UrlTree = router.parseUrl('/auth/login-admin')
         return new RedirectCommand(urlTree, { skipLocationChange: true })
       },
     ],
@@ -46,5 +47,5 @@ export const routes: Routes = [
     path: 'maintenance',
     component: MaintenanceComponent,
     data: { title: 'Maintenance' },
-  },
+  }
 ]

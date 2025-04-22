@@ -1,0 +1,112 @@
+<div class="container-fluid" style="background-color: #ebebeb;">
+    <div class="row vh-100 d-flex justify-content-center">
+      <div class="col-12 align-self-center">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-4 mx-auto">
+              <div class="card">
+                <div class="card-body p-0 bg-secondary auth-header-box rounded-top">
+                  <div class="text-center p-4">
+                    <a class="logo logo-admin">
+                      <img
+                        src="assets/images/logo.png"
+                        height="55"
+                        alt="logo"
+                        class="auth-logo"
+                      />
+                    </a>
+                    <h4 class="mt-3 mb-1 fw-semibold text-black fs-18">
+                      ¡Crea tu cuenta!
+                    </h4>
+                    <p class="text-gray-900 fw-medium mb-0">
+                      Ingresa los datos solicitados.
+                    </p>
+                    <p class="text-gray-900 fw-medium mb-0">
+                      Puedes encontrarlos en tu <span style="font-weight: bold;">constancia fiscal.</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="card-body pt-0">
+                  <form
+                    class="my-4"
+                    action="index.html"
+                    [formGroup]="signupForm"
+                    (ngSubmit)="onSubmit()"
+                  >
+                    <div class="form-group mb-2">
+                      <label class="form-label" for="rfc">RFC</label>
+                      <input
+                        type="text"
+                        formControlName="rfc"
+                        [ngClass]="{
+                          'is-invalid': submitted && form['rfc'].errors,
+                        }"
+                        class="form-control"
+                        id="rfc"
+                        name="rfc"
+                        placeholder="Ingresa tu RFC"
+                      />
+                      <div class="invalid-feedback">
+                        RFC válido es requerido
+                      </div>
+                    </div>
+                    <!--end form-group-->
+  
+                    <div class="form-group mb-2">
+                      <label class="form-label" for="idcif">idCIF</label>
+                      <input
+                        type="idcif"
+                        formControlName="idcif"
+                        [ngClass]="{
+                          'is-invalid': submitted && form['idcif'].errors,
+                        }"
+                        class="form-control"
+                        id="idcif"
+                        name="idcif"
+                        placeholder="Ingresa tu idCIF"
+                      />
+                      <div class="invalid-feedback">idCIF válido es requerido</div>
+                    </div>
+                    <!--end form-group-->
+  
+                    <div class="form-group mb-0 row">
+                      <div class="col-12">
+                        <div class="d-grid mt-3">
+                          <button class="btn btn-primary" type="submit">
+                            Registrar <i class="fas fa-sign-in-alt ms-1"></i>
+                          </button>
+                          <ngb-alert
+                            *ngIf="showAlert"
+                            type="success"
+                            class="shadow-sm border-theme-white-2"
+                            [dismissible]="false"
+                          >
+                            <div
+                              class="d-inline-flex justify-content-center align-items-center thumb-xs bg-success rounded-circle mx-auto me-1"
+                            >
+                              <i class="fas fa-check align-self-center mb-0 text-white"></i>
+                            </div>
+                            <strong> Usuario Registrado!</strong> Correctamente
+                          </ngb-alert>
+                        </div>
+                      </div>
+                      <!--end col-->
+                    </div>
+                    <!--end form-group-->
+                  </form>
+                  <!--end form-->
+                <!--end card-body-->
+              </div>
+              <!--end card-->
+            </div>
+            <!--end col-->
+          </div>
+          <!--end row-->
+        </div>
+        <!--end card-body-->
+      </div>
+      <!--end col-->
+    </div>
+    <!--end row-->
+  </div>
+  
