@@ -7,32 +7,32 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
     isTitle: true,
   },
   {
-    key: 'panel-control',
-    icon: 'iconoir-report-columns',
+    key: 'dashboard',
+    icon: 'iconoir-dashboard', // Panel de Control
     label: 'Panel de Control',
-    url: 'index',
+    url: 'dashboard',
   },
   {
     key: 'calendario',
-    icon: 'iconoir-calendar',
+    icon: 'iconoir-calendar', // Calendario
     label: 'Calendario',
     url: '/apps/calendar',
   },
   {
     key: 'registro-pagos',
-    icon: 'iconoir-hand-cash',
+    icon: 'las la-file-invoice-dollar', // Nueva Factura
     label: 'Nueva Factura',
     url: 'payment',
   },
   {
     key: 'ver-facturas-pendientes',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-task-list', // Facturas Pendientes
     label: 'Facturas Pendientes',
     url: 'pending-invoice',
   },
   {
     key: 'ver-facturas',
-    icon: 'iconoir-task-list',
+    icon: 'las la-file-alt', // Facturas Emitidas
     label: 'Facturas Emitidas',
     url: 'transactions',
   },
@@ -43,50 +43,22 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
   },
   {
     key: 'taxes',
-    icon: 'iconoir-task-list',
+    icon: 'las la-percentage', // Impuestos
     label: 'Impuestos',
     url: 'taxes',
   },
   {
     key: 'clientes',
-    icon: 'iconoir-group',
+    icon: 'iconoir-user-circle', // Clientes
     label: 'Clientes',
     url: 'clients',
   },
   {
     key: 'users',
-    icon: 'iconoir-group',
+    icon: 'las la-users', // Usuarios
     label: 'Usuarios',
     url: 'users',
   },
-  /*{
-    key: 'cards',
-    icon: 'iconoir-credit-cards',
-    label: 'Cards',
-    url: 'cards',
-    badge: {
-      text: '03',
-      variant: 'text-bg-pink',
-    },
-  },*/
-  /*{
-    key: 'taxes',
-    icon: 'iconoir-plug-type-l',
-    label: 'Taxes',
-    url: 'taxes',
-  },*/
-  /*{
-    key: 'chat',
-    icon: 'iconoir-chat-bubble',
-    label: 'Chat',
-    url: '/apps/chat',
-  },*/
-  /*{
-    key: 'contact-list',
-    icon: 'iconoir-community',
-    label: 'Contact List',
-    url: '/apps/contact-list',
-  },*/
   {
     key: 'componentes',
     label: '*componentes',
@@ -94,13 +66,13 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
   },
   {
     key: 'componentes',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-puzzle', // Componentes
     label: 'Componentes',
     collapsed: true,
     subMenu: [
       {
         key: 'base-ui',
-        icon: 'iconoir-compact-disc',
+        icon: 'iconoir-ui-elements', // UI Elements
         label: 'UI Elements',
         collapsed: true,
         parentKey: 'componentes',
@@ -135,7 +107,6 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
             url: '/ui/cards',
             parentKey: 'base-ui',
           },
-        
           {
             key: 'base-ui-carousel',
             label: 'Carousels',
@@ -230,7 +201,7 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
       },
       {
         key: 'advanced-ui',
-        icon: 'iconoir-peace-hand',
+        icon: 'iconoir-advanced', // Advanced UI
         collapsed: true,
         label: 'Advanced UI',
         parentKey: 'componentes',

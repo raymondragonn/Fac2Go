@@ -8,13 +8,13 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
   },
   {
     key: 'wallet',
-    icon: 'iconoir-report-columns',
+    icon: 'iconoir-dollar-circle', // Cartera de Clientes
     label: 'Cartera de Clientes',
     url: 'wallet',
   },
   {
     key: 'mybills',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-reports-solid', // Mis Facturas
     label: 'Mis Facturas',
     url: 'mybills',
   }

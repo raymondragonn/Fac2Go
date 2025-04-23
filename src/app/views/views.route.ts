@@ -10,6 +10,7 @@ import { ClientsComponent } from './main_pages/clients/clients.component'
 import { UsersComponent } from './main_pages/users/users.component'
 import { WalletComponent } from './main_pages/wallet/wallet.component'
 import { MybillsComponent } from './main_pages/mybills/mybills.component'
+import { DashboardComponent } from './main_pages/dashboard/dashboard.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -68,6 +69,11 @@ export const VIEW_ROUTES: Route[] = [
     path: 'issuance',
     loadChildren: () =>
       import('./issuance/issuance.route').then((mod) => mod.ISSUANCE_ROUTES),
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    data: { title: 'Datos y Analíticas'}
   },
   {
     path: 'payment',

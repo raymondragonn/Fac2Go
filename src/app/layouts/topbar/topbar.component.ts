@@ -7,6 +7,8 @@ import { Store } from '@ngrx/store'
 import { SimplebarAngularModule } from 'simplebar-angular'
 import { TabItems } from './data'
 import { CommonModule } from '@angular/common'
+import { Router } from '@angular/router'; // Importa el Router
+import { UserService } from '@/app/services/user.service'; // Importa el servicio
 
 @Component({
   selector: 'app-topbar',
@@ -31,17 +33,16 @@ export class TopbarComponent implements OnInit {
   
   @Output() mobileMenuButtonClicked = new EventEmitter()
 
-  userType: string = ''; // 'guest', 'user', or 'admin'
-  userEmail: string = ''; // Email of the user or admin
+  userType: string = '';
+  userEmail: string = 'prueba@ejemplo.com';
 
-  constructor() {
-  }
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
-    // Obtener el tipo de usuario y el correo desde localStorage
-    this.userType = localStorage.getItem('userType') || 'guest';
-
-    this.userEmail = 'prueba@ejemplo.com';
+    // Suscribirse al estado del userType
+    this.userService.userType$.subscribe((type) => {
+      this.userType = type;
+    });
   }
 
   toggleMobileMenu() {
@@ -55,5 +56,18 @@ export class TopbarComponent implements OnInit {
       return this.userEmail;
     }
     return 'Usuario';
+  }
+
+  logout() {
+    // Cambiar el tipo de usuario a "guest"
+    this.userService.setUserType('guest');
+
+    // Limpiar datos relevantes del localStorage
+    localStorage.removeItem('userEmail');
+
+    // Recargar el componente navegando a la misma ruta
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([this.router.url]);
+    });
   }
 }

@@ -10,6 +10,7 @@ import { MENU_ITEMS_ADMIN } from '@/app/common/menu-item-admin'
 import { MENU_ITEMS_USERS } from '@/app/common/menu-item-users'
 import { MENU_ITEMS_GUEST } from '@/app/common/menu-item-guest'
 import { basePath } from '@/app/common/constants'
+import { UserService } from '@/app/services/user.service'; // Importa el servicio
 
 @Component({
   selector: 'app-sidebar',
@@ -33,7 +34,7 @@ export class SidebarComponent {
     '/'
   )
 
-  constructor() {
+  constructor(private userService: UserService) {
     this.router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this.trimmedURL = this.router.url?.replaceAll(
@@ -46,10 +47,15 @@ export class SidebarComponent {
         }, 200)
       }
     })
+
+    // Suscribirse al estado del userType
+    this.userService.userType$.subscribe((userType) => {
+      this.updateMenu(userType);
+    });
   }
 
   ngOnInit() {
-    this.initMenu()
+    this.updateMenu(this.userService.getUserType());
   }
 
   ngAfterViewInit() {
@@ -58,14 +64,13 @@ export class SidebarComponent {
     })
   }
 
-  initMenu(): void {
-    const userType = localStorage.getItem('userType'); // Obtiene el tipo de usuario
+  updateMenu(userType: string): void {
     if (userType === 'admin') {
-        this.menuItems = MENU_ITEMS_ADMIN; // Menú para administradores
+      this.menuItems = MENU_ITEMS_ADMIN;
     } else if (userType === 'guest') {
-        this.menuItems = MENU_ITEMS_GUEST; // Menú para invitados
+      this.menuItems = MENU_ITEMS_GUEST;
     } else {
-        this.menuItems = MENU_ITEMS_USERS; // Menú para usuarios
+      this.menuItems = MENU_ITEMS_USERS;
     }
   }
 

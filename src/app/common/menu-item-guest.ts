@@ -8,25 +8,25 @@ export const MENU_ITEMS_GUEST: MenuItem[] = [
   },
   {
     key: 'issuance-principal',
-    icon: 'iconoir-report-columns',
+    icon: 'iconoir-report-columns', // Inicio
     label: 'Inicio',
     url: 'issuance/principal',
   },
   {
     key: 'faq',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-chat-bubble', // Preguntas Frecuentes
     label: 'Preguntas Frecuentes',
     url: 'faq',
   },
   {
     key: 'contacto',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-mail', // Contacto
     label: 'Contacto',
     url: 'contacto',
   },
   {
     key: 'privacidad',
-    icon: 'iconoir-task-list',
+    icon: 'iconoir-lock', // Aviso de Privacidad (asumiendo que "lock" es adecuado)
     label: 'Aviso de Privacidad',
     url: 'privacidad',
   }
