@@ -7,10 +7,10 @@ export const MENU_ITEMS_GUEST: MenuItem[] = [
     isTitle: true,
   },
   {
-    key: 'index',
+    key: 'issuance-principal',
     icon: 'iconoir-report-columns',
     label: 'Inicio',
-    url: 'index',
+    url: 'issuance/principal',
   },
   {
     key: 'faq',

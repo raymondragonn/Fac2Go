@@ -1,0 +1,147 @@
+<div class="row py-3 justify-content-center">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col text-center">
+                        <h4 class="card-title" style="font-size: 1.5rem;">Facturación en Línea</h4>
+                        <span class="form-text text-muted" style="font-size: 1rem;">Ingrese los datos correctamente para
+                            elaborar su factura.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <form [formGroup]="secondStepInForm" (ngSubmit)="facturar()" class="my-4">
+                    <div class="row justify-content-center">
+                        <!-- Nombre Completo -->
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="nombreCompleto" class="col-sm-2 col-form-label text-lg-end" style="font-size: 1rem;">Nombre Completo</label>
+                                <div class="col-sm-9">
+                                    <input
+                                        class="form-control form-control-lg"
+                                        type="text"
+                                        id="nombreCompleto"
+                                        formControlName="nombreCompleto"
+                                        placeholder="Fray Sebastián de Aparicio"
+                                        [ngClass]="{
+                                            'is-invalid': submitted && secondStepInForm.controls['nombreCompleto'].errors
+                                        }"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Nombre completo es requerido.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Régimen Fiscal -->
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="regimenFiscal" class="col-sm-2 col-form-label text-lg-end" style="font-size: 1rem;">Régimen Fiscal</label>
+                                <div class="col-sm-9">
+                                    <select
+                                        class="form-select"
+                                        id="regimenFiscal"
+                                        formControlName="regimenFiscal"
+                                        style="font-size: 0.8rem;"
+                                        [ngClass]="{
+                                            'is-invalid': submitted && secondStepInForm.controls['regimenFiscal'].errors
+                                        }"
+                                    >
+                                        <option disabled selected>Selecciona un régimen fiscal</option>
+                                        <option value="605">Sueldos y salarios e ingresos asimilados a salarios</option>
+                                        <option value="606">Arrendamiento</option>
+                                        <option value="608">Demás ingresos</option>
+                                        <option value="610">Residentes en el extranjero sin establecimiento permanente en México</option>
+                                        <option value="611">Ingresos por Dividendos (socios y accionistas)</option>
+                                        <option value="612">Personas físicas con actividades empresariales y profesionales</option>
+                                        <option value="614">Ingresos por intereses</option>
+                                        <option value="615">Régimen de los ingresos por obtención de premios</option>
+                                        <option value="616">Sin obligaciones fiscales</option>
+                                        <option value="621">Régimen de Incorporación Fiscal (RIF)</option>
+                                        <option value="625">Régimen de Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                                        <option value="626">Régimen Simplificado de Confianza (RESICO – Personas Físicas)</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Régimen fiscal es requerido.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Código Postal -->
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="Codigo_Postal" class="col-sm-2 col-form-label text-lg-end" style="font-size: 1rem;">Código Postal</label>
+                                <div class="col-sm-9">
+                                    <input
+                                        class="form-control form-control-lg"
+                                        type="text"
+                                        id="Codigo_Postal"
+                                        formControlName="Codigo_Postal"
+                                        placeholder="44100"
+                                        [ngClass]="{
+                                            'is-invalid': submitted && secondStepInForm.controls['Codigo_Postal'].errors
+                                        }"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Código postal válido es requerido.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Uso de CFDI -->
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="usoCfdi" class="col-sm-2 col-form-label text-lg-end" style="font-size: 1rem;">Uso de CFDI</label>
+                                <div class="col-sm-9">
+                                    <select
+                                        class="form-select"
+                                        id="usoCfdi"
+                                        formControlName="usoCfdi"
+                                        style="font-size: 0.8rem;"
+                                        [ngClass]="{
+                                            'is-invalid': submitted && secondStepInForm.controls['usoCfdi'].errors
+                                        }"
+                                    >
+                                        <option disabled selected>Selecciona un valor</option>
+                                        <option value="G01">Adquisición de mercancías</option>
+                                        <option value="G02">Devoluciones, descuentos o bonificaciones</option>
+                                        <option value="G03">Gastos en general</option>
+                                        <option value="I01">Construcciones</option>
+                                        <option value="I02">Mobiliario y equipo de oficina para inversiones</option>
+                                        <option value="I03">Equipo de transporte</option>
+                                        <option value="I04">Equipo de cómputo y accesorios</option>
+                                        <option value="I05">Dados, troqueles, moldes, matrices y herramental</option>
+                                        <option value="I06">Comunicaciones telefónicas</option>
+                                        <option value="I07">Comunicaciones satelitales</option>
+                                        <option value="I08">Otra maquinaria y equipo</option>
+                                        <option value="D01">Honorarios médicos, dentales y hospitalarios</option>
+                                        <option value="D02">Gastos médicos por incapacidad o discapacidad</option>
+                                        <option value="D03">Gastos funerales</option>
+                                        <option value="D04">Donativos</option>
+                                        <option value="D05">Intereses reales por créditos hipotecarios</option>
+                                        <option value="D06">Aportaciones voluntarias al SAR</option>
+                                        <option value="D07">Primas de seguros de gastos médicos</option>
+                                        <option value="D08">Gastos de transportación escolar obligatoria</option>
+                                        <option value="D09">Depósitos en cuentas de ahorro o planes de pensión</option>
+                                        <option value="D10">Pagos por servicios educativos (colegiaturas)</option>
+                                        <option value="S01">Sin efectos fiscales</option>
+                                        <option value="CP01">Pagos</option>
+                                        <option value="CN01">Nómina</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Uso de CFDI es requerido.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Botón -->
+                        <button class="btn btn-primary" type="submit" id="facturarButton">
+                            Facturar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

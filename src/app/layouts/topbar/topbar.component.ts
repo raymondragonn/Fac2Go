@@ -1,6 +1,6 @@
 import { changetheme } from '@/app/store/layout/layout-action'
 import { getLayoutColor } from '@/app/store/layout/layout-selector'
-import { Component, EventEmitter, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap'
 import { Store } from '@ngrx/store'
@@ -24,37 +24,36 @@ import { CommonModule } from '@angular/common'
     }
   `,
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnInit {
   tabItems = TabItems
   store = inject(Store)
   scrollY = 0
   
   @Output() mobileMenuButtonClicked = new EventEmitter()
 
-  constructor() {
-    window.addEventListener('scroll', this.handleScroll, { passive: true })
-    this.handleScroll()
+  userType: string = ''; // 'guest', 'user', or 'admin'
+  userEmail: string = ''; // Email of the user or admin
 
-   
+  constructor() {
+  }
+
+  ngOnInit(): void {
+    // Obtener el tipo de usuario y el correo desde localStorage
+    this.userType = localStorage.getItem('userType') || 'guest';
+
+    this.userEmail = 'prueba@ejemplo.com';
   }
 
   toggleMobileMenu() {
     this.mobileMenuButtonClicked.emit()
   }
 
-  // Change Theme
-  changeTheme() {
-    const color = document.documentElement.getAttribute('data-bs-theme')
-    if (color == 'light') {
-      this.store.dispatch(changetheme({ color: 'dark' }))
-    } else {
-      this.store.dispatch(changetheme({ color: 'light' }))
+  getDisplayName(): string {
+    if (this.userType === 'guest') {
+      return 'Invitado';
+    } else if (this.userType === 'user' || this.userType === 'admin') {
+      return this.userEmail;
     }
-    this.store.select(getLayoutColor).subscribe((color) => {
-      document.documentElement.setAttribute('data-bs-theme', color)
-    })
-  }
-  handleScroll = () => {
-    this.scrollY = window.scrollY
+    return 'Usuario';
   }
 }

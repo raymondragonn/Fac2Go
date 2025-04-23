@@ -1,0 +1,97 @@
+<div class="row py-3 justify-content-center">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col text-center">
+                        <h4 class="card-title" style="font-size: 1.5rem;">Facturación en Línea</h4>
+                        <span class="form-text text-muted" style="font-size: 1rem;">Bienvenido al servicio de
+                            facturación electrónica.</span>
+                        <br>
+                        <span class="form-text text-muted" style="font-size: 1rem;">Consulta, imprime o descarga tu
+                            factura.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <form [formGroup]="firstStepInForm" (ngSubmit)="nextStep()" class="my-4">
+                    <div class="row justify-content-center">
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="email" class="col-sm-2 col-form-label text-lg-end"
+                                    style="font-size: 1rem;">Correo</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control form-control-lg" type="email"
+                                        placeholder="john&#64;gmail.com" id="email" formControlName="email" [ngClass]="{
+                                            'is-invalid': submitted && form['email'].errors,
+                                          }"/>
+                                    <div class="invalid-feedback">Correo válido es requerido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="rfc" class="col-sm-2 col-form-label text-lg-end"
+                                    style="font-size: 1rem;">RFC</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control form-control-lg" type="text" placeholder="SUJJ900615HXX"
+                                        id="rfc" formControlName="rfc" [ngClass]="{
+                                            'is-invalid': submitted && form['rfc'].errors,
+                                          }"/>
+                                    <div class="invalid-feedback">RFC válido es requerido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="servicio" class="col-sm-2 col-form-label text-lg-end"
+                                    style="font-size: 1rem;">Servicio</label>
+                                <div class="col-sm-9">
+                                    <select class="form-select" id="servicio" formControlName="servicio"
+                                        style="font-size: 0.8rem;">
+                                        <option disabled selected>Selecciona un servicio</option>
+                                        <option value="1">Facturación de boletos</option>
+                                        <option value="2">Facturación de paquetería</option>
+                                        <option value="3">Facturación de consumo de alimentos</option>
+                                        <option value="4">Facturación de hospedaje</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="token" class="col-sm-2 col-form-label text-lg-end"
+                                    style="font-size: 1rem;">Token</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control form-control-lg" type="text" placeholder="AB12-34CD-5678"
+                                        id="token" formControlName="token" [ngClass]="{
+                                            'is-invalid': submitted && form['token'].errors,
+                                          }"/>
+                                    <div class="invalid-feedback">Token válido es requerido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="mb-3 row">
+                                <label for="fechaHora" class="col-sm-2 col-form-label text-lg-end"
+                                    style="font-size: 1rem;">Fecha y Hora</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="datetime-local" id="fechaHora"
+                                        formControlName="fechaHora" [ngClass]="{
+                                            'is-invalid': submitted && form['fechaHora'].errors,
+                                          }"/>
+                                    <div class="invalid-feedback">Fecha válida es requerida</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8 text-center">
+                            <button class="btn btn-primary" type="submit">
+                                Continuar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

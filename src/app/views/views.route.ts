@@ -1,7 +1,5 @@
 import { Route } from '@angular/router'
 
-import { DashboardComponent } from './main_pages/dashboard/dashboard.component'
-
 import { PaymentComponent } from './main_pages/payment/payment.component'
 
 import { PendingInvoiceComponentGeneral } from './main_pages/pending-invoice/pending-invoice.component'
@@ -12,7 +10,6 @@ import { ClientsComponent } from './main_pages/clients/clients.component'
 import { UsersComponent } from './main_pages/users/users.component'
 import { WalletComponent } from './main_pages/wallet/wallet.component'
 import { MybillsComponent } from './main_pages/mybills/mybills.component'
-import { PrincipalComponent } from './main_pages/principal/principal.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -68,9 +65,9 @@ export const VIEW_ROUTES: Route[] = [
       import('./apps/apps.route').then((mod) => mod.APPS_ROUTES),
   },
   {
-    path: 'index',
-    component: PrincipalComponent,
-    data: { title: 'Portal de Facturación' },
+    path: 'issuance',
+    loadChildren: () =>
+      import('./issuance/issuance.route').then((mod) => mod.ISSUANCE_ROUTES),
   },
   {
     path: 'payment',

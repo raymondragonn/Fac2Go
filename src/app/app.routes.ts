@@ -9,7 +9,7 @@ import { AuthenticationService } from './core/service/auth.service'
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'index',
+    redirectTo: 'issuance/principal',
     pathMatch: 'full',
   },
   {
