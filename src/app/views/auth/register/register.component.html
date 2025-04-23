@@ -30,24 +30,6 @@
                   [formGroup]="signupForm"
                   (ngSubmit)="onSubmit()"
                 >
-                  <div class="form-group mb-2">
-                    <label class="form-label" for="username">Usuario</label>
-                    <input
-                      type="text"
-                      formControlName="username"
-                      [ngClass]="{
-                        'is-invalid': submitted && form['username'].errors,
-                      }"
-                      class="form-control"
-                      id="username"
-                      name="username"
-                      placeholder="Ingresa un usuario"
-                    />
-                    <div class="invalid-feedback">
-                      Usuario es requerido
-                    </div>
-                  </div>
-                  <!--end form-group-->
 
                   <div class="form-group mb-2">
                     <label class="form-label" for="useremail">Correo</label>
@@ -136,26 +118,6 @@
                     </div>
                   </div>
                   <!--end form-group-->
-
-                  <div class="form-group mb-2">
-                    <label class="form-label" for="mobileNo"
-                      >Teléfono</label
-                    >
-                    <input
-                      type="text"
-                      formControlName="number"
-                      [ngClass]="{
-                        'is-invalid': submitted && form['number'].errors,
-                      }"
-                      class="form-control"
-                      id="mobileNo"
-                      name="mobile number"
-                      placeholder="Ingresa un número de teléfono"
-                    />
-                    <div class="invalid-feedback">
-                      Teléfono válido es requerido
-                    </div>
-                  </div>
 
                   <div class="col-sm-6 ">
                     <a

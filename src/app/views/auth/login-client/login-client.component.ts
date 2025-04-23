@@ -12,7 +12,7 @@ import { AlertsComponent } from '../../ui/alerts/alerts.component'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { AuthService } from '@/app/servicios/auth.service'
+import { AuthService } from '@/app/services/auth.service'
 
 @Component({
   selector: 'app-login-client',

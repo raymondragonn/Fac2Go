@@ -13,8 +13,7 @@ import { AlertsComponent } from '../../ui/alerts/alerts.component'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { AuthService } from '@/app/servicios/auth.service'
-
+import { AuthService } from '@/app/services/auth.service'
 
 @Component({
   selector: 'app-login',
@@ -38,24 +37,25 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.signInForm = this.fb.group({
-      username: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     })
   }
 
   get formValues() {
     return this.signInForm.controls
-  }
+  }  
 
   login() {
     this.submitted = true;
     if (this.signInForm.valid) {
-      const username = this.formValues['username'].value
+      const email = this.formValues['email'].value
       const password = this.formValues['password'].value
-      this.authService.login( username, password).subscribe((res) => {
+      this.authService.login( email, password).subscribe((res) => {
         console.log(res);
-        const { token, username } = res as { token: string, username: string };
-        localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token}));  
+        const { token, email } = res as { token: string, email: string };
+        localStorage.setItem('currentUser', JSON.stringify({ email: email, token: token}));  
+        localStorage.setItem('userType', 'admin');
         this.router.navigate(['']);
       },(error) => {
         console.log(error);

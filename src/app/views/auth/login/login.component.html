@@ -31,14 +31,14 @@
                   action="index.html"
                 >
                   <div class="form-group mb-2">
-                    <label class="form-label" for="username">Usuario</label>
+                    <label class="form-label" for="email">Correo</label>
                     <input
                       type="text"
                       class="form-control"
-                      id="username"
-                      formControlName="username"
-                      name="username"
-                      placeholder="Ingresa tu usuario"
+                      id="email"
+                      formControlName="email"
+                      name="email"
+                      placeholder="Ingresa tu correo"
                     />
                   </div>
                   <!--end form-group-->
@@ -61,7 +61,7 @@
                   <div class="form-group row mt-3">
                     <div class="col-sm-6">
                       <a
-                        [routerLink]="'/auth/register'"
+                        [routerLink]="'/auth/register-admin'"
                         class="text-muted font-13"
                         ><i class="dripicons-lock"></i>¿Quieres crear una Cuenta?</a
                       >

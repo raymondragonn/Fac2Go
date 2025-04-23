@@ -10,6 +10,9 @@ import { TransactionComponent } from './main_pages/transaction/transaction.compo
 import { TaxesComponent } from './main_pages/taxes/taxes.component'
 import { ClientsComponent } from './main_pages/clients/clients.component'
 import { UsersComponent } from './main_pages/users/users.component'
+import { WalletComponent } from './main_pages/wallet/wallet.component'
+import { MybillsComponent } from './main_pages/mybills/mybills.component'
+import { PrincipalComponent } from './main_pages/principal/principal.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -66,8 +69,8 @@ export const VIEW_ROUTES: Route[] = [
   },
   {
     path: 'index',
-    component: DashboardComponent,
-    data: { title: 'Panel de Control' },
+    component: PrincipalComponent,
+    data: { title: 'Portal de Facturación' },
   },
   {
     path: 'payment',
@@ -99,4 +102,14 @@ export const VIEW_ROUTES: Route[] = [
     component: ClientsComponent,
     data: { title: 'Clientes' },
   },
+  {
+    path: 'wallet',
+    component: WalletComponent,
+    data: { title: 'Cartera de Clientes'}
+  },
+  {
+    path: 'mybills',
+    component: MybillsComponent,
+    data: { title: 'Mis facturas'}
+  }
 ]

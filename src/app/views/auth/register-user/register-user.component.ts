@@ -1,4 +1,4 @@
-import { AuthService } from '@/app/servicios/auth.service'
+import { AuthService } from '@/app/services/auth.service'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import {
@@ -31,7 +31,6 @@ export class RegisterUserComponent {
     this.signupForm = this.fb.group(
       {
         name: ['', [Validators.required]],
-        username: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
         confirmpwd: ['', [Validators.required]],
@@ -56,15 +55,12 @@ export class RegisterUserComponent {
     this.submitted = true
     if(this.signupForm.valid){
       console.log("Formulario Valido")
-      this.serviceAuth.registerUser({name: this.signupForm.value.name, username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
-        this.signupForm.reset();
+      this.serviceAuth.registerUser({name: this.signupForm.value.name, email: this.signupForm.value.email, password: this.signupForm.value.password}).subscribe((res => {
         this.showAlert = true
         setTimeout(() => {
           this.showAlert = false;
           this.router.navigate(['/auth/login-user']);
         }, 3000);
-        
-      
       }), (error) => {
         console.log(error);
         

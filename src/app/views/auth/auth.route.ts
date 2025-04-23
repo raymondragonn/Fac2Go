@@ -14,7 +14,7 @@ export const AUTH_ROUTES: Route[] = [
     data: { title: 'Inicio Sesión' },
   },
   {
-    path: 'register',
+    path: 'register-admin',
     component: RegisterComponent,
     data: { title: 'Registro' },
   },

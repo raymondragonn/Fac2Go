@@ -1,6 +1,6 @@
 import { MenuItem } from '../core/models/menu.model'
 
-export const MENU_ITEMS: MenuItem[] = [
+export const MENU_ITEMS_ADMIN: MenuItem[] = [
   {
     key: 'general',
     label: 'General',
@@ -562,9 +562,9 @@ export const MENU_ITEMS: MenuItem[] = [
         parentKey: 'autenticacion',
       },
       {
-        key: 'register',
+        key: 'register-admin',
         label: 'Register',
-        url: '/auth/register',
+        url: '/auth/register-admin',
         parentKey: 'autenticacion',
       },
       {

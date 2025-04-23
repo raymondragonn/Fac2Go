@@ -61,6 +61,7 @@
     "ngx-cookie-service": "^19.0.0",
     "ngx-progressbar": "^11.1.0",
     "ngx-quill": "^27.0.0",
+    "notyf": "^3.10.0",
     "nouislider": "^15.8.1",
     "prettier": "^3.4.2",
     "prismjs": "^1.29.0",

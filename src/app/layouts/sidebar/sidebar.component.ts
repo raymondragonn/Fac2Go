@@ -6,7 +6,9 @@ import { NgbCollapseModule, NgbCollapse } from '@ng-bootstrap/ng-bootstrap'
 import { findAllParent, findMenuItem } from '@/app/core/helpers/utils'
 import { CommonModule } from '@angular/common'
 import { MenuItem } from '@/app/core/models/menu.model'
-import { MENU_ITEMS } from '@/app/common/menu-items'
+import { MENU_ITEMS_ADMIN } from '@/app/common/menu-item-admin'
+import { MENU_ITEMS_USERS } from '@/app/common/menu-item-users'
+import { MENU_ITEMS_GUEST } from '@/app/common/menu-item-guest'
 import { basePath } from '@/app/common/constants'
 
 @Component({
@@ -22,7 +24,7 @@ import { basePath } from '@/app/common/constants'
   styles: ``,
 })
 export class SidebarComponent {
-  menuItems = MENU_ITEMS
+  menuItems = MENU_ITEMS_GUEST
   activeMenuItems: string[] = []
   router = inject(Router)
 
@@ -57,7 +59,14 @@ export class SidebarComponent {
   }
 
   initMenu(): void {
-    this.menuItems = MENU_ITEMS
+    const userType = localStorage.getItem('userType'); // Obtiene el tipo de usuario
+    if (userType === 'admin') {
+        this.menuItems = MENU_ITEMS_ADMIN; // Menú para administradores
+    } else if (userType === 'guest') {
+        this.menuItems = MENU_ITEMS_GUEST; // Menú para invitados
+    } else {
+        this.menuItems = MENU_ITEMS_USERS; // Menú para usuarios
+    }
   }
 
   /**
