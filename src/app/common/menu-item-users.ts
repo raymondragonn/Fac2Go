@@ -2,9 +2,21 @@ import { MenuItem } from '../core/models/menu.model'
 
 export const MENU_ITEMS_USERS: MenuItem[] = [
   {
-    key: 'general',
-    label: 'General',
+    key: 'fac2go',
+    label: 'Portal de Facturación',
     isTitle: true,
+  },
+  {
+    key: 'issuance-principal',
+    icon: 'iconoir-report-columns', // Inicio
+    label: 'Nueva Factura',
+    url: 'issuance/principal',
+  },
+  {
+    key: 'qr-scanner',
+    icon: 'iconoir-report-columns',
+    label: 'Escaner de Constancia Fiscal',
+    url: 'qr-scanner'
   },
   {
     key: 'wallet',
@@ -17,5 +29,28 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     icon: 'iconoir-reports-solid', // Mis Facturas
     label: 'Mis Facturas',
     url: 'mybills',
+  },
+  {
+    key: 'general',
+    label: 'General',
+    isTitle: true,
+  },
+  {
+    key: 'faq',
+    icon: 'iconoir-chat-bubble', // Preguntas Frecuentes
+    label: 'Preguntas Frecuentes',
+    url: 'faq',
+  },
+  {
+    key: 'contacto',
+    icon: 'iconoir-mail', // Contacto
+    label: 'Contacto',
+    url: 'contacto',
+  },
+  {
+    key: 'privacidad',
+    icon: 'iconoir-lock', // Aviso de Privacidad (asumiendo que "lock" es adecuado)
+    label: 'Aviso de Privacidad',
+    url: 'privacidad',
   }
 ]
