@@ -1,0 +1,8 @@
+{
+  "/sat": {
+    "target": "https://sat-constancia-fiscal-api.onrender.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
