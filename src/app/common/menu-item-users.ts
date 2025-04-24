@@ -25,10 +25,10 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     url: 'wallet',
   },
   {
-    key: 'mybills',
-    icon: 'iconoir-reports-solid', // Mis Facturas
-    label: 'Mis Facturas',
-    url: 'mybills',
+    key: 'ver-facturas',
+    icon: 'las la-file-alt', // Facturas Emitidas
+    label: 'Facturas Emitidas',
+    url: 'transactions',
   },
   {
     key: 'general',

@@ -35,6 +35,7 @@ export class PrincipalComponent implements OnInit {
   showAlert: boolean = false;
   firstQRProcessed: boolean = false; // Bandera para el primer QR
   secondQRProcessed: boolean = false; // Bandera para el segundo QR
+  isPersonaMoral: boolean = false;
 
   qrValue: string | null = null;
 
@@ -49,18 +50,25 @@ export class PrincipalComponent implements OnInit {
   ];
 
   regimenesFiscales = [
-    { value: '605', label: 'Sueldos y salarios e ingresos asimilados a salarios' },
+    { value: '601', label: 'General de Ley Personas Morales' },
+    { value: '603', label: 'Personas Morales con Fines no Lucrativos' },
+    { value: '605', label: 'Sueldos y Salarios e Ingresos Asimilados a Salarios' },
     { value: '606', label: 'Arrendamiento' },
+    { value: '607', label: 'Régimen de Enajenación o Adquisición de Bienes' },
     { value: '608', label: 'Demás ingresos' },
-    { value: '610', label: 'Residentes en el extranjero sin establecimiento permanente en México' },
+    { value: '610', label: 'Residentes en el Extranjero sin Establecimiento Permanente en México' },
     { value: '611', label: 'Ingresos por Dividendos (socios y accionistas)' },
-    { value: '612', label: 'Personas físicas con actividades empresariales y profesionales' },
+    { value: '612', label: 'Personas Físicas con Actividades Empresariales y Profesionales' },
     { value: '614', label: 'Ingresos por intereses' },
     { value: '615', label: 'Régimen de los ingresos por obtención de premios' },
     { value: '616', label: 'Sin obligaciones fiscales' },
-    { value: '621', label: 'Régimen de Incorporación Fiscal (RIF)' },
-    { value: '625', label: 'Régimen de Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras' },
-    { value: '626', label: 'Régimen Simplificado de Confianza (RESICO - Personas Físicas)' },
+    { value: '620', label: 'Sociedades Cooperativas de Producción que optan por diferir sus ingresos' },
+    { value: '621', label: 'Incorporación Fiscal' },
+    { value: '622', label: 'Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras' },
+    { value: '623', label: 'Opcional para Grupos de Sociedades' },
+    { value: '624', label: 'Coordinados' },
+    { value: '625', label: 'Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas' },
+    { value: '626', label: 'Régimen Simplificado de Confianza' },
   ];
 
   usosCFDI = [
@@ -95,6 +103,9 @@ export class PrincipalComponent implements OnInit {
           this.facturacionForm.patchValue({ rfc });
           this.firstQRProcessed = true; // Marcar el primer QR como procesado
 
+          // Determinar si es persona moral (RFC de 12 caracteres)
+          this.isPersonaMoral = rfc.length === 12;
+
           // Obtener datos adicionales del SAT
           this.qrService.getDataSat(this.qrValue).subscribe(
             (res: any) => {
@@ -103,13 +114,24 @@ export class PrincipalComponent implements OnInit {
                 (regimen) => regimen.value === regimenFiscalCode
               )?.label || 'Régimen no válido';
 
+              let nombreCompleto = '';
+
+              if (this.isPersonaMoral) {
+                // Si es persona moral, usar "Denominación o Razón Social"
+                nombreCompleto = res['Denominación o Razón Social'] || 'Razón Social no disponible';
+              } else {
+                // Si es persona física, concatenar nombre y apellidos
+                nombreCompleto = `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`;
+              }
+
               this.facturacionForm.patchValue({
-                nombreCompleto: `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`,
+                nombreCompleto,
                 Codigo_Postal: res['CP'],
                 email: res['Correo electrónico'],
                 regimenFiscal: regimenFiscalCode, // Asignar el código al formulario
               });
 
+              console.log('Nombre completo o Razón Social asignado:', nombreCompleto);
               console.log('Régimen fiscal seleccionado:', regimenFiscalLabel);
             },
             (error) => {
@@ -164,7 +186,7 @@ export class PrincipalComponent implements OnInit {
       servicio: ['', [Validators.required]],
       token: ['', [Validators.required, Validators.pattern('^TOKEN_\\d{6}$')]],
       fechaHora: ['', [Validators.required, past30DaysValidator]],
-      nombreCompleto: ['', [Validators.required, this.nombreCompletoValidator()]],
+      nombreCompleto: ['', [Validators.required, this.dynamicNombreValidator()]], // Validador dinámico
       regimenFiscal: ['', [Validators.required]],
       Codigo_Postal: ['', [Validators.required, this.codigoPostalValidator()]],
       usoCfdi: ['G03', [Validators.required]], // Valor predeterminado
@@ -302,14 +324,23 @@ export class PrincipalComponent implements OnInit {
     }
   }
 
-  private nombreCompletoValidator() {
+  // Validador dinámico para "Nombre Completo" o "Razón Social"
+  private dynamicNombreValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-      const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+){2,}$/;
-      return regex.test(value) ? null : { invalidNombreCompleto: true };
+      if (this.isPersonaMoral) {
+        // Validación para "Razón Social"
+        const razonSocialRegex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ.,&]+$/;
+        return razonSocialRegex.test(value) ? null : { invalidRazonSocial: true };
+      } else {
+        // Validación para "Nombre Completo"
+        const nombreCompletoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+){2,}$/;
+        return nombreCompletoRegex.test(value) ? null : { invalidNombreCompleto: true };
+      }
     };
   }
 
+  // Validador para Código Postal
   private codigoPostalValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
