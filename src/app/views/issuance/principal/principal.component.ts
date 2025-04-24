@@ -16,8 +16,7 @@ import { UserService } from '@/app/services/user.service';
 import { ScannerQRService } from '@/app/services/scanner-qr.service';
 import { NgxScannerQrcodeComponent, LOAD_WASM, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
 import { BehaviorSubject } from 'rxjs';
-import { FacturacionService } from '@/app/core/service/facturacion.service'
-import { any } from 'ramda'
+import { FacturacionService } from '@/app/core/service/facturacion.service';
 
 @Component({
   selector: 'app-principal',
@@ -34,8 +33,6 @@ export class PrincipalComponent implements OnInit {
   useQR: boolean = false; // Determina si se seleccionó QR
   confirmacionAceptada: boolean = false;
   showAlert: boolean = false;
-  // currentStep: number = 1; 
-  isLoading = false;
   firstQRProcessed: boolean = false; // Bandera para el primer QR
   secondQRProcessed: boolean = false; // Bandera para el segundo QR
 
@@ -74,6 +71,7 @@ export class PrincipalComponent implements OnInit {
   private fb = inject(UntypedFormBuilder);
   private router = inject(Router);
   private facturar = inject(FacturacionService);
+  isLoading: boolean = false;
 
   constructor(private userService: UserService, private qrService: ScannerQRService) {}
 
@@ -159,12 +157,6 @@ export class PrincipalComponent implements OnInit {
     });
   }
 
-
-  // Helper methods para obtener nombres de opciones seleccionadas
-  getServiceName(value: string): string {
-    const servicio = this.servicios.find(s => s.value === value);
-    return servicio ? servicio.label : '';
-  }
   initializeForm(): void {
     this.facturacionForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -218,6 +210,70 @@ export class PrincipalComponent implements OnInit {
     this.submitted = false;
     this.showAlert = false;
   }
+  
+  private form: any = {
+    email: 'eduardoavilat2002@gmail.com',
+    rfc: 'AMI780504F88', 
+    servicio: '1', 
+    token: 'TOKEN_123456', 
+    fechaHora: "10/09/2024", 
+    nombreCompleto: 'AISLANTES MINERALES', 
+    regimenFiscal: '601', 
+    Codigo_Postal: '78395', 
+    usoCfdi: 'G03', 
+  };
+  
+
+  generarFactura() {
+    let formData: any = {
+      email: this.facturacionForm.get('email')?.value,
+      rfc: this.facturacionForm.get('rfc')?.value, 
+      servicio: '1', 
+      token: this.facturacionForm.get('token')?.value, 
+      fechaHora: "10/09/2024", 
+      nombreCompleto: this.facturacionForm.get('nombreCompleto')?.value, 
+      regimenFiscal: this.facturacionForm.get('regimenFiscal')?.value, 
+      Codigo_Postal: this.facturacionForm.get('Codigo_Postal')?.value, 
+      usoCfdi: this.facturacionForm.get('usoCfdi')?.value
+    }
+    
+    // let formData: any = {
+    //   email: this.facturacionForm.get('email')?.value,
+    //   rfc: 'AMI780504F88', 
+    //   servicio: '1', 
+    //   token: 'TOKEN_123456', 
+    //   fechaHora: "10/09/2024", 
+    //   nombreCompleto: 'AISLANTES MINERALES', 
+    //   regimenFiscal: '601', 
+    //   Codigo_Postal: '78395', 
+    //   usoCfdi: 'G03', 
+    // };
+    console.log(this.form);
+    console.log(formData);
+
+    console.log("Función facturaPrueba ejecutada");
+    this.isLoading = true;
+    
+    this.facturar.facturarCDFI(formData).subscribe(data => {
+      if(data){
+        let uuid = data;
+        console.log(uuid);
+        this.facturar.genPDF(formData).subscribe(data => {
+          if(data){
+            console.log(data);
+            this.isLoading = false;
+            this.facturar.genPDFUUID(uuid).subscribe(data => {
+              this.facturar.SendEmail().subscribe(data => {
+              
+              })
+            })
+          }
+          
+        })
+      }
+      
+    });
+  }
 
   scannerQR() {
     this.useQR = true; // Activar el uso de QR
@@ -261,111 +317,6 @@ export class PrincipalComponent implements OnInit {
       return regex.test(value) ? null : { invalidCodigoPostal: true };
     };
   }
-  private form = {
-    email: 'eduardoavilat2002@gmail.com',
-    rfc: 'AMI780504F88',
-    servicio: '1', // Facturación de boletos
-    token: 'ABCDEFGH-123456',
-    fechaHora: '2025-04-23T10:00:00', // Fecha y hora inventada
-    nombreCompleto: 'AISLANTES MINERALES',
-    regimenFiscal: '601', // Sueldos y salarios
-    Codigo_Postal: '78395',
-    usoCfdi: 'G03' // Gastos en general
-  };
-
-  facturaPrueba() {
-    console.log("Función facturaPrueba ejecutada");
-    this.isLoading = true;
-  
-    this.facturar.facturarCDFI(this.form).subscribe(data => {
-      if(data){
-        let uuid = data;
-        console.log(uuid);
-        this.facturar.genPDF(this.form).subscribe(data => {
-          if(data){
-            console.log(data);
-            this.isLoading = false;
-            this.facturar.genPDFUUID(uuid).subscribe(data => {
-              this.facturar.SendEmail().subscribe(data => {
-              
-              })
-            })
-          }
-          
-        })
-      }
-      
-    });
-  }
-
-  // Función para enviar el formulario completo
-  submitForm(): void {
-    this.submitted = true;
-    
-    if (this.facturacionForm.invalid || !this.confirmacionAceptada) {
-      this.showAlert = true;
-      return;
-    }
-    
-    // Aquí iría la lógica para enviar los datos al backend
-    const formData = this.facturacionForm.value;
-    // this.facturar.facturarCDFI(formData).subscribe( data=> {
-    //   console.log(data);
-    //   this.isLoading = false;
-
-    // })
-    // Ejemplo de redirección después de enviar
-    // this.router.navigate(['/confirmacion-factura']);
-  }
-
-  // Función para validar y avanzar al siguiente paso
-  // nextStep(): void {
-  
-  //   this.submitted = true;
-
-  //   // Marcar todos los controles del paso actual como tocados para mostrar errores
-  //   const controlsToValidate = this.getControlsForCurrentStep();
-  //   controlsToValidate.forEach(control => control.markAsTouched());
-
-  //   // Validar los campos del paso actual
-  //   if (controlsToValidate.some(control => control.invalid)) {
-  //     this.showAlert = true;
-  //     return;
-  //   }
-
-  //   this.showAlert = false;
-  //   this.currentStep++;
-  // }
-
-  // Obtener los controles del paso actual
-  // private getControlsForCurrentStep(): AbstractControl[] {
-  //   switch (this.currentStep) {
-  //     case 1:
-  //       return [
-  //         this.facturacionForm.get('email')!,
-  //         this.facturacionForm.get('rfc')!,
-  //         this.facturacionForm.get('servicio')!,
-  //         this.facturacionForm.get('token')!,
-  //         this.facturacionForm.get('fechaHora')!
-  //       ];
-  //     case 2:
-  //       return [
-  //         this.facturacionForm.get('nombreCompleto')!,
-  //         this.facturacionForm.get('regimenFiscal')!,
-  //         this.facturacionForm.get('Codigo_Postal')!,
-  //         this.facturacionForm.get('usoCfdi')!
-  //       ];
-  //     default:
-  //       return [];
-  //   }
-  // }
-
-  // Función para retroceder al paso anterior
-  // prevStep(): void {
-  //   this.active--;
-  //   this.submitted = false;
-  //   this.showAlert = false;
-  // }
 }
 
 // Función de validación para fechas
@@ -389,4 +340,3 @@ function past30DaysValidator(control: AbstractControl): ValidationErrors | null 
 
   return null;
 }
-
