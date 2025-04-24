@@ -20,6 +20,8 @@
             "outputPath": "dist/approx-ng",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/",
+            "deployUrl": "",
             "polyfills": [
           "src/polyfills.ts"
             ],
@@ -28,7 +30,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "node_modules/ngx-scanner-qrcode/wasm/",
+                "output": "./assets/wasm/"
               }
             ],
             "styles": [
@@ -104,6 +107,9 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {

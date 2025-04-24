@@ -318,15 +318,15 @@
                           <h5>Datos iniciales:</h5>
                           <p><strong>Correo:</strong> {{ facturacionForm.value.email }}</p>
                           <p><strong>RFC:</strong> {{ facturacionForm.value.rfc }}</p>
-                          <p><strong>Servicio:</strong> {{ getServiceName(facturacionForm.value.servicio) }}</p>
+                          <p><strong>Servicio:</strong> {{ facturacionForm.value.servicio }}</p>
                           <p><strong>Token:</strong> {{ facturacionForm.value.token }}</p> <!-- Mostrar Token -->
                           <p><strong>Fecha y Hora:</strong> {{ facturacionForm.value.fechaHora }}</p> <!-- Mostrar Fecha y Hora -->
 
                           <h5 class="mt-3">Datos fiscales:</h5>
                           <p><strong>Nombre completo:</strong> {{ facturacionForm.value.nombreCompleto }}</p>
-                          <p><strong>Régimen fiscal:</strong> {{ getRegimenName(facturacionForm.value.regimenFiscal) }}</p>
+                          <p><strong>Régimen fiscal:</strong> {{facturacionForm.value.regimenFiscal }}</p>
                           <p><strong>Código postal:</strong> {{ facturacionForm.value.Codigo_Postal }}</p>
-                          <p><strong>Uso de CFDI:</strong> {{ getUsoCfdiName(facturacionForm.value.usoCfdi) }}</p>
+                          <p><strong>Uso de CFDI:</strong> {{ facturacionForm.value.usoCfdi }}</p>
                         </div>
                         
                         <div class="form-check my-4" style="display: flex; justify-content: center;">
