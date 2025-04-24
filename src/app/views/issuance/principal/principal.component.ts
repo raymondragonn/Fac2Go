@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core'
+import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -7,35 +7,42 @@ import {
   Validators,
   AbstractControl,
   ValidationErrors,
-} from '@angular/forms'
-import { Router, RouterLink } from '@angular/router'
-import { Store } from '@ngrx/store'
-import { AlertsComponent } from '../../ui/alerts/alerts.component'
-import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap'
-import { CommonModule } from '@angular/common'
-import { UserService } from '@/app/services/user.service'
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { UserService } from '@/app/services/user.service';
+import { ScannerQRService } from '@/app/services/scanner-qr.service';
+import { NgxScannerQrcodeComponent, LOAD_WASM, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgbAlertModule, CommonModule, NgbNavModule],
+  imports: [FormsModule, ReactiveFormsModule, NgbAlertModule, CommonModule, NgbNavModule, NgxScannerQrcodeComponent],
   templateUrl: './principal.component.html',
   styles: ``,
 })
 export class PrincipalComponent implements OnInit {
+  @ViewChild('action', { static: false }) scanner!: NgxScannerQrcodeComponent;
   facturacionForm!: UntypedFormGroup;
   submitted: boolean = false;
-  active: number = 1; // Para controlar el paso activo
+  currentStep: number = 1; // Paso inicial
+  useQR: boolean = false; // Determina si se seleccionó QR
   confirmacionAceptada: boolean = false;
   showAlert: boolean = false;
-  currentStep: number = 1; 
+
+  qrValue: string | null = null;
+
+  @ViewChild('videoElement') videoElement!: ElementRef;
 
   // Opciones para los select
   servicios = [
     { value: '1', label: 'Facturación de boletos' },
     { value: '2', label: 'Facturación de paquetería' },
     { value: '3', label: 'Facturación de consumo de alimentos' },
-    { value: '4', label: 'Facturación de hospedaje' }
+    { value: '4', label: 'Facturación de hospedaje' },
   ];
 
   regimenesFiscales = [
@@ -50,7 +57,7 @@ export class PrincipalComponent implements OnInit {
     { value: '616', label: 'Sin obligaciones fiscales' },
     { value: '621', label: 'Régimen de Incorporación Fiscal (RIF)' },
     { value: '625', label: 'Régimen de Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras' },
-    { value: '626', label: 'Régimen Simplificado de Confianza (RESICO - Personas Físicas)' }
+    { value: '626', label: 'Régimen Simplificado de Confianza (RESICO - Personas Físicas)' },
   ];
 
   usosCFDI = [
@@ -77,56 +84,124 @@ export class PrincipalComponent implements OnInit {
     { value: 'D10', label: 'Pagos por servicios educativos (colegiaturas)' },
     { value: 'S01', label: 'Sin efectos fiscales' },
     { value: 'CP01', label: 'Pagos' },
-    { value: 'CN01', label: 'Nómina' }
+    { value: 'CN01', label: 'Nómina' },
   ];
 
   private fb = inject(UntypedFormBuilder);
   private router = inject(Router);
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private qrService: ScannerQRService) {}
 
-  }
-  
   ngOnInit(): void {
     this.initializeForm();
     this.userService.setUserType('guest');
   }
 
+  extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
+    data.subscribe((results) => {
+      const qrResult = results.find((result) => result.value);
+      this.qrValue = qrResult ? qrResult.value : null;
+
+      if (this.qrValue) {
+        this.qrService.getDataSat(this.qrValue).subscribe(
+          (res: any) => {
+            this.facturacionForm.patchValue({
+              nombreCompleto: `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`,
+              Codigo_Postal: res['CP'],
+              email: res['Correo electrónico'],
+              regimenFiscal: res['Regimenes']?.[0]?.['Régimen Fiscal'],
+            });
+            this.currentStep = 3; // Avanzar al paso 3 automáticamente
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
+    });
+  }
+
   initializeForm(): void {
     this.facturacionForm = this.fb.group({
-      // Paso 1
       email: ['', [Validators.required, Validators.email]],
       rfc: ['', [Validators.required, Validators.pattern('^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$')]],
       servicio: ['', [Validators.required]],
       token: ['', [Validators.required, Validators.pattern('^[A-Z0-9-]{14}$')]],
       fechaHora: ['', [Validators.required, past30DaysValidator]],
-      
-      // Paso 2
       nombreCompleto: ['', [Validators.required, this.nombreCompletoValidator()]],
       regimenFiscal: ['', [Validators.required]],
       Codigo_Postal: ['', [Validators.required, this.codigoPostalValidator()]],
       usoCfdi: ['', [Validators.required]],
-      
     });
   }
 
-  // Helper methods para obtener nombres de opciones seleccionadas
-  getServiceName(value: string): string {
-    const servicio = this.servicios.find(s => s.value === value);
-    return servicio ? servicio.label : '';
+  selectQR(): void {
+    this.useQR = true;
+    this.currentStep = 2; // Ir al paso de lectura de QR
   }
 
-  getRegimenName(value: string): string {
-    const regimen = this.regimenesFiscales.find(r => r.value === value);
-    return regimen ? regimen.label : '';
+  scanQR(): void {
+    const video = this.videoElement.nativeElement;
+    // Implementar lógica de escaneo de QR
+    // Simulación: llenar el formulario con datos del QR
+    this.populateFormWithQRData();
+    this.currentStep = 3; // Avanzar al siguiente paso
   }
 
-  getUsoCfdiName(value: string): string {
-    const uso = this.usosCFDI.find(u => u.value === value);
-    return uso ? uso.label : '';
+  populateFormWithQRData(): void {
+    this.facturacionForm.patchValue({
+      email: 'example@example.com',
+      rfc: 'RFC123456789',
+      servicio: '1',
+      token: 'AB12-34CD-5678',
+      fechaHora: new Date().toISOString().slice(0, 16),
+    });
   }
 
-  // Validadores personalizados
+  nextStep(): void {
+    if (this.currentStep === 1 && this.useQR) {
+    } else if (this.currentStep === 1 && !this.useQR) {
+      this.currentStep = 3; // Saltar al paso 3
+    } else if (this.currentStep === 2 && this.useQR) {
+      this.currentStep = 4; // Continuar al paso 3 después de QR
+    } else {
+      this.currentStep++;
+    }
+  }
+
+  prevStep(): void {
+    this.currentStep--;
+    this.submitted = false;
+    this.showAlert = false;
+  }
+
+  scannerQR() {
+    this.useQR = true; // Activar el uso de QR
+    this.currentStep = 2; // Cambiar al paso 2
+  }
+
+  private getControlsForCurrentStep(): AbstractControl[] {
+    switch (this.currentStep) {
+      case 1:
+        return [
+          this.facturacionForm.get('email')!,
+          this.facturacionForm.get('rfc')!,
+          this.facturacionForm.get('servicio')!,
+          this.facturacionForm.get('token')!,
+          this.facturacionForm.get('fechaHora')!,
+        ];
+      case 2:
+        return [
+          this.facturacionForm.get('nombreCompleto')!,
+          this.facturacionForm.get('regimenFiscal')!,
+          this.facturacionForm.get('Codigo_Postal')!,
+          this.facturacionForm.get('usoCfdi')!,
+        ];
+      default:
+        return [];
+    }
+  }
+
   private nombreCompletoValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -142,74 +217,9 @@ export class PrincipalComponent implements OnInit {
       return regex.test(value) ? null : { invalidCodigoPostal: true };
     };
   }
-
-  // Función para enviar el formulario completo
-  submitForm(): void {
-    this.submitted = true;
-    
-    if (this.facturacionForm.invalid || !this.confirmacionAceptada) {
-      this.showAlert = true;
-      return;
-    }
-
-    // Aquí iría la lógica para enviar los datos al backend
-    const formData = this.facturacionForm.value;
-    console.log('Datos a enviar:', formData);
-    
-    // Ejemplo de redirección después de enviar
-    this.router.navigate(['/confirmacion-factura']);
-  }
-
-  // Función para validar y avanzar al siguiente paso
-  nextStep(): void {
-    this.submitted = true;
-
-    // Marcar todos los controles del paso actual como tocados para mostrar errores
-    const controlsToValidate = this.getControlsForCurrentStep();
-    controlsToValidate.forEach(control => control.markAsTouched());
-
-    // Validar los campos del paso actual
-    if (controlsToValidate.some(control => control.invalid)) {
-      this.showAlert = true;
-      return;
-    }
-
-    this.showAlert = false;
-    this.currentStep++;
-  }
-
-  // Obtener los controles del paso actual
-  private getControlsForCurrentStep(): AbstractControl[] {
-    switch (this.currentStep) {
-      case 1:
-        return [
-          this.facturacionForm.get('email')!,
-          this.facturacionForm.get('rfc')!,
-          this.facturacionForm.get('servicio')!,
-          this.facturacionForm.get('token')!,
-          this.facturacionForm.get('fechaHora')!
-        ];
-      case 2:
-        return [
-          this.facturacionForm.get('nombreCompleto')!,
-          this.facturacionForm.get('regimenFiscal')!,
-          this.facturacionForm.get('Codigo_Postal')!,
-          this.facturacionForm.get('usoCfdi')!
-        ];
-      default:
-        return [];
-    }
-  }
-
-  // Función para retroceder al paso anterior
-  prevStep(): void {
-    this.active--;
-    this.submitted = false;
-    this.showAlert = false;
-  }
 }
 
-// Funciones de validación (deben estar fuera de la clase)
+// Función de validación para fechas
 function past30DaysValidator(control: AbstractControl): ValidationErrors | null {
   const selectedDate = new Date(control.value);
   const currentDate = new Date();
@@ -230,3 +240,4 @@ function past30DaysValidator(control: AbstractControl): ValidationErrors | null 
 
   return null;
 }
+
