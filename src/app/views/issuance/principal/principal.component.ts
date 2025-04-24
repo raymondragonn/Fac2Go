@@ -14,6 +14,8 @@ import { AlertsComponent } from '../../ui/alerts/alerts.component'
 import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { UserService } from '@/app/services/user.service'
+import { FacturacionService } from '@/app/core/service/facturacion.service'
+import { any } from 'ramda'
 
 @Component({
   selector: 'app-principal',
@@ -29,6 +31,7 @@ export class PrincipalComponent implements OnInit {
   confirmacionAceptada: boolean = false;
   showAlert: boolean = false;
   currentStep: number = 1; 
+  isLoading = false;
 
   // Opciones para los select
   servicios = [
@@ -82,6 +85,7 @@ export class PrincipalComponent implements OnInit {
 
   private fb = inject(UntypedFormBuilder);
   private router = inject(Router);
+  private facturar = inject(FacturacionService);
 
   constructor(private userService: UserService) {
 
@@ -109,6 +113,7 @@ export class PrincipalComponent implements OnInit {
       
     });
   }
+
 
   // Helper methods para obtener nombres de opciones seleccionadas
   getServiceName(value: string): string {
@@ -142,6 +147,42 @@ export class PrincipalComponent implements OnInit {
       return regex.test(value) ? null : { invalidCodigoPostal: true };
     };
   }
+  private form = {
+    email: 'eduardoavilat2002@gmail.com',
+    rfc: 'AMI780504F88',
+    servicio: '1', // Facturación de boletos
+    token: 'ABCDEFGH-123456',
+    fechaHora: '2025-04-23T10:00:00', // Fecha y hora inventada
+    nombreCompleto: 'AISLANTES MINERALES',
+    regimenFiscal: '601', // Sueldos y salarios
+    Codigo_Postal: '78395',
+    usoCfdi: 'G03' // Gastos en general
+  };
+
+  facturaPrueba() {
+    console.log("Función facturaPrueba ejecutada");
+    this.isLoading = true;
+  
+    this.facturar.facturarCDFI(this.form).subscribe(data => {
+      if(data){
+        let uuid = data;
+        console.log(uuid);
+        this.facturar.genPDF(this.form).subscribe(data => {
+          if(data){
+            console.log(data);
+            this.isLoading = false;
+            this.facturar.genPDFUUID(uuid).subscribe(data => {
+              this.facturar.SendEmail().subscribe(data => {
+              
+              })
+            })
+          }
+          
+        })
+      }
+      
+    });
+  }
 
   // Función para enviar el formulario completo
   submitForm(): void {
@@ -151,17 +192,21 @@ export class PrincipalComponent implements OnInit {
       this.showAlert = true;
       return;
     }
-
+    
     // Aquí iría la lógica para enviar los datos al backend
     const formData = this.facturacionForm.value;
-    console.log('Datos a enviar:', formData);
-    
+    // this.facturar.facturarCDFI(formData).subscribe( data=> {
+    //   console.log(data);
+    //   this.isLoading = false;
+
+    // })
     // Ejemplo de redirección después de enviar
-    this.router.navigate(['/confirmacion-factura']);
+    // this.router.navigate(['/confirmacion-factura']);
   }
 
   // Función para validar y avanzar al siguiente paso
   nextStep(): void {
+  
     this.submitted = true;
 
     // Marcar todos los controles del paso actual como tocados para mostrar errores
