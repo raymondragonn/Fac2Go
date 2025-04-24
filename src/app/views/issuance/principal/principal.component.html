@@ -16,7 +16,7 @@
                   <li class="nav-item">
                       <a class="nav-link" [class.active]="currentStep === 1">Método de Facturación</a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item" *ngIf="useQR">
                       <a class="nav-link" [class.active]="currentStep === 2">Lectura de QR</a>
                   </li>
                   <li class="nav-item">
@@ -58,8 +58,7 @@
                                   <div class="col-10 col-md-8 col-lg-6">
                                       <div class="card shadow-lg border-0">
                                           <div class="card-body text-center">
-                                              <img src="assets/images/icons/qr-code-scan.png" alt="QR Scan" class="mb-3" height="80" />
-                                              <h5 class="mb-3">Escanea el QR de tu constancia fiscal</h5>
+                                              <h5 class="mb-3">Escanea el QR de tu constancia fiscal y de tu ticket de compra</h5>
                                               <p class="text-muted mb-4">
                                                   Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
                                               </p>

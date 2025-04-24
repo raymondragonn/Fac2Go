@@ -32,6 +32,8 @@ export class PrincipalComponent implements OnInit {
   useQR: boolean = false; // Determina si se seleccionó QR
   confirmacionAceptada: boolean = false;
   showAlert: boolean = false;
+  firstQRProcessed: boolean = false; // Bandera para el primer QR
+  secondQRProcessed: boolean = false; // Bandera para el segundo QR
 
   qrValue: string | null = null;
 
@@ -61,30 +63,8 @@ export class PrincipalComponent implements OnInit {
   ];
 
   usosCFDI = [
-    { value: 'G01', label: 'Adquisición de mercancías' },
-    { value: 'G02', label: 'Devoluciones, descuentos o bonificaciones' },
     { value: 'G03', label: 'Gastos en general' },
-    { value: 'I01', label: 'Construcciones' },
-    { value: 'I02', label: 'Mobiliario y equipo de oficina para inversiones' },
-    { value: 'I03', label: 'Equipo de transporte' },
-    { value: 'I04', label: 'Equipo de cómputo y accesorios' },
-    { value: 'I05', label: 'Dados, troqueles, moldes, matrices y herramental' },
-    { value: 'I06', label: 'Comunicaciones telefónicas' },
-    { value: 'I07', label: 'Comunicaciones satelitales' },
-    { value: 'I08', label: 'Otra maquinaria y equipo' },
-    { value: 'D01', label: 'Honorarios médicos, dentales y hospitalarios' },
-    { value: 'D02', label: 'Gastos médicos por incapacidad o discapacidad' },
-    { value: 'D03', label: 'Gastos funerales' },
-    { value: 'D04', label: 'Donativos' },
-    { value: 'D05', label: 'Intereses reales por créditos hipotecarios' },
-    { value: 'D06', label: 'Aportaciones voluntarias al SAR' },
-    { value: 'D07', label: 'Primas de seguros de gastos médicos' },
-    { value: 'D08', label: 'Gastos de transportación escolar obligatoria' },
-    { value: 'D09', label: 'Depósitos en cuentas de ahorro o planes de pensión' },
-    { value: 'D10', label: 'Pagos por servicios educativos (colegiaturas)' },
     { value: 'S01', label: 'Sin efectos fiscales' },
-    { value: 'CP01', label: 'Pagos' },
-    { value: 'CN01', label: 'Nómina' },
   ];
 
   private fb = inject(UntypedFormBuilder);
@@ -103,20 +83,73 @@ export class PrincipalComponent implements OnInit {
       this.qrValue = qrResult ? qrResult.value : null;
 
       if (this.qrValue) {
-        this.qrService.getDataSat(this.qrValue).subscribe(
-          (res: any) => {
-            this.facturacionForm.patchValue({
-              nombreCompleto: `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`,
-              Codigo_Postal: res['CP'],
-              email: res['Correo electrónico'],
-              regimenFiscal: res['Regimenes']?.[0]?.['Régimen Fiscal'],
-            });
-            this.currentStep = 3; // Avanzar al paso 3 automáticamente
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
+        // Verificar si el QR contiene un RFC (último guion bajo "_")
+        const rfcMatch = this.qrValue.match(/_(\w+)$/);
+        const rfc = rfcMatch ? rfcMatch[1] : null;
+
+        if (rfc) {
+          console.log('RFC extraído:', rfc);
+          this.facturacionForm.patchValue({ rfc });
+          this.firstQRProcessed = true; // Marcar el primer QR como procesado
+
+          // Obtener datos adicionales del SAT
+          this.qrService.getDataSat(this.qrValue).subscribe(
+            (res: any) => {
+              const regimenFiscalCode = res['Regimenes']?.[0]?.['RegimenFiscal']?.['code'];
+              const regimenFiscalLabel = this.regimenesFiscales.find(
+                (regimen) => regimen.value === regimenFiscalCode
+              )?.label || 'Régimen no válido';
+
+              this.facturacionForm.patchValue({
+                nombreCompleto: `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`,
+                Codigo_Postal: res['CP'],
+                email: res['Correo electrónico'],
+                regimenFiscal: regimenFiscalCode, // Asignar el código al formulario
+              });
+
+              console.log('Régimen fiscal seleccionado:', regimenFiscalLabel);
+            },
+            (error) => {
+              console.error('Error al obtener datos del SAT:', error);
+            }
+          );
+        }
+
+        // Verificar si el QR contiene un enlace con token y fecha
+        const tokenMatch = this.qrValue.match(/token=([^&]+)/);
+        const fechaMatch = this.qrValue.match(/fecha=([^&]+)/);
+        const tipoMatch = this.qrValue.match(/tipo=([^&]+)/);
+        const token = tokenMatch ? tokenMatch[1] : null;
+        const fecha = fechaMatch ? fechaMatch[1] : null;
+        const tipo = tipoMatch ? tipoMatch[1] : null;
+
+        if (token && fecha) {
+          console.log('Token extraído:', token);
+          console.log('Fecha extraída:', fecha);
+          console.log('Tipo extraído:', tipo);
+
+          // Buscar el label correspondiente al tipo en el arreglo servicios
+          const servicioSeleccionado = this.servicios.find(servicio => servicio.value === tipo);
+          const servicioLabel = servicioSeleccionado ? servicioSeleccionado.label : 'Tipo no válido';
+
+          console.log('Servicio seleccionado:', servicioLabel);
+
+          this.facturacionForm.patchValue({
+            token,
+            fechaHora: fecha,
+            servicio: tipo // Asignar el value al formulario
+          });
+
+          this.secondQRProcessed = true; // Marcar el segundo QR como procesado
+        }
+
+        // Solo avanzar al siguiente paso si ambos QR han sido procesados
+        if (this.firstQRProcessed && this.secondQRProcessed) {
+          console.log('Ambos QR procesados. Avanzando al siguiente paso.');
+          this.currentStep = 3; // Avanzar al paso 3 automáticamente
+        } else {
+          console.log('Esperando a que ambos QR sean procesados.');
+        }
       }
     });
   }
@@ -126,12 +159,12 @@ export class PrincipalComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       rfc: ['', [Validators.required, Validators.pattern('^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$')]],
       servicio: ['', [Validators.required]],
-      token: ['', [Validators.required, Validators.pattern('^[A-Z0-9-]{14}$')]],
+      token: ['', [Validators.required, Validators.pattern('^TOKEN_\\d{6}$')]],
       fechaHora: ['', [Validators.required, past30DaysValidator]],
       nombreCompleto: ['', [Validators.required, this.nombreCompletoValidator()]],
       regimenFiscal: ['', [Validators.required]],
       Codigo_Postal: ['', [Validators.required, this.codigoPostalValidator()]],
-      usoCfdi: ['', [Validators.required]],
+      usoCfdi: ['G03', [Validators.required]], // Valor predeterminado
     });
   }
 
@@ -153,7 +186,7 @@ export class PrincipalComponent implements OnInit {
       email: 'example@example.com',
       rfc: 'RFC123456789',
       servicio: '1',
-      token: 'AB12-34CD-5678',
+      token: 'TOKEN_753628',
       fechaHora: new Date().toISOString().slice(0, 16),
     });
   }
@@ -232,7 +265,7 @@ function past30DaysValidator(control: AbstractControl): ValidationErrors | null 
   }
 
   const past30DaysDate = new Date();
-  past30DaysDate.setDate(currentDate.getDate() - 30);
+  past30DaysDate.setDate(currentDate.getDate() - 90);
 
   if (selectedDate < past30DaysDate) {
     return { pastLimit: true };

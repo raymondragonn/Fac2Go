@@ -13,12 +13,6 @@ export const MENU_ITEMS_GUEST: MenuItem[] = [
     url: 'issuance/principal',
   },
   {
-    key: 'qr-scanner',
-    icon: 'iconoir-report-columns',
-    label: 'Escaner de Constancia Fiscal',
-    url: 'qr-scanner'
-  },
-  {
     key: 'faq',
     icon: 'iconoir-chat-bubble', // Preguntas Frecuentes
     label: 'Preguntas Frecuentes',
