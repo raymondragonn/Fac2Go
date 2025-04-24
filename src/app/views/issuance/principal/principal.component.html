@@ -64,7 +64,7 @@
                                               </p>
                                               <div class="d-flex justify-content-center align-items-center mb-4">
                                                   <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
-                                                      style="border: 2px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
+                                                      style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
                                                       (event)="extractValue(action.data)">
                                                   </ngx-scanner-qrcode>
                                               </div>
@@ -234,28 +234,35 @@
                       <div *ngIf="currentStep === 4">
                           <div class="tab-pane show active" id="step4" class="mt-4">
                               <div class="row justify-content-center">
-                                  <!-- Nombre Completo -->
-                                  <div class="col-8">
-                                      <div class="mb-3 row">
-                                          <label for="nombreCompleto" class="col-sm-2 col-form-label text-lg-end"
-                                              style="font-size: 1rem;">Nombre Completo</label>
-                                          <div class="col-sm-9">
-                                              <input class="form-control form-control-lg" type="text"
-                                                  id="nombreCompleto" formControlName="nombreCompleto"
-                                                  placeholder="Fray Sebastián de Aparicio" [ngClass]="{
-                          'is-invalid': facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.invalid
-                        }" />
-                                              <div class="invalid-feedback"
-                                                  *ngIf="facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.errors?.['required']">
-                                                  Nombre completo es requerido
-                                              </div>
-                                              <div class="invalid-feedback"
-                                                  *ngIf="facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.errors?.['invalidNombreCompleto']">
-                                                  Formato de nombre completo inválido
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
+                                  <!-- Campo Nombre Completo o Razón Social -->
+<div class="col-8">
+  <div class="mb-3 row">
+    <label for="nombreCompleto" class="col-sm-2 col-form-label text-lg-end" style="font-size: 1rem;">
+      {{ isPersonaMoral ? 'Razón Social' : 'Nombre Completo' }}
+    </label>
+    <div class="col-sm-9">
+      <input
+        class="form-control form-control-lg"
+        type="text"
+        id="nombreCompleto"
+        formControlName="nombreCompleto"
+        placeholder="{{ isPersonaMoral ? 'TECHNOPROBE SPA' : 'Fray Sebastián de Aparicio' }}"
+        [ngClass]="{
+          'is-invalid': facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.invalid
+        }"
+      />
+      <div class="invalid-feedback" *ngIf="facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.errors?.['required']">
+        {{ isPersonaMoral ? 'Razón Social es requerida' : 'Nombre completo es requerido' }}
+      </div>
+      <div class="invalid-feedback" *ngIf="facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.errors?.['invalidRazonSocial']">
+        Formato de Razón Social inválido.
+      </div>
+      <div class="invalid-feedback" *ngIf="facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.errors?.['invalidNombreCompleto']">
+        Formato de Nombre Completo inválido.
+      </div>
+    </div>
+  </div>
+</div>
 
                                   <!-- Régimen Fiscal -->
                                   <div class="col-8">
@@ -359,21 +366,15 @@
                                                   <h5>Datos iniciales:</h5>
                                                   <p><strong>Correo:</strong> {{ facturacionForm.value.email }}</p>
                                                   <p><strong>RFC:</strong> {{ facturacionForm.value.rfc }}</p>
-                                                  <p><strong>Servicio:</strong> {{ facturacionForm.value.servicio }}
-                                                  </p>
+                                                  <p><strong>Servicio:</strong> {{ facturacionForm.value.servicio }}</p>
                                                   <p><strong>Token:</strong> {{ facturacionForm.value.token }}</p>
-                                                  <p><strong>Fecha y Hora:</strong> {{
-                                                      facturacionForm.value.fechaHora}}</p>
+                                                  <p><strong>Fecha y Hora:</strong> {{ facturacionForm.value.fechaHora }}</p>
 
                                                   <h5 class="mt-3">Datos fiscales:</h5>
-                                                  <p><strong>Nombre completo:</strong> {{
-                                                      facturacionForm.value.nombreCompleto }}</p>
-                                                  <p><strong>Régimen fiscal:</strong> {{
-                                                      facturacionForm.value.regimenFiscal }}</p>
-                                                  <p><strong>Código postal:</strong> {{
-                                                      facturacionForm.value.Codigo_Postal }}</p>
-                                                  <p><strong>Uso de CFDI:</strong> {{
-                                                      facturacionForm.value.usoCfdi }}</p>
+                                                  <p><strong>{{ isPersonaMoral ? 'Razón Social' : 'Nombre Completo' }}:</strong> {{ facturacionForm.value.nombreCompleto }}</p>
+                                                  <p><strong>Régimen fiscal:</strong> {{ facturacionForm.value.regimenFiscal }}</p>
+                                                  <p><strong>Código postal:</strong> {{ facturacionForm.value.Codigo_Postal }}</p>
+                                                  <p><strong>Uso de CFDI:</strong> {{ facturacionForm.value.usoCfdi }}</p>
                                               </div>
 
                                               <div class="form-check my-4">
