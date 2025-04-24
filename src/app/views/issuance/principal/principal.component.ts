@@ -248,7 +248,7 @@ export class PrincipalComponent implements OnInit {
 
   generarFactura() {
     let formData: any = {
-      email: this.facturacionForm.get('email')?.value,
+      email: "raymondragonn@gmail.com",
       rfc: this.facturacionForm.get('rfc')?.value, 
       servicio: '1', 
       token: this.facturacionForm.get('token')?.value, 
@@ -260,7 +260,7 @@ export class PrincipalComponent implements OnInit {
     }
     
     // let formData: any = {
-    //   email: this.facturacionForm.get('email')?.value,
+    //   email: "eduardoavilat2002@gmail.com",
     //   rfc: 'AMI780504F88', 
     //   servicio: '1', 
     //   token: 'TOKEN_123456', 
@@ -283,10 +283,11 @@ export class PrincipalComponent implements OnInit {
         this.facturar.genPDF(formData).subscribe(data => {
           if(data){
             console.log(data);
-            this.isLoading = false;
             this.facturar.genPDFUUID(uuid).subscribe(data => {
+              this.isLoading = false;
+              alert(`Correo enviado en breve llegara tu factura a tu correo`);
               this.facturar.SendEmail().subscribe(data => {
-              
+                window.location.reload();
               })
             })
           }
