@@ -12,6 +12,9 @@ import { WalletComponent } from './main_pages/wallet/wallet.component'
 import { MybillsComponent } from './main_pages/mybills/mybills.component'
 import { DashboardComponent } from './main_pages/dashboard/dashboard.component'
 import { QrScannerComponent } from './issuance/qr-scanner/qr-scanner.component'
+import { FaqComponent } from './main_pages/faq/faq.component'
+import { ContactComponent } from './main_pages/contact/contact.component'
+import { PrivacyComponent } from './main_pages/privacy/privacy.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -120,5 +123,20 @@ export const VIEW_ROUTES: Route[] = [
     path: 'mybills',
     component: MybillsComponent,
     data: { title: 'Mis facturas'}
+  },
+  {
+    path: 'faq',
+    component: FaqComponent,
+    data: { title: 'Preguntas Frecuentes' },
+  },
+  {
+    path: 'contact',
+    component: ContactComponent,
+    data: { title: 'Contacto' },
+  },
+  {
+    path: 'privacy',
+    component: PrivacyComponent,
+    data: { title: 'Aviso de Privacidad' },
   }
 ]

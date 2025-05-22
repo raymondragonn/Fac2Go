@@ -30,11 +30,23 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "public/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "favicon.ico",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
                 "input": "node_modules/ngx-scanner-qrcode/wasm/",
                 "output": "./assets/wasm/"
               }
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/ngx-toastr/toastr.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -42,7 +54,9 @@
               "node_modules/mobius1-selectr/dist/selectr.min.js",
               "node_modules/listree/dist/listree.umd.min.js",
               "node_modules/imask/dist/imask.min.js",
-              "node_modules/jsvectormap/dist/js/jsvectormap.min.js"
+              "node_modules/jsvectormap/dist/js/jsvectormap.min.js",
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "allowedCommonJsDependencies": [
               "quill-delta",
@@ -135,7 +149,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public/assets",
+                "output": "/assets"
               }
             ],
             "styles": [

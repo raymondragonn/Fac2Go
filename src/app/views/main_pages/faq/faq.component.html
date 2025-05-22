@@ -1,0 +1,78 @@
+<div class="row py-3 justify-content-center">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col text-center">
+                        <h4 class="card-title" style="font-size: 1.5rem;">Preguntas Frecuentes</h4>
+                        <span class="form-text text-muted" style="font-size: 1rem;">En esta sección encontrarás respuestas a las preguntas más comunes sobre el servicio de facturación electrónica.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Primera columna -->
+                    <div class="col-md-6">
+                        <div class="accordion custom-accordion" id="faqAccordion1">
+                            <div class="accordion-item border-0 mb-3" *ngFor="let item of faqItems.slice(0, 5)">
+                                <h2 class="accordion-header" [id]="'heading-' + item.id">
+                                    <button class="accordion-button shadow-none" type="button" 
+                                            [class.collapsed]="item.id !== 'panel-1'"
+                                            data-bs-toggle="collapse" 
+                                            [attr.data-bs-target]="'#collapse-' + item.id" 
+                                            [attr.aria-expanded]="item.id === 'panel-1'"
+                                            [attr.aria-controls]="'collapse-' + item.id">
+                                        <i class="mdi mdi-help-circle-outline text-primary me-2"></i>
+                                        {{ item.title }}
+                                    </button>
+                                </h2>
+                                <div [id]="'collapse-' + item.id" 
+                                     class="accordion-collapse collapse" 
+                                     [class.show]="item.id === 'panel-1'"
+                                     [attr.aria-labelledby]="'heading-' + item.id" 
+                                     data-bs-parent="#faqAccordion1">
+                                    <div class="accordion-body">
+                                        <div class="d-flex">
+                                            <i class="mdi mdi-check-circle-outline text-success me-2"></i>
+                                            <div>{{ item.content }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Segunda columna -->
+                    <div class="col-md-6">
+                        <div class="accordion custom-accordion" id="faqAccordion2">
+                            <div class="accordion-item border-0 mb-3" *ngFor="let item of faqItems.slice(5, 10)">
+                                <h2 class="accordion-header" [id]="'heading-' + item.id">
+                                    <button class="accordion-button shadow-none" type="button" 
+                                            [class.collapsed]="item.id !== 'panel-6'"
+                                            data-bs-toggle="collapse" 
+                                            [attr.data-bs-target]="'#collapse-' + item.id" 
+                                            [attr.aria-expanded]="item.id === 'panel-6'"
+                                            [attr.aria-controls]="'collapse-' + item.id">
+                                        <i class="mdi mdi-help-circle-outline text-primary me-2"></i>
+                                        {{ item.title }}
+                                    </button>
+                                </h2>
+                                <div [id]="'collapse-' + item.id" 
+                                     class="accordion-collapse collapse" 
+                                     [class.show]="item.id === 'panel-6'"
+                                     [attr.aria-labelledby]="'heading-' + item.id" 
+                                     data-bs-parent="#faqAccordion2">
+                                    <div class="accordion-body">
+                                        <div class="d-flex">
+                                            <i class="mdi mdi-check-circle-outline text-success me-2"></i>
+                                            <div>{{ item.content }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

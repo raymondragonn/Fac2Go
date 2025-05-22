@@ -42,15 +42,15 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     url: 'faq',
   },
   {
-    key: 'contacto',
+    key: 'contact',
     icon: 'iconoir-mail', // Contacto
     label: 'Contacto',
-    url: 'contacto',
+    url: 'contact',
   },
   {
-    key: 'privacidad',
+    key: 'privacy',
     icon: 'iconoir-lock', // Aviso de Privacidad (asumiendo que "lock" es adecuado)
     label: 'Aviso de Privacidad',
-    url: 'privacidad',
+    url: 'privacy',
   }
 ]

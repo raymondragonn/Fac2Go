@@ -2,6 +2,7 @@ import {
   ApplicationConfig,
   isDevMode,
   provideZoneChangeDetection,
+  importProvidersFrom,
 } from '@angular/core'
 import {
   provideRouter,
@@ -22,6 +23,10 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http'
 import { FakeBackendProvider } from './core/helpers/fake-backend'
+import { provideClientHydration } from '@angular/platform-browser'
+import { provideAnimations } from '@angular/platform-browser/animations'
+import { ToastrModule } from 'ngx-toastr'
+import { HttpClientModule } from '@angular/common/http'
 
 // scroll
 const scrollConfig: InMemoryScrollingOptions = {
@@ -47,5 +52,15 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEffects(AuthenticationEffects),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideClientHydration(),
+    provideAnimations(),
+    importProvidersFrom(
+      HttpClientModule,
+      ToastrModule.forRoot({
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+      })
+    )
   ],
 }
