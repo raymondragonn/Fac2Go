@@ -82,6 +82,24 @@ export class CalendarComponent {
     eventReceive: (info) => this.updateEvent(info),
     eventClick: this.handleEventClick.bind(this),
     dateClick: this.openModal.bind(this),
+    locale: 'es',
+    buttonText: {
+      today: 'Hoy',
+      month: 'Mes',
+      week: 'Semana',
+      day: 'Día',
+      list: 'Lista'
+    },
+    allDayText: 'Todo el día',
+    noEventsText: 'No hay eventos',
+    weekText: 'Sem',
+    weekNumbers: true,
+    firstDay: 1,
+    dayHeaderFormat: { weekday: 'long' },
+    titleFormat: { 
+      year: 'numeric', 
+      month: 'long'
+    }
   }
 
   updateEvent(info: UpdateEventType) {

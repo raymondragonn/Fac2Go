@@ -22,12 +22,42 @@ import { UserService } from '@/app/services/user.service'; // Importa el servici
     CommonModule,
   ],
   templateUrl: './sidebar.component.html',
-  styles: ``,
+  styles: [`
+    .admin-login-link {
+      background-color: rgba(0,0,0,0.02);
+      transition: all 0.3s ease;
+      margin-top: auto;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .admin-login-link a {
+      color: var(--bs-primary);
+      transition: all 0.3s ease;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+
+    .admin-login-link:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+
+    .admin-login-link a:hover {
+      color: var(--bs-primary-dark);
+    }
+
+    .admin-login-link i {
+      font-size: 1.25rem;
+      margin-right: 0.75rem;
+    }
+  `]
 })
 export class SidebarComponent {
   menuItems = MENU_ITEMS_GUEST
   activeMenuItems: string[] = []
   router = inject(Router)
+  isGuest = false;
 
   trimmedURL = this.router.url?.replaceAll(
     basePath !== '' ? basePath + '/' : '',
@@ -51,11 +81,14 @@ export class SidebarComponent {
     // Suscribirse al estado del userType
     this.userService.userType$.subscribe((userType) => {
       this.updateMenu(userType);
+      this.isGuest = userType === 'guest';
     });
   }
 
   ngOnInit() {
-    this.updateMenu(this.userService.getUserType());
+    const userType = this.userService.getUserType();
+    this.updateMenu(userType);
+    this.isGuest = userType === 'guest';
   }
 
   ngAfterViewInit() {

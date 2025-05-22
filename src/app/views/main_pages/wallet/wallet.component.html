@@ -1,1 +1,106 @@
-<p>wallet works!</p>
+<div class="container-fluid mb-5">
+    <!-- Header de la página -->
+    <div class="row mb-4 mt-4">
+        <div class="col-7">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col text-center">
+                            <h4 class="card-title" style="font-size: 1.5rem;">Cartera de Clientes</h4>
+                            <span class="form-text text-muted" style="font-size: 1rem;">Gestiona y accede rápidamente a tus clientes frecuentes</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="las la-search"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Buscar cliente por nombre o RFC..." 
+                                       [(ngModel)]="searchTerm" (input)="filterClients()">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" [(ngModel)]="sortBy" (change)="sortClients()">
+                                <option value="name">Ordenar por nombre</option>
+                                <option value="lastInvoice">Ordenar por última factura</option>
+                                <option value="rfc">Ordenar por RFC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" [(ngModel)]="filterBy" (change)="filterClients()">
+                                <option value="all">Todos los clientes</option>
+                                <option value="recent">Facturados recientemente</option>
+                                <option value="old">Facturados hace tiempo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="card h-100 bg-warning-subtle border-warning new-invoice-card">
+                <div class="card-body p-0">
+                    <button class="btn btn-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center new-invoice-btn" (click)="redirectionToPrincipal()">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="las la-plus-circle me-2 fs-1"></i>
+                        </div>
+                        <span class="fs-4 fw-semibold mb-2">Facturar Nuevo Cliente</span>
+                        <small class="text-primary-emphasis fs-6">¿No encuentras al cliente en tu cartera? ¡Créalo ahora!</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de clientes -->
+    <div class="row g-4">
+        <ng-container *ngIf="filteredClients.length > 0">
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let client of filteredClients">
+                <div class="card h-100 client-card" (click)="selectClient(client)">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="client-avatar bg-primary-subtle text-primary rounded-circle p-2">
+                                <i class="las la-user fs-4"></i>
+                            </div>
+                            <span class="badge bg-success-subtle text-success">
+                                <i class="las la-clock me-1"></i>
+                                {{ client.lastInvoice | date:'dd/MM/yyyy' }}
+                            </span>
+                        </div>
+                        
+                        <h5 class="card-title mb-2">{{ client.name }}</h5>
+                        <p class="text-muted mb-3">
+                            <i class="las la-id-card me-1"></i>
+                            {{ client.rfc }}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="las la-file-invoice me-1"></i>
+                                {{ client.invoiceCount }} facturas
+                            </small>
+                            <button class="btn btn-sm btn-primary" (click)="selectClient(client); $event.stopPropagation()">
+                                <i class="las la-file-invoice me-1"></i>
+                                Facturar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Mensaje cuando no hay clientes -->
+        <div class="col-12" *ngIf="filteredClients.length === 0">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <img src="assets/images/extra/empty-box.png" alt="No hay clientes" class="mb-3" height="100">
+                    <h4 class="text-muted">No se encontraron clientes</h4>
+                    <p class="text-muted mb-0">Comienza agregando un nuevo cliente al generar una factura</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

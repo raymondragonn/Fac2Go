@@ -47,20 +47,6 @@ import { ToastrService } from 'ngx-toastr';
         cursor: pointer;
       }
 
-      .card-title {
-        position: relative;
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -0.5rem;
-          left: 0;
-          width: 50px;
-          height: 3px;
-          background-color: #6c757d;
-          border-radius: 2px;
-        }
-      }
-
       .form-label {
         font-size: 1.1rem;
         font-weight: 500;

@@ -24,6 +24,19 @@ import { UserService } from '@/app/services/user.service'; // Importa el servici
     .stop {
       transform: translate3d(4.8px, 74.4px, 0px) !important;
     }
+
+    .nav-icon {
+      color: var(--bs-body-color);
+      transition: all 0.3s ease;
+    }
+
+    .nav-icon:hover {
+      color: var(--bs-primary);
+    }
+
+    .la-user-shield {
+      font-size: 1.25rem;
+    }
   `,
 })
 export class TopbarComponent implements OnInit {

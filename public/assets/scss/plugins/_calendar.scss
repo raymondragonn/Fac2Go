@@ -16,84 +16,94 @@
 
 .fc {
   background-color: $light;
-  border-radius: 10px;
-  .fc-header-toolbar{
+  border-radius: 15px;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  
+  .fc-header-toolbar {
     &.fc-toolbar {
-      .fc-toolbar-chunk{
-        h2{
-          font-size: 26px;
+      .fc-toolbar-chunk {
+        h2 {
+          font-size: 1.5rem;
           text-transform: uppercase;
-          color: $black;
+          color: $primary;
+          font-weight: 600;
         }
       }
     }
   }
-  .fc-toolbar{
-    &.fc-header-toolbar{
-      margin-bottom: $card-spacer-y;
+
+  .fc-button {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
     }
   }
 
-  .fc-col-header-cell-cushion{
-    padding: 10px 0;
-    color: var(--#{$prefix}body-color);
-  }
-  .fc-button{
-    font-size: $font-size-base;
-  }
-  .fc-button-primary{
-    background: white;
-    border: 1px solid var(--#{$prefix}border-color);
-    color: $black;
+  .fc-button-primary {
+    background: $primary;
+    border: none;
+    color: white;
     text-transform: capitalize;
     text-shadow: none;
-    box-shadow: none;
-    &:hover{
-      background: $primary;
-      color: $black;
-      border-color: var(--#{$prefix}border-color);
+    box-shadow: 0 2px 4px rgba($primary, 0.2);
+    
+    &:hover {
+      background: darken($primary, 5%);
+      color: white;
+      border: none;
     }
+    
     &.active,
     &:focus,
-    &:active{
-      text-shadow: none;
-      box-shadow: none;
+    &:active {
+      background: darken($primary, 10%);
+      box-shadow: 0 2px 4px rgba($primary, 0.3);
     }
-    &:disabled {
-      background: white;
-      color: $black;
-      border-color: var(--#{$prefix}border-color);
-      opacity: 1;
-    }
-    &:not(:disabled):active, 
-    &:not(:disabled).fc-button-active{
-      background: $primary;
-      color: $white;
-      border-color: var(--#{$prefix}border-color);
-      &:focus{
-        box-shadow: none;
-      }
-    }
-  }
-  .fc-daygrid-day-number{
-    color: var(--#{$prefix}body-color);
-    font-weight: 600;
   }
 
   .fc-daygrid-day {
     &.fc-day-today {
-      background-color: transparent;
-      padding: 4px;
-      border-radius: 24px;
+      background-color: rgba($primary, 0.1);
       .fc-daygrid-day-frame {
-        background-color: rgba($white, 0.5);
-        border-radius: 10px;
+        background-color: transparent;
         .fc-daygrid-day-number {
-          font-size: 16px;
-          font-weight: 800;
+          font-size: 1rem;
+          font-weight: 700;
+          color: $primary;
         }
       }
     }
+  }
+
+  .fc-event {
+    border-radius: 8px;
+    border: none;
+    padding: 0.5rem;
+    margin: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .fc-col-header-cell-cushion {
+    padding: 1rem 0;
+    color: $gray-700;
+    font-weight: 600;
+  }
+
+  .fc-daygrid-day-number {
+    color: $gray-700;
+    font-weight: 500;
+    padding: 0.5rem;
   }
 }
 
@@ -103,9 +113,9 @@
 
 .fc-theme-standard {
   .fc-scrollgrid,
-  td, 
-  th{
-    border: 1px solid var(--#{$prefix}border-color);
+  td,
+  th {
+    border: 1px solid rgba($gray-300, 0.5);
   }
 }
 
@@ -116,27 +126,37 @@
 
 
 .fc-h-event {
-  .fc-event-main{
-    color: $dark;
+  .fc-event-main {
+    color: white;
     font-weight: 500;
   }
 }
 
 .fc-daygrid-dot-event {
-  .fc-event-title{
+  .fc-event-title {
     font-weight: 500;
   }
 }
+
 .fc-direction-ltr,
-.fc-direction-rtl{
-  .fc-daygrid-event{
+.fc-direction-rtl {
+  .fc-daygrid-event {
     &.fc-event-start,
-    &.fc-event-end{
-      background-color: $dark;
-      box-shadow: $box-shadow-sm;
-      color: $white;
-      border-radius: 4px;
+    &.fc-event-end {
+      background-color: $primary;
+      box-shadow: 0 2px 4px rgba($primary, 0.2);
+      color: white;
+      border-radius: 8px;
     }
-  } 
+  }
+}
+
+.calendar-container {
+  min-height: 600px;
+  padding: 1rem;
+  
+  #calendar {
+    height: 100%;
+  }
 } 
 

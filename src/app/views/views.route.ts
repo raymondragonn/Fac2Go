@@ -11,7 +11,6 @@ import { UsersComponent } from './main_pages/users/users.component'
 import { WalletComponent } from './main_pages/wallet/wallet.component'
 import { MybillsComponent } from './main_pages/mybills/mybills.component'
 import { DashboardComponent } from './main_pages/dashboard/dashboard.component'
-import { QrScannerComponent } from './issuance/qr-scanner/qr-scanner.component'
 import { FaqComponent } from './main_pages/faq/faq.component'
 import { ContactComponent } from './main_pages/contact/contact.component'
 import { PrivacyComponent } from './main_pages/privacy/privacy.component'
@@ -73,11 +72,6 @@ export const VIEW_ROUTES: Route[] = [
     path: 'issuance',
     loadChildren: () =>
       import('./issuance/issuance.route').then((mod) => mod.ISSUANCE_ROUTES),
-  },
-  {
-    path: 'qr-scanner',
-    component: QrScannerComponent,
-    data: { title: 'Escaner de Constancia Fiscal'}
   },
   {
     path: 'dashboard',

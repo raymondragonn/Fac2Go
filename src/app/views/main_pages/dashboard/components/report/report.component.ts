@@ -13,14 +13,12 @@ export class ReportComponent {
   ReportChart: Partial<ChartOptions> = {
     series: [
       {
-        name: 'Income',
+        name: 'Ingresos',
         data: [2.7, 2.2, 1.3, 2.5, 1, 2.5, 1.2, 1.2, 2.7, 1, 3.6, 2.1],
       },
       {
-        name: 'Expense',
-        data: [
-          -2.3, -1.9, -1, -2.1, -1.3, -2.2, -1.1, -2.3, -2.8, -1.1, -2.5, -1.5,
-        ],
+        name: 'Gastos',
+        data: [-2.3, -1.9, -1, -2.1, -1.3, -2.2, -1.1, -2.3, -2.8, -1.1, -2.5, -1.5],
       },
     ],
     chart: {
@@ -83,18 +81,18 @@ export class ReportComponent {
         show: false,
       },
       categories: [
-        'Jan',
+        'Ene',
         'Feb',
         'Mar',
-        'Apr',
+        'Abr',
         'May',
         'Jun',
-        'July',
-        'Aug',
+        'Jul',
+        'Ago',
         'Sep',
         'Oct',
         'Nov',
-        'Dec',
+        'Dic',
       ],
     },
     // yaxis: {

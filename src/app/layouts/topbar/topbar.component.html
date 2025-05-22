@@ -17,6 +17,17 @@
             <i class="iconoir-menu"></i>
           </button>
         </li>
+        @if (userType === 'guest') {
+        <li>
+          <a
+            [routerLink]="'/auth/login-admin'"
+            class="nav-link nav-icon"
+            title="Acceso Administradores"
+          >
+            <i class="las la-user-shield fs-4"></i>
+          </a>
+        </li>
+        }
       </ul>
       <ul
         class="topbar-item list-unstyled d-inline-flex align-items-center mb-0"
@@ -213,29 +224,60 @@
             <!-- Mostrar opciones según el tipo de usuario -->
             <div *ngIf="userType === 'user' || userType === 'admin'">
               <div class="dropdown-divider mt-0"></div>
-              <small class="text-muted px-3 pb-1 d-block">Cuenta</small>
-              <a class="dropdown-item" routerLink="/pages/profile">
-                <i class="las la-user fs-18 me-1 align-text-bottom"></i>
-                Mi perfil
-              </a>
-              <div class="dropdown-divider mb-0"></div>
-              <a class="dropdown-item text-danger" routerLink="/" (click)="logout()">
-                <i class="las la-power-off fs-18 me-1 align-text-bottom"></i>
-                Cerrar sesión
-              </a>
+              <div class="px-3 py-2">
+                <h6 class="text-muted mb-2 fs-15">Gestión de cuenta</h6>
+                <a class="dropdown-item d-flex align-items-center py-2" routerLink="/pages/profile">
+                  <div class="flex-shrink-0 bg-info-subtle text-info rounded-circle p-2 me-2">
+                    <i class="las la-user fs-20"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="my-0 fw-medium text-dark fs-15">Mi perfil</h6>
+                    <small class="text-muted fs-13">Gestiona tu información personal</small>
+                  </div>
+                </a>
+              </div>
+
+              <div class="px-3 py-2">
+                <a class="dropdown-item d-flex align-items-center py-2" routerLink="/" (click)="logout()">
+                  <div class="flex-shrink-0 bg-danger-subtle text-danger rounded-circle p-2 me-2">
+                    <i class="las la-power-off fs-20"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="my-0 fw-medium text-dark fs-15">Cerrar sesión</h6>
+                    <small class="text-muted fs-13">Salir de tu cuenta</small>
+                  </div>
+                </a>
+              </div>
             </div>
 
             <!-- Mostrar opción para crear una cuenta si es guest -->
             <div *ngIf="userType === 'guest'">
               <div class="dropdown-divider mt-0"></div>
-              <a class="dropdown-item text-blue" routerLink="/auth/login-user">
-                <i class="las la-user-plus fs-18 me-1 align-text-bottom"></i>
-                Iniciar sesión
-              </a>
-              <a class="dropdown-item text-secondary" routerLink="/auth/register-user">
-                <i class="las la-user-plus fs-18 me-1 align-text-bottom"></i>
-                Crear una cuenta
-              </a>
+              <div class="px-3 py-2">
+                <h6 class="text-muted mb-2 fs-15">¿Ya tienes una cuenta?</h6>
+                <a class="dropdown-item d-flex align-items-center py-2" routerLink="/auth/login-user">
+                  <div class="flex-shrink-0 bg-primary-subtle text-primary rounded-circle p-2 me-2">
+                    <i class="las la-sign-in-alt fs-20"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="my-0 fw-medium text-dark fs-15">Iniciar sesión</h6>
+                    <small class="text-muted fs-13">Accede a tu cuenta</small>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="px-3 py-2">
+                <h6 class="text-muted mb-2 fs-15">¿Eres nuevo?</h6>
+                <a class="dropdown-item d-flex align-items-center py-2" routerLink="/auth/register-user">
+                  <div class="flex-shrink-0 bg-success-subtle text-success rounded-circle p-2 me-2">
+                    <i class="las la-user-plus fs-20"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="my-0 fw-medium text-dark fs-15">Crear cuenta</h6>
+                    <small class="text-muted fs-13">Únete a nuestra comunidad</small>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </li>

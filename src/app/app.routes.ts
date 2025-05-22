@@ -5,7 +5,6 @@ import { Error500Component } from './views/auth/error500/error500.component'
 import { MaintenanceComponent } from './views/auth/maintenance/maintenance.component'
 import { inject } from '@angular/core'
 import { AuthenticationService } from './core/service/auth.service'
-import { FaqComponent } from './views/main_pages/faq/faq.component'
 
 export const routes: Routes = [
   {

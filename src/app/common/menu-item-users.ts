@@ -7,18 +7,6 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     isTitle: true,
   },
   {
-    key: 'issuance-principal',
-    icon: 'iconoir-report-columns', // Inicio
-    label: 'Nueva Factura',
-    url: 'issuance/principal',
-  },
-  {
-    key: 'qr-scanner',
-    icon: 'iconoir-report-columns',
-    label: 'Escaner de Constancia Fiscal',
-    url: 'qr-scanner'
-  },
-  {
     key: 'wallet',
     icon: 'iconoir-dollar-circle', // Cartera de Clientes
     label: 'Cartera de Clientes',
@@ -42,13 +30,13 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     url: 'faq',
   },
   {
-    key: 'contact',
+    key: 'contacto',
     icon: 'iconoir-mail', // Contacto
     label: 'Contacto',
     url: 'contact',
   },
   {
-    key: 'privacy',
+    key: 'privacidad',
     icon: 'iconoir-lock', // Aviso de Privacidad (asumiendo que "lock" es adecuado)
     label: 'Aviso de Privacidad',
     url: 'privacy',

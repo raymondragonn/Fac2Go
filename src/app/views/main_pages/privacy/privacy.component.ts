@@ -19,7 +19,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
           left: 0;
           width: 50px;
           height: 3px;
-          background-color: #6c757d;
           border-radius: 2px;
         }
       }
