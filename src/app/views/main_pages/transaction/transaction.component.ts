@@ -77,7 +77,6 @@ interface InvoiceDataType {
   selector: 'app-transaction',
   standalone: true,
   imports: [
-    PagetitleComponent,
     CommonModule,
     NgbPaginationModule,
     FormsModule,

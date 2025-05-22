@@ -10,6 +10,7 @@ body{
 .page-wrapper {
     .page-content {
         // width: calc(100% - var(--#{$prefix}startbar-width));
+        background-color: #f4f6f9;
         width: 100%;
         margin-left: var(--#{$prefix}startbar-width);
         position: relative;

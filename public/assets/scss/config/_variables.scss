@@ -359,8 +359,8 @@ $browns: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       $yellow;
-$secondary:     $brown;
+$primary:       #2DC1A4;
+$secondary:     $gray-900;
 $success:       $green;
 $info:          $cyan;
 $warning:       $yellow;
@@ -368,7 +368,7 @@ $danger:        $red;
 $pink:          $pink;
 $purple:        $purple;
 $blue:          $blue;
-$light:         $gray-100;
+$light:         $gray-200;
 $dark:          $gray-900;
 // scss-docs-end theme-color-variables
 
@@ -1811,7 +1811,6 @@ $offcanvas-vertical-height:         30vh;
 $offcanvas-transition-duration:     .3s;
 $offcanvas-border-color:            $modal-content-border-color;
 $offcanvas-border-width:            $modal-content-border-width;
-$offcanvas-title-line-height:       $modal-title-line-height;
 $offcanvas-bg-color:                var(--#{$prefix}body-bg);
 $offcanvas-color:                   var(--#{$prefix}body-color);
 $offcanvas-box-shadow:              $modal-content-box-shadow-xs;

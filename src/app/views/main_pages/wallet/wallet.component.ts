@@ -40,16 +40,16 @@ interface Client {
 
     .new-invoice-btn {
       transition: all 0.3s ease;
-      background: linear-gradient(45deg, #ffc107, #ffb300);
+      background-color: #0da684;
       border: none;
-      color: #000;
+      color: #fff;
       padding: 2rem;
     }
 
     .new-invoice-btn:hover {
-      background: linear-gradient(45deg, #ffb300, #ffa000);
+      background-color: shade(#0da684, 10%);
       transform: scale(1.02);
-      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+      box-shadow: 0 4px 12px rgba(13, 166, 132, 0.3);
     }
 
     .new-invoice-btn:active {
@@ -59,17 +59,17 @@ interface Client {
     .new-invoice-btn small {
       display: block;
       font-weight: 500;
-      color: #000 !important;
-      text-shadow: 0 0 1px rgba(255,255,255,0.5);
+      color: #fff !important;
+      text-shadow: 0 0 1px rgba(0,0,0,0.3);
     }
 
     .new-invoice-btn:hover small {
-      color: #000 !important;
+      color: #fff !important;
     }
 
     .new-invoice-btn i {
       transition: transform 0.3s ease;
-      color: #000;
+      color: #fff;
     }
 
     .new-invoice-btn:hover i {
