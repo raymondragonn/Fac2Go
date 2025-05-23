@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
 import { AuthService } from '@/app/services/auth.service'
 import { UserService } from '@/app/services/user.service'; // Importa el servicio
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authServicePrueba: AuthService,
     private authService: AuthenticationService,
-    private userService: UserService
+    private userService: UserService,
+    private toastr: ToastrService
   ) {}
 
   public fb = inject(UntypedFormBuilder)
@@ -63,16 +65,26 @@ export class LoginComponent implements OnInit {
           // Establece el userType como 'admin'
           this.userService.setUserType('admin');
 
+          this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
           this.router.navigate(['/dashboard']);
         },
         (error) => {
           console.log(error);
           this.showAlert = true;
+          this.toastr.error('Credenciales inválidas', 'Error de autenticación');
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
         }
       );
+    } else {
+      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación')
+      Object.keys(this.signInForm.controls).forEach(key => {
+        const control = this.signInForm.get(key)
+        if (control?.invalid) {
+          control.markAsTouched()
+        }
+      })
     }
   }
 }

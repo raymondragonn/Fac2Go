@@ -1,6 +1,6 @@
 import { AuthService } from '@/app/services/auth.service'
 import { CommonModule } from '@angular/common'
-import { Component, inject } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core'
 import {
   AbstractControl,
   FormsModule,
@@ -11,6 +11,8 @@ import {
 } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
+import { Store } from '@ngrx/store'
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-register-user',
@@ -18,7 +20,7 @@ import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
   templateUrl: './register-user.component.html',
   styles: ``,
 })
-export class RegisterUserComponent {
+export class RegisterUserComponent implements OnInit {
   fieldTextType!: boolean
   fieldTextType1!: boolean
   signupForm!: UntypedFormGroup
@@ -26,47 +28,57 @@ export class RegisterUserComponent {
   showAlert: boolean = false
 
   public fb = inject(UntypedFormBuilder)
+  public store = inject(Store)
+  public router = inject(Router)
+  public toastr = inject(ToastrService)
 
-  constructor(private serviceAuth: AuthService, private router: Router) {
-    this.signupForm = this.fb.group(
-      {
-        name: ['', [Validators.required]],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required]],
-        confirmpwd: ['', [Validators.required]],
-      },
-      { validators: this.validateAreEqual }
-    )
-  }
-
-  public validateAreEqual(c: AbstractControl): { notSame: boolean } | null {
-    return c.value.password === c.value.confirmpwd ? null : { notSame: true }
-  }
-
-  changetype() {
-    this.fieldTextType = !this.fieldTextType
+  ngOnInit(): void {
+    this.signupForm = this.fb.group({
+      name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmpwd: ['', [Validators.required]],
+    }, {
+      validator: this.mustMatch('password', 'confirmpwd')
+    })
   }
 
   get form() {
     return this.signupForm.controls
   }
 
+  mustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: UntypedFormGroup) => {
+      const control = formGroup.controls[controlName]
+      const matchingControl = formGroup.controls[matchingControlName]
+      if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
+        return
+      }
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true })
+      } else {
+        matchingControl.setErrors(null)
+      }
+    }
+  }
+
+  changetype() {
+    this.fieldTextType = !this.fieldTextType
+  }
+
   onSubmit() {
     this.submitted = true
-    if(this.signupForm.valid){
-      console.log("Formulario Valido")
-      this.serviceAuth.registerUser({name: this.signupForm.value.name, email: this.signupForm.value.email, password: this.signupForm.value.password}).subscribe((res => {
-        this.showAlert = true
-        setTimeout(() => {
-          this.showAlert = false;
-          this.router.navigate(['/auth/login-user']);
-        }, 3000);
-      }), (error) => {
-        console.log(error);
-        
+    if (this.signupForm.valid) {
+      this.store.dispatch({ type: '[Auth] Register', payload: this.signupForm.value })
+      this.toastr.success('Registro exitoso', '¡Bienvenido!')
+    } else {
+      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación')
+      Object.keys(this.signupForm.controls).forEach(key => {
+        const control = this.signupForm.get(key)
+        if (control?.invalid) {
+          control.markAsTouched()
+        }
       })
     }
-
-
   }
 }
