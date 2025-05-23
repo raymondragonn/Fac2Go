@@ -22,6 +22,8 @@ export type User = {
   avatar?: string
   location?: string
   title?: string
+  correo?: string 
+  contraseña?: string
 }
 
 type MyRequestBody = {

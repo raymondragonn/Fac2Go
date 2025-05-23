@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators'
 import { CookieService } from 'ngx-cookie-service'
 import { User } from '../helpers/fake-backend'
 
-const API_URL = 'http://localhost:5050';
+const API_URL = 'http://localhost:8080';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -16,15 +16,15 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {}
 
-  login(username: string , password: string) {
-    return this.http.post<User>(`${API_URL}/generate-token`, { username, password }).pipe(
+  login(correo: string , contraseña: string) {
+    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }).pipe(
       map((user) => {
         // login successful if there's a jwt token in the response
-        if (user && user.token) {
-          this.user = user
-          // store user details and jwt in session
-          this.saveSession(user.token)
-        }
+        // if (user && user.token) {
+        //   this.user = user
+        //   // store user details and jwt in session
+        //   this.saveSession(user.token)
+        // }
         return user
       })
     )

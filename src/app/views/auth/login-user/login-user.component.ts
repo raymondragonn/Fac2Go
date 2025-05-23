@@ -50,19 +50,28 @@ export class LoginUserComponent {
   }
 
   login() {
+    
     this.submitted = true;
     if (this.signInForm.valid) {
-      const email = this.formValues['email'].value;
-      const password = this.formValues['password'].value;
-      this.authService.login(email, password).subscribe(
+      const correo = this.formValues['email'].value;
+      const contraseña = this.formValues['password'].value;
+      this.authService.login(correo, contraseña).subscribe(
         (res) => {
-          const { token, email } = res as { token: string; email: string };
-          localStorage.setItem('currentUser', JSON.stringify({ email, token }));
-
+          const { status } = res as { status:string};
+          // localStorage.setItem('currentUser', JSON.stringify({ email, token }));
+          
           // Establece el userType como 'user'
-          this.userService.setUserType('user');
+          if(status == "success"){
+            this.userService.setUserType('user');
+            this.router.navigate(['/wallet']);
 
-          this.router.navigate(['/wallet']);
+          }else{
+            this.showAlert = true;
+            setTimeout(() => {
+              this.showAlert = false;
+            })
+          }
+          // console.log(status);
         },
         (error) => {
           console.log(error);
