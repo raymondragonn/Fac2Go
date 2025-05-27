@@ -15,6 +15,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    /* Guard temporalmente deshabilitado
     canActivate: [
       () => {
         const currentUser = inject(AuthenticationService).session
@@ -24,6 +25,7 @@ export const routes: Routes = [
         return new RedirectCommand(urlTree, { skipLocationChange: true })
       },
     ],
+    */
     loadChildren: () =>
       import('./views/views.route').then((mod) => mod.VIEW_ROUTES),
   },

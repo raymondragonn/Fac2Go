@@ -52,6 +52,13 @@ export class LoginComponent implements OnInit {
   }  
 
   login() {
+    // Acceso directo temporal
+    localStorage.setItem('currentUser', JSON.stringify({ email: 'admin@temporal.com', token: 'temp-token' }));
+    this.userService.setUserType('admin');
+    this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
+    this.router.navigate(['/dashboard']);
+
+    /* Código original comentado temporalmente
     this.submitted = true;
     if (this.signInForm.valid) {
       const email = this.formValues['email'].value;
@@ -86,5 +93,6 @@ export class LoginComponent implements OnInit {
         }
       })
     }
+    */
   }
 }

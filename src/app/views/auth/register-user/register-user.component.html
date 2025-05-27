@@ -9,10 +9,10 @@
               <div class="card-body p-0 bg-primary auth-header-box rounded-top">
                 <div class="text-center p-4">
                   <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">
-                    Crear un nuevo usuario
+                    {{ currentStep === 1 ? 'Crear un nuevo usuario' : 'Datos fiscales' }}
                   </h4>
                   <p class="text-white-50 fw-medium mb-0">
-                    Ingresa los datos para crear el usuario.
+                    {{ currentStep === 1 ? 'Ingresa los datos para crear el usuario.' : 'Ingresa tus datos fiscales.' }}
                   </p>
                 </div>
               </div>
@@ -23,197 +23,291 @@
                   [formGroup]="signupForm"
                   (ngSubmit)="onSubmit()"
                 >
-                  <div class="form-group mb-2">
-                    <label class="form-label text-muted" for="name">Nombre Completo</label>
-                    <div class="input-group">
-                      <span class="input-group-text bg-primary text-white border-end-0">
-                        <i class="fas fa-user"></i>
-                      </span>
-                      <input
-                        type="text"
-                        formControlName="name"
-                        [ngClass]="{
-                          'is-invalid': submitted && form['name'].errors,
-                        }"
-                        class="form-control border-start-0"
-                        id="name"
-                        name="name"
-                        placeholder="Ingresa tu nombre completo"
-                      />
+                  <!-- Paso 1: Datos personales -->
+                  <div *ngIf="currentStep === 1">
+                    <div class="form-group mb-2">
+                      <label class="form-label text-muted" for="name">Nombre Completo</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-user"></i>
+                        </span>
+                        <input
+                          type="text"
+                          formControlName="name"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['name'].errors,
+                          }"
+                          class="form-control border-start-0"
+                          id="name"
+                          name="name"
+                          placeholder="Ingresa tu nombre completo"
+                        />
+                      </div>
+                      <div class="invalid-feedback">
+                        Nombre Completo es requerido
+                      </div>
                     </div>
-                    <div class="invalid-feedback">
-                      Nombre Completo es requerido
+
+                    <div class="form-group mb-2">
+                      <label class="form-label text-muted" for="useremail">Correo</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-envelope"></i>
+                        </span>
+                        <input
+                          type="email"
+                          formControlName="email"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['email'].errors,
+                          }"
+                          class="form-control border-start-0"
+                          id="useremail"
+                          name="user email"
+                          placeholder="Ingresa un correo electrónico"
+                        />
+                      </div>
+                      <div class="invalid-feedback">Correo válido es requerido</div>
+                    </div>
+
+                    <div class="form-group mb-2 position-relative">
+                      <label class="form-label text-muted" for="userpassword">Contraseña</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                        <input
+                          type="password"
+                          class="form-control border-start-0"
+                          formControlName="password"
+                          [type]="fieldTextType ? 'text' : 'password'"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['password'].errors,
+                          }"
+                          name="password"
+                          id="userpassword"
+                          placeholder="Ingresa una contraseña"
+                        />
+                      </div>
+                      @if (
+                        (signupForm.get('confirmpwd')?.touched &&
+                          signupForm.errors?.['notSame']) ||
+                        (!submitted && form['password'].errors)
+                      ) {
+                        <span
+                          class="position-absolute top-50 text-muted end-0 translate-middle-y p-0 mt-2"
+                        >
+                          <i
+                            class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
+                            [ngClass]="{ 'fa-eye': fieldTextType }"
+                            (click)="changetype()"
+                          ></i>
+                        </span>
+                      }
+                      <div class="invalid-feedback">
+                        Contraseña es requerida
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-2 position-relative">
+                      <label class="form-label text-muted" for="Confirmpassword">Confirmar Contraseña</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                        <input
+                          [type]="fieldTextType1 ? 'text' : 'password'"
+                          formControlName="confirmpwd"
+                          [ngClass]="{
+                            'is-invalid':
+                              signupForm.get('confirmpwd')?.touched &&
+                              signupForm.errors?.['notSame'],
+                          }"
+                          type="password"
+                          class="form-control border-start-0"
+                          name="password"
+                          id="Confirmpassword"
+                          placeholder="Ingresa nuevamente la contraseña"
+                        />
+                      </div>
+                      @if (!submitted && form['confirmpwd'].errors) {
+                        <span
+                          class="position-absolute top-50 end-0 text-muted translate-middle-y p-0 mt-2"
+                        >
+                          <i
+                            class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
+                            [ngClass]="{ 'fa-eye': fieldTextType1 }"
+                            (click)="fieldTextType1 = !fieldTextType1"
+                          ></i>
+                        </span>
+                      }
+                      <div class="invalid-feedback">
+                        No coinciden las contraseñas
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-0 row">
+                      <div class="col-12">
+                        <div class="d-grid mt-3">
+                          <button class="btn btn-primary btn-lg" type="button" (click)="nextStep()">
+                            Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <!--end form-group-->
-  
-                  <div class="form-group mb-2">
-                    <label class="form-label text-muted" for="useremail">Correo</label>
-                    <div class="input-group">
-                      <span class="input-group-text bg-primary text-white border-end-0">
-                        <i class="fas fa-envelope"></i>
-                      </span>
-                      <input
-                        type="email"
-                        formControlName="email"
-                        [ngClass]="{
-                          'is-invalid': submitted && form['email'].errors,
-                        }"
-                        class="form-control border-start-0"
-                        id="useremail"
-                        name="user email"
-                        placeholder="Ingresa un correo electrónico"
-                      />
+
+                  <!-- Paso 2: Datos fiscales -->
+                  <div *ngIf="currentStep === 2">
+                    <div class="text-center mb-4">
+                      <button type="button" class="btn btn-primary btn-lg" (click)="toggleQRScanner()">
+                        <i class="fas fa-qrcode me-2"></i> Escanear QR de Constancia Fiscal
+                      </button>
+                      <p class="text-muted mt-2">O ingresa los datos manualmente</p>
                     </div>
-                    <div class="invalid-feedback">Correo válido es requerido</div>
+
+                    <!-- Escáner QR -->
+                    <div *ngIf="showQRScanner" class="card shadow-lg border-0 mb-4">
+                      <div class="card-body text-center">
+                        <h5 class="mb-3">Escanea el QR de tu constancia fiscal</h5>
+                        <p class="text-muted mb-4">
+                          Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
+                        </p>
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                          <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
+                            style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
+                            (event)="extractValue(action.data)">
+                          </ngx-scanner-qrcode>
+                        </div>
+                        <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
+                          (click)="action.isStart ? action.stop() : action.start()">
+                          {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
+                        </button>
+                        <button type="button" class="btn btn-secondary w-100 rounded-pill px-4 py-2"
+                          (click)="toggleQRScanner()">
+                          Cerrar Escáner
+                        </button>
+                        <div class="alert alert-info mt-4" *ngIf="!qrValue">
+                          <small>Esperando la captura del código QR...</small>
+                        </div>
+                        <div class="alert alert-success mt-4" *ngIf="qrValue">
+                          <small>QR capturado: {{ qrValue }}</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-2">
+                      <label class="form-label text-muted" for="rfc">RFC</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-id-card"></i>
+                        </span>
+                        <input
+                          type="text"
+                          formControlName="rfc"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['rfc'].errors,
+                          }"
+                          class="form-control border-start-0"
+                          id="rfc"
+                          name="rfc"
+                          placeholder="Ingresa tu RFC"
+                        />
+                      </div>
+                      <div class="invalid-feedback">
+                        RFC válido es requerido
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-2">
+                      <label class="form-label text-muted" for="codigoPostal">Código Postal</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-map-marker-alt"></i>
+                        </span>
+                        <input
+                          type="text"
+                          formControlName="codigoPostal"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['codigoPostal'].errors,
+                          }"
+                          class="form-control border-start-0"
+                          id="codigoPostal"
+                          name="codigoPostal"
+                          placeholder="Ingresa tu código postal"
+                        />
+                      </div>
+                      <div class="invalid-feedback">
+                        Código postal válido es requerido
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-2">
+                      <label class="form-label text-muted" for="regimenFiscal">Régimen Fiscal</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-primary text-white border-end-0">
+                          <i class="fas fa-building"></i>
+                        </span>
+                        <select
+                          formControlName="regimenFiscal"
+                          [ngClass]="{
+                            'is-invalid': submitted && form['regimenFiscal'].errors,
+                          }"
+                          class="form-control border-start-0"
+                          id="regimenFiscal"
+                          name="regimenFiscal"
+                        >
+                          <option value="">Selecciona un régimen fiscal</option>
+                          <option value="601">General de Ley Personas Morales</option>
+                          <option value="603">Personas Morales con Fines no Lucrativos</option>
+                          <option value="605">Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                          <option value="606">Arrendamiento</option>
+                          <option value="608">Demás ingresos</option>
+                          <option value="611">Ingresos por Dividendos</option>
+                          <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
+                          <option value="614">Ingresos por intereses</option>
+                          <option value="616">Sin obligaciones fiscales</option>
+                          <option value="620">Sociedades Cooperativas de Producción</option>
+                          <option value="621">Incorporación Fiscal</option>
+                          <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                          <option value="623">Opcional para Grupos de Sociedades</option>
+                          <option value="624">Coordinados</option>
+                          <option value="625">Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas</option>
+                          <option value="626">Régimen Simplificado de Confianza</option>
+                        </select>
+                      </div>
+                      <div class="invalid-feedback">
+                        Régimen fiscal es requerido
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-0 row">
+                      <div class="col-12">
+                        <div class="d-flex gap-2 mt-3">
+                          <button class="btn btn-outline-secondary btn-lg flex-grow-1" type="button" (click)="previousStep()">
+                            <i class="fas fa-arrow-left me-2"></i> Anterior
+                          </button>
+                          <button class="btn btn-primary btn-lg flex-grow-1" type="submit">
+                            Registrar <i class="fas fa-check ms-2"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <!--end form-group-->
-  
-                  <div class="form-group mb-2 position-relative">
-                    <label class="form-label text-muted" for="userpassword">Contraseña</label>
-                    <div class="input-group">
-                      <span class="input-group-text bg-primary text-white border-end-0">
-                        <i class="fas fa-lock"></i>
-                      </span>
-                      <input
-                        type="password"
-                        class="form-control border-start-0"
-                        formControlName="password"
-                        [type]="fieldTextType ? 'text' : 'password'"
-                        [ngClass]="{
-                          'is-invalid': submitted && form['password'].errors,
-                        }"
-                        name="password"
-                        id="userpassword"
-                        placeholder="Ingresa una contraseña"
-                      />
-                    </div>
-                    @if (
-                      (signupForm.get('confirmpwd')?.touched &&
-                        signupForm.errors?.['notSame']) ||
-                      (!submitted && form['password'].errors)
-                    ) {
-                      <span
-                        class="position-absolute top-50 text-muted end-0 translate-middle-y p-0 mt-2"
-                      >
-                        <i
-                          class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
-                          [ngClass]="{ 'fa-eye': fieldTextType }"
-                          (click)="changetype()"
-                        ></i>
-                      </span>
-                    }
-                    <div class="invalid-feedback">
-                      Contraseña es requerida
-                    </div>
-                  </div>
-  
-                  <div class="form-group mb-2 position-relative">
-                    <label class="form-label text-muted" for="Confirmpassword">Confirmar Contraseña</label>
-                    <div class="input-group">
-                      <span class="input-group-text bg-primary text-white border-end-0">
-                        <i class="fas fa-lock"></i>
-                      </span>
-                      <input
-                        [type]="fieldTextType1 ? 'text' : 'password'"
-                        formControlName="confirmpwd"
-                        [ngClass]="{
-                          'is-invalid':
-                            signupForm.get('confirmpwd')?.touched &&
-                            signupForm.errors?.['notSame'],
-                        }"
-                        type="password"
-                        class="form-control border-start-0"
-                        name="password"
-                        id="Confirmpassword"
-                        placeholder="Ingresa nuevamente la contraseña"
-                      />
-                    </div>
-                    @if (!submitted && form['confirmpwd'].errors) {
-                      <span
-                        class="position-absolute top-50 end-0 text-muted translate-middle-y p-0 mt-2"
-                      >
-                        <i
-                          class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
-                          [ngClass]="{ 'fa-eye': fieldTextType1 }"
-                          (click)="fieldTextType1 = !fieldTextType1"
-                        ></i>
-                      </span>
-                    }
-                    <div class="invalid-feedback">
-                      No coinciden las contraseñas
-                    </div>
-                  </div>
-                  <!--end form-group-->
-  
-                  <div class="col-sm-6 ">
+
+                  <div class="col-sm-6 mt-3">
                     <a
                       [routerLink]="'/auth/login-user'"
                       class="text-muted font-13"
                       ><i class="dripicons-lock"></i>¿Ya tienes cuenta?</a
                     >
                   </div>
-                  <!--end form-group-->
-  
-                  <!--<div class="form-group row mt-3">
-                    <div class="col-12">
-                      <div class="form-check form-switch form-switch-success">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="customSwitchSuccess"
-                        />
-                        <label
-                          class="form-check-label"
-                          for="customSwitchSuccess"
-                          >By registering you agree to the Approx
-                          <a href="javascript:void(0);" class="text-primary"
-                            >Terms of Use</a
-                          ></label
-                        >
-                      </div>
-                    </div>
-                  </div>-->
-                  <!--end form-group-->
-  
-                  <div class="form-group mb-0 row">
-                    <div class="col-12">
-                      <div class="d-grid mt-3">
-                        <button class="btn btn-primary btn-lg" type="submit">
-                          Registrar <i class="fas fa-sign-in-alt ms-1"></i>
-                        </button>
-                        <ngb-alert
-                          *ngIf="showAlert"
-                          type="success"
-                          class="shadow-sm border-theme-white-2"
-                          [dismissible]="false"
-                        >
-                          <div
-                            class="d-inline-flex justify-content-center align-items-center thumb-xs bg-success rounded-circle mx-auto me-1"
-                          >
-                            <i class="fas fa-check align-self-center mb-0 text-white"></i>
-                          </div>
-                          <strong> Usuario Registrado!</strong> Correctamente
-                        </ngb-alert>
-                      </div>
-                    </div>
-                    <!--end col-->
-                  </div>
-                  <!--end form-group-->
                 </form>
-                <!--end form-->
-              <!--end card-body-->
+              </div>
             </div>
-            <!--end card-->
           </div>
-          <!--end col-->
         </div>
-        <!--end row-->
       </div>
-      <!--end card-body-->
     </div>
-    <!--end col-->
   </div>
-  <!--end row-->
 </div>
   
