@@ -1,25 +1,18 @@
-<div class="container-fluid" style="background-color: #ebebeb;">
-  <div class="row vh-100 d-flex justify-content-center">
+<div class="container-fluid" style="background-color: #ebebeb; position: relative;">
+  <div class="background-pattern" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/assets/images/fac2go_400x400.png'); background-repeat: repeat; background-size: 100px; opacity: 0.1; z-index: 0;"></div>
+  <div class="row vh-100 d-flex justify-content-center" style="position: relative; z-index: 1;">
     <div class="col-12 align-self-center">
       <div class="card-body">
         <div class="row">
           <div class="col-lg-4 mx-auto">
             <div class="card">
-              <div class="card-body p-0 bg-secondary auth-header-box rounded-top">
+              <div class="card-body p-0 bg-dark auth-header-box rounded-top">
                 <div class="text-center p-4">
-                  <a routerLink="/" class="logo logo-admin">
-                    <img
-                      src="assets/images/fac2go_300x56.png"
-                      height="55"
-                      alt="logo"
-                      class="auth-logo"
-                    />
-                  </a>
-                  <h4 class="mt-3 mb-1 fw-semibold text-black fs-18">
-                    Crear un nuevo usuario
+                  <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">
+                    Crear un nuevo administrador
                   </h4>
-                  <p class="text-gray-900 fw-medium mb-0">
-                    Ingresa los datos para crear el usuario.
+                  <p class="text-white-50 fw-medium mb-0">
+                    Ingresa los datos para crear el administrador.
                   </p>
                 </div>
               </div>
@@ -32,38 +25,46 @@
                 >
 
                   <div class="form-group mb-2">
-                    <label class="form-label" for="useremail">Correo</label>
-                    <input
-                      type="email"
-                      formControlName="email"
-                      [ngClass]="{
-                        'is-invalid': submitted && form['email'].errors,
-                      }"
-                      class="form-control"
-                      id="useremail"
-                      name="user email"
-                      placeholder="Ingresa un correo electrónico"
-                    />
+                    <label class="form-label text-muted" for="useremail">Correo</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-dark text-white border-end-0">
+                        <i class="fas fa-envelope"></i>
+                      </span>
+                      <input
+                        type="email"
+                        formControlName="email"
+                        [ngClass]="{
+                          'is-invalid': submitted && form['email'].errors,
+                        }"
+                        class="form-control border-start-0"
+                        id="useremail"
+                        name="user email"
+                        placeholder="Ingresa un correo electrónico"
+                      />
+                    </div>
                     <div class="invalid-feedback">Correo válido es requerido</div>
                   </div>
                   <!--end form-group-->
 
                   <div class="form-group mb-2 position-relative">
-                    <label class="form-label" for="userpassword"
-                      >Contraseña</label
-                    >
-                    <input
-                      type="password"
-                      class="form-control"
-                      formControlName="password"
-                      [type]="fieldTextType ? 'text' : 'password'"
-                      [ngClass]="{
-                        'is-invalid': submitted && form['password'].errors,
-                      }"
-                      name="password"
-                      id="userpassword"
-                      placeholder="Enter password"
-                    />
+                    <label class="form-label text-muted" for="userpassword">Contraseña</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-dark text-white border-end-0">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                      <input
+                        type="password"
+                        class="form-control border-start-0"
+                        formControlName="password"
+                        [type]="fieldTextType ? 'text' : 'password'"
+                        [ngClass]="{
+                          'is-invalid': submitted && form['password'].errors,
+                        }"
+                        name="password"
+                        id="userpassword"
+                        placeholder="Ingresa una contraseña"
+                      />
+                    </div>
                     @if (
                       (signupForm.get('confirmpwd')?.touched &&
                         signupForm.errors?.['notSame']) ||
@@ -85,23 +86,26 @@
                   </div>
 
                   <div class="form-group mb-2 position-relative">
-                    <label class="form-label" for="Confirmpassword"
-                      >Confirmar Contraseña</label
-                    >
-                    <input
-                      [type]="fieldTextType1 ? 'text' : 'password'"
-                      formControlName="confirmpwd"
-                      [ngClass]="{
-                        'is-invalid':
-                          signupForm.get('confirmpwd')?.touched &&
-                          signupForm.errors?.['notSame'],
-                      }"
-                      type="password"
-                      class="form-control"
-                      name="password"
-                      id="Confirmpassword"
-                      placeholder="Enter Confirm password"
-                    />
+                    <label class="form-label text-muted" for="Confirmpassword">Confirmar Contraseña</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-dark text-white border-end-0">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                      <input
+                        [type]="fieldTextType1 ? 'text' : 'password'"
+                        formControlName="confirmpwd"
+                        [ngClass]="{
+                          'is-invalid':
+                            signupForm.get('confirmpwd')?.touched &&
+                            signupForm.errors?.['notSame'],
+                        }"
+                        type="password"
+                        class="form-control border-start-0"
+                        name="password"
+                        id="Confirmpassword"
+                        placeholder="Ingresa nuevamente la contraseña"
+                      />
+                    </div>
                     @if (!submitted && form['confirmpwd'].errors) {
                       <span
                         class="position-absolute top-50 end-0 text-muted translate-middle-y p-0 mt-2"
@@ -152,7 +156,7 @@
                   <div class="form-group mb-0 row">
                     <div class="col-12">
                       <div class="d-grid mt-3">
-                        <button class="btn btn-primary" type="submit">
+                        <button class="btn btn-dark btn-lg" type="submit">
                           Registrar <i class="fas fa-sign-in-alt ms-1"></i>
                         </button>
                         <ngb-alert
