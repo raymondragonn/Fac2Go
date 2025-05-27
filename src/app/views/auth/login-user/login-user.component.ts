@@ -14,15 +14,17 @@ import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
 import { AuthService } from '@/app/services/auth.service'
-import { UserService } from '@/app/services/user.service'; // Importa el servicio
+import { UserService } from '@/app/services/user.service'
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-login-user',
-  imports: [RouterLink, FormsModule, ReactiveFormsModule,NgbAlertModule,CommonModule],
+  standalone: true,
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, NgbAlertModule, CommonModule],
   templateUrl: './login-user.component.html',
   styles: ``
 })
-export class LoginUserComponent {
+export class LoginUserComponent implements OnInit {
   signInForm!: UntypedFormGroup
   submitted: boolean = false
   private token: string = ''
@@ -31,7 +33,8 @@ export class LoginUserComponent {
   constructor(
     private authServicePrueba: AuthService,
     private authService: AuthenticationService,
-    private userService: UserService // Inyecta el servicio
+    private userService: UserService,
+    private toastr: ToastrService
   ) {}
 
   public fb = inject(UntypedFormBuilder)
@@ -50,37 +53,39 @@ export class LoginUserComponent {
   }
 
   login() {
-    
     this.submitted = true;
     if (this.signInForm.valid) {
-      const correo = this.formValues['email'].value;
-      const contraseña = this.formValues['password'].value;
-      this.authService.login(correo, contraseña).subscribe(
-        (res) => {
-          const { status } = res as { status:string};
-          // localStorage.setItem('currentUser', JSON.stringify({ email, token }));
-          
-          // Establece el userType como 'user'
-          if(status == "success"){
-            this.userService.setUserType('user');
-            this.router.navigate(['/wallet']);
+      const email = this.formValues['email'].value;
+      const password = this.formValues['password'].value;
+      this.authService.login(email, password).subscribe({
+        next: (res) => {
+          console.log(res);
+          const { token, email } = res as { token: string; email: string };
+          localStorage.setItem('currentUser', JSON.stringify({ email, token }));
 
-          }else{
-            this.showAlert = true;
-            setTimeout(() => {
-              this.showAlert = false;
-            })
-          }
-          // console.log(status);
+          // Establece el userType como 'user'
+          this.userService.setUserType('user');
+
+          this.toastr.success('¡Bienvenido al Panel de Usuarios!', 'Inicio de sesión exitoso');
+          this.router.navigate(['/wallet']);
         },
-        (error) => {
+        error: (error) => {
           console.log(error);
           this.showAlert = true;
+          this.toastr.error('Credenciales inválidas', 'Error de autenticación');
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
         }
-      );
+      });
+    } else {
+      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación');
+      Object.keys(this.signInForm.controls).forEach(key => {
+        const control = this.signInForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
     }
   }
 }
