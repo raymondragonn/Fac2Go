@@ -56,6 +56,10 @@ export class TopbarComponent implements OnInit {
     this.userService.userType$.subscribe((type) => {
       this.userType = type;
     });
+    const currentUser = localStorage.getItem('currentUser');
+    this.userEmail = currentUser ? JSON.parse(currentUser).usuario : '';
+    
+    
   }
 
   toggleMobileMenu() {

@@ -1,3 +1,4 @@
+import { AuthenticationService } from '@/app/core/service/auth.service'
 import { AuthService } from '@/app/services/auth.service'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
@@ -27,20 +28,13 @@ export class ConfirmRegisterClientComponent {
 
   public fb = inject(UntypedFormBuilder)
 
-  constructor(private serviceAuth: AuthService, private router: Router) {
+  constructor(private servicioAuth: AuthenticationService, private serviceAuth: AuthService, private router: Router) {
     this.signupForm = this.fb.group(
       {
         name: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
-        confirmpwd: ['', [Validators.required]],
-        number: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
-          ],
-        ],
+        confirmpwd: ['', [Validators.required]]
       },
       { validators: this.validateAreEqual }
     )
@@ -61,20 +55,41 @@ export class ConfirmRegisterClientComponent {
   onSubmit() {
     this.submitted = true
     if(this.signupForm.valid){
-      console.log("Formulario Valido")
-      this.serviceAuth.registerUser({username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
-        this.signupForm.reset();
-        this.showAlert = true
-        setTimeout(() => {
-          this.showAlert = false;
-          this.router.navigate(['']);
-        }, 3000);
-        
+      let usuario = {
+        nombre: this.signupForm.value.name,
+        correo: this.signupForm.value.email,
+        contraseña: this.signupForm.value.password
+
+      }
       
-      }), (error) => {
-        console.log(error);
-        
+      console.log("Formulario Valido")
+
+      this.servicioAuth.register(usuario).subscribe({
+        next: (res) => {
+          console.log(res);
+          this.signupForm.reset()
+          this.showAlert = true
+          setTimeout(() => {
+           this.showAlert = false;
+           this.router.navigate(['']);
+         }, 3000);
+        }
       })
+      // this.serviceAuth.registerUser({username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
+      //   this.signupForm.reset();
+      //   this.showAlert = true
+      //   setTimeout(() => {
+      //     this.showAlert = false;
+      //     this.router.navigate(['']);
+      //   }, 3000);
+        
+
+      
+      // }), (error) => {
+      //   console.log(error);
+        
+      // })
+      
     }
 
 

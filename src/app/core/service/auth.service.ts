@@ -30,6 +30,16 @@ export class AuthenticationService {
     )
   }
 
+  register(usuario : any){
+    return this.http.post<User>(`${API_URL}/usuarios/register`, {usuario}).pipe(
+      map((user) => {
+        return user
+      })
+    )
+  }
+
+
+
   logout(): void {
     // remove user from cookie to log user out
     this.removeSession()
