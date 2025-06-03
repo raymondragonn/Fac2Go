@@ -14,6 +14,8 @@ import { DashboardComponent } from './main_pages/dashboard/dashboard.component'
 import { FaqComponent } from './main_pages/faq/faq.component'
 import { ContactComponent } from './main_pages/contact/contact.component'
 import { PrivacyComponent } from './main_pages/privacy/privacy.component'
+import { PrincipalComponent } from './main_pages/principal/principal.component'
+import { NewClientComponent } from './main_pages/new-client/new-client.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -69,9 +71,9 @@ export const VIEW_ROUTES: Route[] = [
       import('./apps/apps.route').then((mod) => mod.APPS_ROUTES),
   },
   {
-    path: 'issuance',
-    loadChildren: () =>
-      import('./issuance/issuance.route').then((mod) => mod.ISSUANCE_ROUTES),
+    path: 'principal',
+    component: PrincipalComponent,
+    data: { title: 'Nueva Factura'}
   },
   {
     path: 'dashboard',
@@ -132,5 +134,10 @@ export const VIEW_ROUTES: Route[] = [
     path: 'privacy',
     component: PrivacyComponent,
     data: { title: 'Aviso de Privacidad' },
+  },
+  {
+    path: 'new-client',
+    component: NewClientComponent,
+    data: { title: 'Nuevo Cliente'}
   }
 ]

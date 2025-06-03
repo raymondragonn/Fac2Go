@@ -14,13 +14,12 @@
                     <!-- Primera columna -->
                     <div class="col-md-6">
                         <div class="accordion custom-accordion" id="faqAccordion1">
-                            <div class="accordion-item border-0 mb-3" *ngFor="let item of faqItems.slice(0, 5)">
+                            <div class="accordion-item border-0 mb-3 shadow-sm" *ngFor="let item of faqItems.slice(0, 5)">
                                 <h2 class="accordion-header" [id]="'heading-' + item.id">
-                                    <button class="accordion-button shadow-none" type="button" 
-                                            [class.collapsed]="item.id !== 'panel-1'"
+                                    <button class="accordion-button shadow-none collapsed" type="button" 
                                             data-bs-toggle="collapse" 
                                             [attr.data-bs-target]="'#collapse-' + item.id" 
-                                            [attr.aria-expanded]="item.id === 'panel-1'"
+                                            [attr.aria-expanded]="false"
                                             [attr.aria-controls]="'collapse-' + item.id">
                                         <i class="mdi mdi-help-circle-outline text-primary me-2"></i>
                                         {{ item.title }}
@@ -28,7 +27,6 @@
                                 </h2>
                                 <div [id]="'collapse-' + item.id" 
                                      class="accordion-collapse collapse" 
-                                     [class.show]="item.id === 'panel-1'"
                                      [attr.aria-labelledby]="'heading-' + item.id" 
                                      data-bs-parent="#faqAccordion1">
                                     <div class="accordion-body">
@@ -44,13 +42,12 @@
                     <!-- Segunda columna -->
                     <div class="col-md-6">
                         <div class="accordion custom-accordion" id="faqAccordion2">
-                            <div class="accordion-item border-0 mb-3" *ngFor="let item of faqItems.slice(5, 10)">
+                            <div class="accordion-item border-0 mb-3 shadow-sm" *ngFor="let item of faqItems.slice(5, 10)">
                                 <h2 class="accordion-header" [id]="'heading-' + item.id">
-                                    <button class="accordion-button shadow-none" type="button" 
-                                            [class.collapsed]="item.id !== 'panel-6'"
+                                    <button class="accordion-button shadow-none collapsed" type="button" 
                                             data-bs-toggle="collapse" 
                                             [attr.data-bs-target]="'#collapse-' + item.id" 
-                                            [attr.aria-expanded]="item.id === 'panel-6'"
+                                            [attr.aria-expanded]="false"
                                             [attr.aria-controls]="'collapse-' + item.id">
                                         <i class="mdi mdi-help-circle-outline text-primary me-2"></i>
                                         {{ item.title }}
@@ -58,7 +55,6 @@
                                 </h2>
                                 <div [id]="'collapse-' + item.id" 
                                      class="accordion-collapse collapse" 
-                                     [class.show]="item.id === 'panel-6'"
                                      [attr.aria-labelledby]="'heading-' + item.id" 
                                      data-bs-parent="#faqAccordion2">
                                     <div class="accordion-body">

@@ -1,0 +1,163 @@
+<div class="row py-3 justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col text-center">
+            <h4 class="card-title" style="font-size: 1.5rem;">Nuevo Cliente</h4>
+            <span class="form-text text-muted" style="font-size: 1rem;">Agrega un nuevo cliente a tu cartera</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body pt-0">
+        <div class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+              <h4 class="mb-3">¿Cómo deseas agregar al cliente?</h4>
+              <p class="text-muted">Elige el método que mejor se adapte a tus necesidades</p>
+            </div>
+            
+            <div class="row g-4">
+              <!-- Opción QR -->
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm hover-card qr-card" (click)="toggleQRScanner()" style="cursor: pointer;">
+                  <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-3">
+                      <i class="fas fa-qrcode fa-3x text-white"></i>
+                    </div>
+                    <h5 class="card-title text-white">Escaneo de QR</h5>
+                    <p class="card-text text-white-50 small">
+                      Escanea el código QR de la constancia fiscal del cliente
+                    </p>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-light">
+                        Seleccionar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Opción Manual -->
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer;">
+                  <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-3">
+                      <i class="fas fa-keyboard fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Ingreso Manual</h5>
+                    <p class="card-text text-muted small">
+                      Ingresa los datos del cliente manualmente
+                    </p>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-primary">
+                        Seleccionar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sección del Scanner QR -->
+            <div *ngIf="showQRScanner" class="mt-4">
+              <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                  <h5 class="mb-3">Escanea el QR de la constancia fiscal</h5>
+                  <p class="text-muted mb-4">
+                    Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
+                  </p>
+                  <div class="d-flex justify-content-center align-items-center mb-4">
+                    <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
+                      style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
+                      (event)="extractValue(action.data)">
+                    </ngx-scanner-qrcode>
+                  </div>
+                  <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
+                    (click)="action.isStart ? action.stop() : action.start()">
+                    {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
+                  </button>
+                  <button type="button" class="btn btn-secondary w-100 rounded-pill px-4 py-2"
+                    (click)="toggleQRScanner()">
+                    Regresar
+                  </button>
+                  <div class="alert alert-info mt-4" *ngIf="!qrValue">
+                    <small>Esperando la captura del código QR...</small>
+                  </div>
+                  <div class="alert alert-success mt-4" *ngIf="qrValue">
+                    <small>QR capturado: {{ qrValue }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulario de datos del cliente -->
+            <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="mt-4">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <!-- Nombre Completo o Razón Social -->
+                  <div class="mb-3">
+                    <label for="nombreCompleto" class="form-label">
+                      {{ isPersonaMoral ? 'Razón Social' : 'Nombre Completo' }}
+                    </label>
+                    <input type="text" class="form-control" id="nombreCompleto" formControlName="nombreCompleto"
+                      [ngClass]="{'is-invalid': clientForm.get('nombreCompleto')?.touched && clientForm.get('nombreCompleto')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="clientForm.get('nombreCompleto')?.touched && clientForm.get('nombreCompleto')?.errors?.['required']">
+                      {{ isPersonaMoral ? 'Razón Social es requerida' : 'Nombre completo es requerido' }}
+                    </div>
+                  </div>
+
+                  <!-- RFC -->
+                  <div class="mb-3">
+                    <label for="rfc" class="form-label">RFC</label>
+                    <input type="text" class="form-control" id="rfc" formControlName="rfc"
+                      [ngClass]="{'is-invalid': clientForm.get('rfc')?.touched && clientForm.get('rfc')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="clientForm.get('rfc')?.touched && clientForm.get('rfc')?.errors?.['required']">
+                      RFC es requerido
+                    </div>
+                    <div class="invalid-feedback" *ngIf="clientForm.get('rfc')?.touched && clientForm.get('rfc')?.errors?.['pattern']">
+                      Formato de RFC inválido
+                    </div>
+                  </div>
+
+                  <!-- Código Postal -->
+                  <div class="mb-3">
+                    <label for="codigoPostal" class="form-label">Código Postal</label>
+                    <input type="text" class="form-control" id="codigoPostal" formControlName="codigoPostal"
+                      [ngClass]="{'is-invalid': clientForm.get('codigoPostal')?.touched && clientForm.get('codigoPostal')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="clientForm.get('codigoPostal')?.touched && clientForm.get('codigoPostal')?.errors?.['required']">
+                      Código postal es requerido
+                    </div>
+                    <div class="invalid-feedback" *ngIf="clientForm.get('codigoPostal')?.touched && clientForm.get('codigoPostal')?.errors?.['pattern']">
+                      Formato de código postal inválido
+                    </div>
+                  </div>
+
+                  <!-- Régimen Fiscal -->
+                  <div class="mb-3">
+                    <label for="regimenFiscal" class="form-label">Régimen Fiscal</label>
+                    <select class="form-select" id="regimenFiscal" formControlName="regimenFiscal"
+                      [ngClass]="{'is-invalid': clientForm.get('regimenFiscal')?.touched && clientForm.get('regimenFiscal')?.invalid}">
+                      <option value="">Selecciona un régimen fiscal</option>
+                      <!-- Aquí se agregarían las opciones de régimen fiscal -->
+                    </select>
+                    <div class="invalid-feedback" *ngIf="clientForm.get('regimenFiscal')?.touched && clientForm.get('regimenFiscal')?.errors?.['required']">
+                      Régimen fiscal es requerido
+                    </div>
+                  </div>
+
+                  <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-4" [disabled]="!clientForm.valid">
+                      Guardar Cliente
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

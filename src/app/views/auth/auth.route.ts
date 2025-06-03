@@ -3,7 +3,6 @@ import { LockScreenComponent } from './lock-screen/lock-screen.component'
 import { LoginComponent } from './login/login.component'
 import { RegisterComponent } from './register/register.component'
 import { RecoverPwComponent } from './recover-pw/recover-pw.component'
-import { RegisterClientComponent } from './register-client/register-client.component'
 import { LoginUserComponent } from './login-user/login-user.component'
 import { RegisterUserComponent } from './register-user/register-user.component'
 
@@ -37,10 +36,5 @@ export const AUTH_ROUTES: Route[] = [
     path: 'register-user',
     component: RegisterUserComponent,
     data: {title: 'Registro de Usuario'}
-  },
-  {
-    path: 'register-client',
-    component: RegisterClientComponent,
-    data: { title: 'Registro de Cliente' }
   }
 ]

@@ -2,14 +2,14 @@
 
 <div class="row justify-content-center">
   <div class="col-md-12">
-    <div class="card shadow-lg border-0 rounded-4">
+    <div class="card shadow-sm border-0 rounded-4">
       <!-- Header de la Tarjeta -->
       <div class="card-header bg-light mb-2">
         <div class="row align-items-center">
           <div class="d-flex justify-content-between pb-0 px-2 col">
             <input class="datatable-input p-1 rounded-3" (input)="searchName($event)" placeholder="Buscar factura..."
               type="text" name="search" title="Search within table" aria-controls="datatable_1" />
-            <button class="btn bg-white text-black" data-bs-toggle="modal" data-bs-target="#addUser">
+            <button class="btn bg-white text-black shadow-sm" data-bs-toggle="modal" data-bs-target="#addUser">
               <i class="fas fa-plus me-1"></i> Nueva Factura
             </button>
           </div>
@@ -27,7 +27,6 @@
             </label>
           </div>
           <!--end col-->
-
         </div>
         <!--end row-->
       </div>

@@ -7,10 +7,10 @@ export const MENU_ITEMS_GUEST: MenuItem[] = [
     isTitle: true,
   },
   {
-    key: 'issuance-principal',
+    key: 'principal',
     icon: 'iconoir-report-columns', // Inicio
     label: 'Nueva Factura',
-    url: 'issuance/principal',
+    url: 'principal',
   },
   {
     key: 'faq',

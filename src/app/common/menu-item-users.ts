@@ -13,6 +13,12 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     url: 'wallet',
   },
   {
+    key: 'new-client',
+    icon: 'iconoir-dollar-circle',
+    label: 'Nuevo Cliente',
+    url: 'new-client'
+  },
+  {
     key: 'ver-facturas',
     icon: 'las la-file-alt', // Facturas Emitidas
     label: 'Facturas Emitidas',

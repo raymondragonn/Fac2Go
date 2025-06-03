@@ -23,7 +23,125 @@ import { FacturacionService } from '@/app/core/service/facturacion.service';
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, NgbAlertModule, CommonModule, NgbNavModule, NgxScannerQrcodeComponent],
   templateUrl: './principal.component.html',
-  styles: ``,
+  styles: [`
+    .hover-card {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hover-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .hover-card:hover::before {
+      opacity: 1;
+    }
+
+    .qr-card, .manual-card {
+      position: relative;
+      background: linear-gradient(135deg, #2DC1A4, #25a08c);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .qr-card::after, .manual-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .qr-card::after {
+      background: linear-gradient(135deg, #2DC1A4, #25a08c);
+    }
+
+    .manual-card::after {
+      background: linear-gradient(135deg, #2DC1A4, #25a08c);
+    }
+
+    .qr-card:hover::after, .manual-card:hover::after {
+      opacity: 1;
+    }
+
+    .card {
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .card-body {
+      border-radius: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      border-radius: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-light {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: none;
+      color: #212529;
+    }
+
+    .btn-light:hover {
+      background-color: #ffffff;
+      transform: scale(1.05);
+      color: #212529;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .text-white-50 {
+      opacity: 0.8;
+    }
+
+    .card-title {
+      font-weight: 600;
+    }
+
+    .fa-3x {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .qr-card:hover .fa-3x {
+      transform: scale(1.1);
+      color: #2DC1A4;
+    }
+
+    .manual-card:hover .fa-3x {
+      transform: scale(1.1);
+      color: #2DC1A4;
+    }
+
+    .card-body {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-title, .card-text {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  `],
 })
 export class PrincipalComponent implements OnInit {
   @ViewChild('action', { static: false }) scanner!: NgxScannerQrcodeComponent;
@@ -171,6 +289,10 @@ export class PrincipalComponent implements OnInit {
         // Solo avanzar al siguiente paso si ambos QR han sido procesados
         if (this.firstQRProcessed && this.secondQRProcessed) {
           console.log('Ambos QR procesados. Avanzando al siguiente paso.');
+          // Detener el escáner cuando ambos QR han sido procesados
+          if (this.scanner && this.scanner.isStart) {
+            this.scanner.stop();
+          }
           this.currentStep = 3; // Avanzar al paso 3 automáticamente
         } else {
           console.log('Esperando a que ambos QR sean procesados.');
@@ -195,7 +317,20 @@ export class PrincipalComponent implements OnInit {
 
   selectQR(): void {
     this.useQR = true;
-    this.currentStep = 2; // Ir al paso de lectura de QR
+    this.currentStep = 2;
+    // Resetear el estado del QR
+    this.firstQRProcessed = false;
+    this.secondQRProcessed = false;
+    this.qrValue = null;
+  }
+
+  selectManual(): void {
+    this.useQR = false;
+    this.currentStep = 3;
+    // Resetear el estado del QR
+    this.firstQRProcessed = false;
+    this.secondQRProcessed = false;
+    this.qrValue = null;
   }
 
   scanQR(): void {
@@ -217,18 +352,34 @@ export class PrincipalComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.currentStep === 1 && this.useQR) {
-    } else if (this.currentStep === 1 && !this.useQR) {
-      this.currentStep = 3; // Saltar al paso 3
-    } else if (this.currentStep === 2 && this.useQR) {
-      this.currentStep = 4; // Continuar al paso 3 después de QR
+    if (this.currentStep === 1) {
+      if (this.useQR) {
+        this.currentStep = 2;
+      } else {
+        this.currentStep = 3;
+      }
     } else {
       this.currentStep++;
     }
   }
 
   prevStep(): void {
-    this.currentStep--;
+    if (this.currentStep === 2) {
+      this.currentStep = 1;
+      this.useQR = false;
+      // Resetear el estado del QR
+      this.firstQRProcessed = false;
+      this.secondQRProcessed = false;
+      this.qrValue = null;
+    } else if (this.currentStep === 3) {
+      if (this.useQR) {
+        this.currentStep = 2;
+      } else {
+        this.currentStep = 1;
+      }
+    } else {
+      this.currentStep--;
+    }
     this.submitted = false;
     this.showAlert = false;
   }
