@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthenticationService } from '@/app/core/service/auth.service';
 
 interface Client {
   id: string;
@@ -131,88 +132,105 @@ export class WalletComponent implements OnInit {
   sortBy: string = 'name';
   filterBy: string = 'all';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     this.loadClients();
   }
 
+
+
   loadClients(): void {
-    this.clients = [
-      {
-        id: '1',
-        name: 'Juan Pérez García',
-        rfc: 'XAXX010101000',
-        lastInvoice: new Date('2024-03-15'),
-        invoiceCount: 5
-      },
-      {
-        id: '2',
-        name: 'Empresa ABC, S.A. de C.V.',
-        rfc: 'XAXX020202000',
-        lastInvoice: new Date('2024-03-10'),
-        invoiceCount: 12
-      },
-      {
-        id: '3',
-        name: 'María Rodríguez López',
-        rfc: 'XAXX030303000',
-        lastInvoice: new Date('2024-03-18'),
-        invoiceCount: 3
-      },
-      {
+    this.authService.getClientes().subscribe(
+      (data: any) => {
+        this.clients = data.map((client: any) => ({
+          id: client.id_Cliente,
+          name: client.nombre_RazonSocial,
+          rfc: client.rfc,
+          lastInvoice: client.fecha_Registro
+          ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
+          : new Date(),
+          invoiceCount: 0
+        }))
+        this.filteredClients = [...this.clients];
+        console.log(this.clients);
+      }
+    )
+    // this.clients = [
+    //   {
+    //     id: '1',
+    //     name: 'Juan Pérez García',
+    //     rfc: 'XAXX010101000',
+    //     lastInvoice: new Date('2024-03-15'),
+    //     invoiceCount: 5
+    //   },
+    //   {
+    //     id: '2',
+    //     name: 'Empresa ABC, S.A. de C.V.',
+    //     rfc: 'XAXX020202000',
+    //     lastInvoice: new Date('2024-03-10'),
+    //     invoiceCount: 12
+    //   },
+    //   {
+    //     id: '3',
+    //     name: 'María Rodríguez López',
+    //     rfc: 'XAXX030303000',
+    //     lastInvoice: new Date('2024-03-18'),
+    //     invoiceCount: 3
+    //   },
+    //   {
 
         
-        id: '4',
-        name: 'Tecnologías XYZ, S.A.P.I. de C.V.',
-        rfc: 'XAXX040404000',
-        lastInvoice: new Date('2024-02-28'),
-        invoiceCount: 8
-      },
-      {
-        id: '5',
-        name: 'Carlos Martínez Sánchez',
-        rfc: 'XAXX050505000',
-        lastInvoice: new Date('2024-03-01'),
-        invoiceCount: 2
-      },
-      {
-        id: '6',
-        name: 'Servicios Profesionales del Norte, S.C.',
-        rfc: 'XAXX060606000',
-        lastInvoice: new Date('2024-03-20'),
-        invoiceCount: 15
-      },
-      {
-        id: '7',
-        name: 'Ana González Hernández',
-        rfc: 'XAXX070707000',
-        lastInvoice: new Date('2024-02-15'),
-        invoiceCount: 4
-      },
-      {
-        id: '8',
-        name: 'Consultores Asociados, S.A. de C.V.',
-        rfc: 'XAXX080808000',
-        lastInvoice: new Date('2024-03-05'),
-        invoiceCount: 10
-      },
-      {
-        id: '9',
-        name: 'Roberto Silva Mendoza',
-        rfc: 'XAXX090909000',
-        lastInvoice: new Date('2024-03-12'),
-        invoiceCount: 6
-      },
-      {
-        id: '10',
-        name: 'Distribuidora Comercial del Sur, S.A. de C.V.',
-        rfc: 'XAXX101010000',
-        lastInvoice: new Date('2024-03-17'),
-        invoiceCount: 9
-      }
-    ];
-    this.filteredClients = [...this.clients];
+    //     id: '4',
+    //     name: 'Tecnologías XYZ, S.A.P.I. de C.V.',
+    //     rfc: 'XAXX040404000',
+    //     lastInvoice: new Date('2024-02-28'),
+    //     invoiceCount: 8
+    //   },
+    //   {
+    //     id: '5',
+    //     name: 'Carlos Martínez Sánchez',
+    //     rfc: 'XAXX050505000',
+    //     lastInvoice: new Date('2024-03-01'),
+    //     invoiceCount: 2
+    //   },
+    //   {
+    //     id: '6',
+    //     name: 'Servicios Profesionales del Norte, S.C.',
+    //     rfc: 'XAXX060606000',
+    //     lastInvoice: new Date('2024-03-20'),
+    //     invoiceCount: 15
+    //   },
+    //   {
+    //     id: '7',
+    //     name: 'Ana González Hernández',
+    //     rfc: 'XAXX070707000',
+    //     lastInvoice: new Date('2024-02-15'),
+    //     invoiceCount: 4
+    //   },
+    //   {
+    //     id: '8',
+    //     name: 'Consultores Asociados, S.A. de C.V.',
+    //     rfc: 'XAXX080808000',
+    //     lastInvoice: new Date('2024-03-05'),
+    //     invoiceCount: 10
+    //   },
+    //   {
+    //     id: '9',
+    //     name: 'Roberto Silva Mendoza',
+    //     rfc: 'XAXX090909000',
+    //     lastInvoice: new Date('2024-03-12'),
+    //     invoiceCount: 6
+    //   },
+    //   {
+    //     id: '10',
+    //     name: 'Distribuidora Comercial del Sur, S.A. de C.V.',
+    //     rfc: 'XAXX101010000',
+    //     lastInvoice: new Date('2024-03-17'),
+    //     invoiceCount: 9
+    //   }
+    // ];
+    
   }
 
   filterClients(): void {

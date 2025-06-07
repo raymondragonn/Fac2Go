@@ -30,6 +30,10 @@ export class AuthenticationService {
     )
   }
 
+  getClientes() {
+    return this.http.get(`${API_URL}/clientes`);
+  }
+
   register(usuario: any) {
     return this.http.post(`${API_URL}/usuarios/register`, usuario);
   }
