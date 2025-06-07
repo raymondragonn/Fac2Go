@@ -34,12 +34,14 @@ export class AuthenticationService {
     return this.http.get(`${API_URL}/clientes`);
   }
 
+  newCliente(cliente: any) {
+    return this.http.post(`${API_URL}/clientes`, cliente);
+  }
+
   register(usuario: any) {
     return this.http.post(`${API_URL}/usuarios/register`, usuario);
   }
-
-
-
+  
   logout(): void {
     // remove user from cookie to log user out
     this.removeSession()

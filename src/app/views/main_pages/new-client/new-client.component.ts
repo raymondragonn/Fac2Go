@@ -5,6 +5,7 @@ import { NgxScannerQrcodeComponent, ScannerQRCodeResult } from 'ngx-scanner-qrco
 import { BehaviorSubject } from 'rxjs';
 import { ScannerQRService } from '@/app/services/scanner-qr.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from '@/app/core/service/auth.service';
 
 @Component({
   selector: 'app-new-client',
@@ -94,6 +95,9 @@ import { ToastrService } from 'ngx-toastr';
     }
   `]
 })
+
+
+
 export class NewClientComponent implements OnInit {
   @ViewChild('action', { static: false }) scanner!: NgxScannerQrcodeComponent;
   
@@ -101,11 +105,12 @@ export class NewClientComponent implements OnInit {
   showQRScanner: boolean = false;
   qrValue: string | null = null;
   isPersonaMoral: boolean = false;
-
+  
   constructor(
     private formBuilder: UntypedFormBuilder,
     private qrService: ScannerQRService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -115,10 +120,37 @@ export class NewClientComponent implements OnInit {
   initForm() {
     this.clientForm = this.formBuilder.group({
       nombreCompleto: ['', [Validators.required]],
-      rfc: ['', [Validators.required, Validators.pattern(/^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$/)]],
+      rfc: ['', [Validators.required]],
       codigoPostal: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
       regimenFiscal: ['', [Validators.required]]
     });
+  }
+  registroCliente(){
+  
+    if(this.clientForm.valid){
+
+   
+
+      console.log(this.clientForm.value);
+      let cliente = {
+        nombre_RazonSocial: this.clientForm.value.nombreCompleto,
+        rfc: this.clientForm.value.rfc,
+        codigo_Postal: this.clientForm.value.codigoPostal,
+        regimenFiscal: this.clientForm.value.regimenFiscal
+      }
+
+      this.authService.newCliente(cliente).subscribe(
+        (response:any) => {
+          if (response.status === 'success') {
+            this.toastr.success(`${response.message}. Cliente: ${response.cliente.correo || ''}`, 'Exito');
+            this.clientForm.reset();
+          } else {
+            this.toastr.error(response.message, 'Error');
+          } 
+        }
+      )
+
+    }
   }
 
   toggleQRScanner() {
