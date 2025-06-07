@@ -24,6 +24,11 @@ export type User = {
   title?: string
   correo?: string 
   contraseña?: string
+  nombre?: string
+  rfc?: string
+  codigo_Postal?: string
+  regimen_Fiscal?: string
+  message?: string
 }
 
 type MyRequestBody = {

@@ -55,6 +55,7 @@ export class ConfirmRegisterClientComponent {
   onSubmit() {
     this.submitted = true
     if(this.signupForm.valid){
+      
       let usuario = {
         nombre: this.signupForm.value.name,
         correo: this.signupForm.value.email,

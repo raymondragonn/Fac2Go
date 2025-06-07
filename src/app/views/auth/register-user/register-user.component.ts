@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr'
 import { NgxScannerQrcodeComponent, LOAD_WASM, ScannerQRCodeResult } from 'ngx-scanner-qrcode'
 import { BehaviorSubject } from 'rxjs'
 import { ScannerQRService } from '@/app/services/scanner-qr.service'
+import { AuthenticationService } from '@/app/core/service/auth.service'
 
 @Component({
   selector: 'app-register-user',
@@ -34,6 +35,10 @@ export class RegisterUserComponent implements OnInit {
   showQRScanner: boolean = false
   isPersonaMoral: boolean = false
   qrValue: string | null = null
+
+  constructor(private authService: AuthenticationService) {
+
+  }
 
   regimenesFiscales = [
     { value: '601', label: 'General de Ley Personas Morales' },
@@ -59,6 +64,7 @@ export class RegisterUserComponent implements OnInit {
   public router = inject(Router)
   public toastr = inject(ToastrService)
   private qrService = inject(ScannerQRService)
+  
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
@@ -74,6 +80,35 @@ export class RegisterUserComponent implements OnInit {
     }, {
       validator: this.mustMatch('password', 'confirmpwd')
     })
+  }
+
+  registerUser(){
+    if (this.signupForm.valid){
+      let usuario = {
+        nombre: this.signupForm.value.name,
+        correo: this.signupForm.value.email,
+        contraseña: this.signupForm.value.password,
+        rfc: this.signupForm.value.rfc,
+        codigo_Postal: this.signupForm.value.codigoPostal,
+        regimen_Fiscal: this.signupForm.value.regimenFiscal
+      }
+      this.authService.register(usuario).subscribe( 
+        (response: any) => {
+          console.log('Registro exitoso:', response);
+          if(response.message === 'Usuario registrado exitosamente'){
+            this.toastr.success('Usuario registrado exitosamente, redirigiendo al login...', '¡Éxito!');
+              setTimeout(() => {
+                this.router.navigate(['auth/login-user']);
+              }, 2000);
+          }else{
+            this.toastr.error('Error al registrar el usuario:')
+          }
+        }
+      )
+
+
+      console.log('Usuario a registrar:', usuario);
+    }
   }
 
   get form() {
@@ -94,6 +129,8 @@ export class RegisterUserComponent implements OnInit {
       }
     }
   }
+
+  
 
   changetype() {
     this.fieldTextType = !this.fieldTextType

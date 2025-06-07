@@ -30,12 +30,8 @@ export class AuthenticationService {
     )
   }
 
-  register(usuario : any){
-    return this.http.post<User>(`${API_URL}/usuarios/register`, {usuario}).pipe(
-      map((user) => {
-        return user
-      })
-    )
+  register(usuario: any) {
+    return this.http.post(`${API_URL}/usuarios/register`, usuario);
   }
 
 
