@@ -137,7 +137,7 @@ export class WalletComponent implements OnInit {
   clients: Client[] = [];
   filteredClients: Client[] = [];
   searchTerm: string = '';
-  sortBy: string = 'name';
+  sortBy: string = 'recentlyAdded';
   filterBy: string = 'all';
 
   constructor(private router: Router, private authService: AuthenticationService) {}
@@ -170,17 +170,21 @@ export class WalletComponent implements OnInit {
       (data: any) => {
         this.clients = data.map((client: any) => {
           const tipoCliente = client.rfc.length === 12 ? 'Persona Moral' : 'Persona Física';
+          const fechaRegistro = client.fecha_Registro
+            ? new Date(
+                client.fecha_Registro[0],
+                client.fecha_Registro[1] - 1,
+                client.fecha_Registro[2],
+                0, 0, 0
+              )
+            : new Date();
           return {
             id: client.id_Cliente,
             name: client.nombre_RazonSocial,
             rfc: client.rfc,
-            lastInvoice: client.fecha_Registro
-              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
-              : new Date(),
+            lastInvoice: fechaRegistro,
             invoiceCount: 0,
-            fechaRegistro: client.fecha_Registro
-              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
-              : new Date(),
+            fechaRegistro: fechaRegistro,
             tipoCliente: tipoCliente,
             iniciales: this.getInitials(client.nombre_RazonSocial, tipoCliente)
           };

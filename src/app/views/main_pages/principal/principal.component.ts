@@ -154,6 +154,7 @@ export class PrincipalComponent implements OnInit {
   firstQRProcessed: boolean = false; // Bandera para el primer QR
   secondQRProcessed: boolean = false; // Bandera para el segundo QR
   isPersonaMoral: boolean = false;
+  isProcessingQR: boolean = false; // Nueva bandera para controlar el procesamiento
 
   qrValue: string | null = null;
 
@@ -207,19 +208,25 @@ export class PrincipalComponent implements OnInit {
   }
 
   extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
+    if (this.isProcessingQR) return; // Si ya está procesando, no hacer nada
+
     data.subscribe((results) => {
       const qrResult = results.find((result) => result.value);
       this.qrValue = qrResult ? qrResult.value : null;
 
       if (this.qrValue) {
+        this.isProcessingQR = true; // Marcar que estamos procesando
+        this.scanner.stop(); // Detener el escáner
+
         // Verificar si el QR contiene un RFC (último guion bajo "_")
         const rfcMatch = this.qrValue.match(/_(\w+)$/);
         const rfc = rfcMatch ? rfcMatch[1] : null;
 
-        if (rfc) {
+        if (rfc && !this.firstQRProcessed) {
+          console.log('QR de Constancia Fiscal detectado');
           console.log('RFC extraído:', rfc);
           this.facturacionForm.patchValue({ rfc });
-          this.firstQRProcessed = true; // Marcar el primer QR como procesado
+          this.firstQRProcessed = true;
 
           // Determinar si es persona moral (RFC de 12 caracteres)
           this.isPersonaMoral = rfc.length === 12;
@@ -235,10 +242,8 @@ export class PrincipalComponent implements OnInit {
               let nombreCompleto = '';
 
               if (this.isPersonaMoral) {
-                // Si es persona moral, usar "Denominación o Razón Social"
                 nombreCompleto = res['Denominación o Razón Social'] || 'Razón Social no disponible';
               } else {
-                // Si es persona física, concatenar nombre y apellidos
                 nombreCompleto = `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`;
               }
 
@@ -246,19 +251,22 @@ export class PrincipalComponent implements OnInit {
                 nombreCompleto,
                 Codigo_Postal: res['CP'],
                 email: res['Correo electrónico'],
-                regimenFiscal: regimenFiscalCode, // Asignar el código al formulario
+                regimenFiscal: regimenFiscalCode,
+                usoCfdi: 'G03'
               });
 
-              console.log('Nombre completo o Razón Social asignado:', nombreCompleto);
-              console.log('Régimen fiscal seleccionado:', regimenFiscalLabel);
+              console.log('Datos fiscales obtenidos correctamente');
+              console.log('Por favor, escanee ahora el QR del ticket de compra');
+              this.isProcessingQR = false; // Resetear la bandera
             },
             (error) => {
               console.error('Error al obtener datos del SAT:', error);
+              this.isProcessingQR = false; // Resetear la bandera en caso de error
             }
           );
         }
 
-        // Verificar si el QR contiene un enlace con token y fecha
+        // Verificar si el QR contiene datos del ticket de compra
         const tokenMatch = this.qrValue.match(/token=([^&]+)/);
         const fechaMatch = this.qrValue.match(/fecha=([^&]+)/);
         const tipoMatch = this.qrValue.match(/tipo=([^&]+)/);
@@ -266,36 +274,29 @@ export class PrincipalComponent implements OnInit {
         const fecha = fechaMatch ? fechaMatch[1] : null;
         const tipo = tipoMatch ? tipoMatch[1] : null;
 
-        if (token && fecha) {
+        if (token && fecha && !this.secondQRProcessed) {
+          console.log('QR de Ticket de Compra detectado');
           console.log('Token extraído:', token);
           console.log('Fecha extraída:', fecha);
           console.log('Tipo extraído:', tipo);
 
-          // Buscar el label correspondiente al tipo en el arreglo servicios
           const servicioSeleccionado = this.servicios.find(servicio => servicio.value === tipo);
           const servicioLabel = servicioSeleccionado ? servicioSeleccionado.label : 'Tipo no válido';
-
-          console.log('Servicio seleccionado:', servicioLabel);
 
           this.facturacionForm.patchValue({
             token,
             fechaHora: fecha,
-            servicio: tipo // Asignar el value al formulario
+            servicio: tipo
           });
 
-          this.secondQRProcessed = true; // Marcar el segundo QR como procesado
+          this.secondQRProcessed = true;
+          this.isProcessingQR = false; // Resetear la bandera
         }
 
-        // Solo avanzar al siguiente paso si ambos QR han sido procesados
+        // Avanzar al siguiente paso cuando ambos QR han sido procesados
         if (this.firstQRProcessed && this.secondQRProcessed) {
-          console.log('Ambos QR procesados. Avanzando al siguiente paso.');
-          // Detener el escáner cuando ambos QR han sido procesados
-          if (this.scanner && this.scanner.isStart) {
-            this.scanner.stop();
-          }
-          this.currentStep = 3; // Avanzar al paso 3 automáticamente
-        } else {
-          console.log('Esperando a que ambos QR sean procesados.');
+          console.log('Ambos QR procesados correctamente');
+          this.currentStep = 3;
         }
       }
     });
@@ -367,13 +368,11 @@ export class PrincipalComponent implements OnInit {
     if (this.currentStep === 2) {
       this.currentStep = 1;
       this.useQR = false;
-      // Resetear el estado del QR
-      this.firstQRProcessed = false;
-      this.secondQRProcessed = false;
-      this.qrValue = null;
+      this.resetQRState();
     } else if (this.currentStep === 3) {
       if (this.useQR) {
         this.currentStep = 2;
+        this.resetQRState();
       } else {
         this.currentStep = 1;
       }
@@ -382,6 +381,25 @@ export class PrincipalComponent implements OnInit {
     }
     this.submitted = false;
     this.showAlert = false;
+  }
+
+  // Nuevo método para reiniciar el estado de los QR
+  private resetQRState(): void {
+    this.firstQRProcessed = false;
+    this.secondQRProcessed = false;
+    this.qrValue = null;
+    this.isProcessingQR = false; // Resetear la bandera
+    // Reiniciar los campos del formulario relacionados con los QR
+    this.facturacionForm.patchValue({
+      rfc: '',
+      nombreCompleto: '',
+      Codigo_Postal: '',
+      email: '',
+      regimenFiscal: '',
+      token: '',
+      fechaHora: '',
+      servicio: ''
+    });
   }
   
   private form: any = {
