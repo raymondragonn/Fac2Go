@@ -50,6 +50,14 @@ export class AuthenticationService {
     )
   }
 
+  getFacturas(){
+    return this.http.get(`${API_URL}/factu`)
+  }
+
+  // getClientes() {
+  //   return this.http.get(`${API_URL}/clientes`);
+  // }
+
   loginUser(correo: string, contraseña: string) {
     return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
       map((user: any) => {

@@ -156,7 +156,35 @@ export class TransactionComponent implements OnInit {
   constructor(private router: Router, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
-    this.loadInvoices()
+    // this.loadInvoices()
+    this.loadInvoices2()
+  }
+
+  loadInvoices2(){
+    this.authService.getFacturas().subscribe(
+  (data: any) => {
+    console.log(data);
+    this.invoiceData = data.map((item: any, idx: number) => ({
+      date: item.Fecha_Emision
+        ? `${item.Fecha_Emision[0]}-${String(item.Fecha_Emision[1]).padStart(2, '0')}-${String(item.Fecha_Emision[2]).padStart(2, '0')}`
+        : '',
+      serie: item.Num_Serie || 'A',
+      folio: item.Folio || `FAC-${String(idx + 1).padStart(3, '0')}`,
+      uuid: item.UUID || item.id_Cliente || '',
+      cliente: item.Nombre_RazonSocial || '',
+      medioPago: 'Transferencia',
+      importe: Number(item.SubTotal) || 0,
+      iva: Number(item.IVA) || 0,
+      total: Number(item.total) || 0,
+      status: 'pagada'
+    }));
+
+    this.filteredData = [...this.invoiceData];
+    this.totalItems = this.invoiceData.length;
+    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  }
+);
+
   }
 
   loadInvoices(): void {
