@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthenticationService } from '@/app/core/service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 interface Client {
   id: string;
@@ -140,7 +141,7 @@ export class WalletComponent implements OnInit {
   sortBy: string = 'recentlyAdded';
   filterBy: string = 'all';
 
-  constructor(private router: Router, private authService: AuthenticationService) {}
+  constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.loadClients();
@@ -250,5 +251,19 @@ export class WalletComponent implements OnInit {
 
   redirectionToNewClient(): void {
     this.router.navigate(['/new-client']);
+  }
+
+  deleteClient(client: Client): void {
+    if (confirm(`¿Está seguro que desea eliminar al cliente ${client.name}?`)) {
+      this.authService.deleteCliente(client.id).subscribe(
+        () => {
+          this.toastr.success('Cliente eliminado exitosamente', 'Éxito');
+          this.loadClients();
+        },
+        (error) => {
+          this.toastr.error('Error al eliminar el cliente', 'Error');
+        }
+      );
+    }
   }
 }

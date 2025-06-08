@@ -82,32 +82,44 @@ export class RegisterUserComponent implements OnInit {
     })
   }
 
-  registerUser(){
-    if (this.signupForm.valid){
-      let usuario = {
+  registerUser() {
+    this.submitted = true;
+    if (this.signupForm.valid) {
+      const userData = {
         nombre: this.signupForm.value.name,
         correo: this.signupForm.value.email,
         contraseña: this.signupForm.value.password,
         rfc: this.signupForm.value.rfc,
         codigo_Postal: this.signupForm.value.codigoPostal,
-        regimen_Fiscal: this.signupForm.value.regimenFiscal
-      }
-      this.authService.register(usuario).subscribe( 
+        regimen_Fiscal: this.signupForm.value.regimenFiscal,
+        rol: 'user' // Establecer rol como user
+      };
+
+      this.authService.registerUser(userData).subscribe(
         (response: any) => {
           console.log('Registro exitoso:', response);
           if(response.message === 'Usuario registrado exitosamente'){
             this.toastr.success('Usuario registrado exitosamente, redirigiendo al login...', '¡Éxito!');
-              setTimeout(() => {
-                this.router.navigate(['auth/login-user']);
-              }, 2000);
-          }else{
-            this.toastr.error('Error al registrar el usuario:')
+            setTimeout(() => {
+              this.router.navigate(['auth/login-user']);
+            }, 2000);
+          } else {
+            this.toastr.error('Error al registrar el usuario');
           }
+        },
+        (error) => {
+          console.error('Error en el registro:', error);
+          this.toastr.error('Error al registrar el usuario');
         }
-      )
-
-
-      console.log('Usuario a registrar:', usuario);
+      );
+    } else {
+      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación');
+      Object.keys(this.signupForm.controls).forEach(key => {
+        const control = this.signupForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
     }
   }
 

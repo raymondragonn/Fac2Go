@@ -52,32 +52,27 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    // Acceso directo temporal
-    // localStorage.setItem('currentUser', JSON.stringify({ usuario: 'admin@temporal.com', token: 'temp-token' }));
-    // this.userService.setUserType('admin');
-    // this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
-    // this.router.navigate(['/dashboard']);
-
     this.submitted = true;
     if (this.signInForm.valid) {
       const email = this.formValues['email'].value;
       const password = this.formValues['password'].value;
-      this.authService.login(email, password).subscribe({
-        next: (res) => {
-          console.log(res);
-          const { token, usuario } = res as { token: string; usuario: string };
-          localStorage.setItem('currentUser', JSON.stringify({ usuario, token }));
-
-          // Establece el userType como 'admin'
-          this.userService.setUserType('admin');
-
-          this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
-          this.router.navigate(['/dashboard']);
+      this.authService.loginAdmin(email, password).subscribe({
+        next: (res: any) => {
+          console.log('Respuesta del login:', res);
+          if (res.status === 'success' && res.token) {
+            // El token ya se guarda en el servicio de autenticación
+            this.userService.setUserType('admin');
+            this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
+            this.router.navigate(['/transactions']);
+          } else {
+            this.showAlert = true;
+            this.toastr.error(res.message || 'Error en el inicio de sesión', 'Error de autenticación');
+          }
         },
         error: (error) => {
-          console.log(error);
+          console.error('Error en el login:', error);
           this.showAlert = true;
-          this.toastr.error('Credenciales inválidas', 'Error de autenticación');
+          this.toastr.error(error.error?.message || 'Credenciales inválidas', 'Error de autenticación');
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
