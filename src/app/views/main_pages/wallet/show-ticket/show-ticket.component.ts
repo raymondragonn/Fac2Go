@@ -127,6 +127,7 @@ export class ShowTicketComponent implements OnInit {
   selectedMethod: 'qr' | 'manual' | null = null;
   ticketForm!: UntypedFormGroup;
   confirmacionAceptada: boolean = false;
+  isProcessingQR: boolean = false;
 
   constructor(
     public router: Router,
@@ -170,6 +171,7 @@ export class ShowTicketComponent implements OnInit {
       this.selectedMethod = null;
       this.qrValue = null;
       this.ticketForm.reset();
+      this.isProcessingQR = false;
     } else {
       this.router.navigate(['/wallet']);
     }
@@ -224,12 +226,16 @@ export class ShowTicketComponent implements OnInit {
   }
 
   extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
+    if (this.isProcessingQR) return;
+
     data.subscribe((results) => {
       const qrResult = results.find((result) => result.value);
       this.qrValue = qrResult ? qrResult.value : null;
 
       if (this.qrValue && this.clienteSeleccionado) {
-        // Verificar si el QR contiene un token y fecha
+        this.isProcessingQR = true;
+        this.scanner.stop();
+
         const tokenMatch = this.qrValue.match(/token=([^&]+)/);
         const fechaMatch = this.qrValue.match(/fecha=([^&]+)/);
         const tipoMatch = this.qrValue.match(/tipo=([^&]+)/);
@@ -239,22 +245,23 @@ export class ShowTicketComponent implements OnInit {
           const fecha = fechaMatch[1];
           const tipo = tipoMatch[1];
 
-          // Convertir la fecha al formato datetime-local
           const fechaObj = new Date(fecha);
           const fechaFormateada = fechaObj.toISOString().slice(0, 16);
 
           console.log('Fecha original:', fecha);
           console.log('Fecha formateada:', fechaFormateada);
 
-          // Llenar el formulario manual con los datos extraídos
           this.ticketForm.patchValue({
             token: token,
             fecha: fechaFormateada,
             tipo: tipo
           });
 
-          // Cambiar al método manual para mostrar el formulario lleno
           this.selectedMethod = 'manual';
+          this.isProcessingQR = false;
+        } else {
+          console.log('Formato de QR no válido');
+          this.isProcessingQR = false;
         }
       }
     });

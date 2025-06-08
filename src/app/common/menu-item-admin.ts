@@ -6,30 +6,12 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
     label: 'General',
     isTitle: true,
   },
-  {
-    key: 'dashboard',
-    icon: 'iconoir-dashboard', // Panel de Control
-    label: 'Panel de Control',
-    url: 'dashboard',
-  },
-  {
-    key: 'calendario',
-    icon: 'iconoir-calendar', // Calendario
-    label: 'Calendario',
-    url: '/apps/calendar',
-  },
-  {
-    key: 'registro-pagos',
-    icon: 'las la-file-invoice-dollar', // Nueva Factura
-    label: 'Nueva Factura',
-    url: 'payment',
-  },
-  {
-    key: 'ver-facturas-pendientes',
-    icon: 'iconoir-task-list', // Facturas Pendientes
-    label: 'Facturas Pendientes',
-    url: 'pending-invoice',
-  },
+  // {
+  //   key: 'dashboard',
+  //   icon: 'iconoir-dashboard', // Panel de Control
+  //   label: 'Panel de Control',
+  //   url: 'dashboard',
+  // },
   {
     key: 'ver-facturas',
     icon: 'las la-file-alt', // Facturas Emitidas
@@ -37,27 +19,45 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
     url: 'transactions',
   },
   {
+    key: 'calendario',
+    icon: 'iconoir-calendar', // Calendario
+    label: 'Calendario',
+    url: '/apps/calendar',
+  },
+  // {
+  //   key: 'registro-pagos',
+  //   icon: 'las la-file-invoice-dollar', // Nueva Factura
+  //   label: 'Nueva Factura',
+  //   url: 'payment',
+  // },
+  // {
+  //   key: 'ver-facturas-pendientes',
+  //   icon: 'iconoir-task-list', // Facturas Pendientes
+  //   label: 'Facturas Pendientes',
+  //   url: 'pending-invoice',
+  // },
+  {
     key: 'admin',
     label: 'Ajustes',
     isTitle: true,
   },
+  // {
+  //   key: 'taxes',
+  //   icon: 'las la-percentage', // Impuestos
+  //   label: 'Impuestos',
+  //   url: 'taxes',
+  // },
   {
-    key: 'taxes',
-    icon: 'las la-percentage', // Impuestos
-    label: 'Impuestos',
-    url: 'taxes',
+    key: 'users',
+    icon: 'las la-users', // Usuarios
+    label: 'Usuarios',
+    url: 'users',
   },
   {
     key: 'clientes',
     icon: 'iconoir-user-circle', // Clientes
     label: 'Clientes',
     url: 'clients',
-  },
-  {
-    key: 'users',
-    icon: 'las la-users', // Usuarios
-    label: 'Usuarios',
-    url: 'users',
   },
 //   {
 //     key: 'componentes',

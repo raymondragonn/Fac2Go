@@ -101,29 +101,70 @@
                                   <div class="col-10 col-md-8 col-lg-6">
                                       <div class="card shadow-lg border-0">
                                           <div class="card-body text-center">
-                                              <h5 class="mb-3">Escanea el QR de tu constancia fiscal y de tu ticket de compra</h5>
-                                              <p class="text-muted mb-4">
-                                                  Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
-                                              </p>
+                                              <h5 class="mb-3">Escaneo de Códigos QR</h5>
+                                              
+                                              <!-- Instrucciones generales -->
+                                              <div class="alert alert-primary mb-4">
+                                                  <h6 class="alert-heading">Instrucciones</h6>
+                                                  <p class="mb-0">Debe escanear dos códigos QR:</p>
+                                                  <ul class="text-start mb-0">
+                                                      <li>QR de la Constancia Fiscal del receptor</li>
+                                                      <li>QR del Ticket de Compra</li>
+                                                  </ul>
+                                                  <p class="mb-0 mt-2"><small>Puede escanearlos en cualquier orden</small></p>
+                                              </div>
+
+                                              <!-- Estado de los QR -->
+                                              <div class="row mb-4">
+                                                  <div class="col-6">
+                                                      <div class="card" [ngClass]="{'bg-success text-white': firstQRProcessed, 'bg-light': !firstQRProcessed}">
+                                                          <div class="card-body">
+                                                              <i class="fas" [ngClass]="firstQRProcessed ? 'fa-check-circle' : 'fa-qrcode'"></i>
+                                                              <p class="mb-0">Constancia Fiscal</p>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <div class="col-6">
+                                                      <div class="card" [ngClass]="{'bg-success text-white': secondQRProcessed, 'bg-light': !secondQRProcessed}">
+                                                          <div class="card-body">
+                                                              <i class="fas" [ngClass]="secondQRProcessed ? 'fa-check-circle' : 'fa-ticket-alt'"></i>
+                                                              <p class="mb-0">Ticket de Compra</p>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+
                                               <div class="d-flex justify-content-center align-items-center mb-4">
                                                   <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
                                                       style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
                                                       (event)="extractValue(action.data)">
                                                   </ngx-scanner-qrcode>
                                               </div>
+
                                               <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
                                                   (click)="action.isStart ? action.stop() : action.start()">
                                                   {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
                                               </button>
+
                                               <button type="button" class="btn btn-secondary w-100 rounded-pill px-4 py-2"
                                                   (click)="currentStep = 1">
                                                   Regresar
                                               </button>
-                                              <div class="alert alert-info mt-4" *ngIf="!qrValue">
-                                                  <small>Esperando la captura del código QR...</small>
-                                              </div>
-                                              <div class="alert alert-success mt-4" *ngIf="qrValue">
-                                                  <small>QR capturado: {{ qrValue }}</small>
+
+                                              <!-- Estado del escaneo -->
+                                              <div class="mt-4">
+                                                  <div class="alert alert-success" *ngIf="firstQRProcessed && !secondQRProcessed">
+                                                      <i class="fas fa-check-circle me-2"></i>
+                                                      Un QR escaneado correctamente. Falta escanear el otro.
+                                                  </div>
+                                                  <div class="alert alert-success" *ngIf="secondQRProcessed && !firstQRProcessed">
+                                                      <i class="fas fa-check-circle me-2"></i>
+                                                      Un QR escaneado correctamente. Falta escanear el otro.
+                                                  </div>
+                                                  <div class="alert alert-success" *ngIf="firstQRProcessed && secondQRProcessed">
+                                                      <i class="fas fa-check-circle me-2"></i>
+                                                      Ambos QR escaneados correctamente
+                                                  </div>
                                               </div>
                                           </div>
                                       </div>

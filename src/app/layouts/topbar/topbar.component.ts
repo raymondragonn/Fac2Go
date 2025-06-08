@@ -1,14 +1,17 @@
 import { changetheme } from '@/app/store/layout/layout-action'
 import { getLayoutColor } from '@/app/store/layout/layout-selector'
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core'
+import { Component, EventEmitter, Output, inject, OnInit, OnDestroy } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap'
 import { Store } from '@ngrx/store'
 import { SimplebarAngularModule } from 'simplebar-angular'
 import { TabItems } from './data'
 import { CommonModule } from '@angular/common'
-import { Router } from '@angular/router'; // Importa el Router
-import { UserService } from '@/app/services/user.service'; // Importa el servicio
+import { Router } from '@angular/router'
+import { UserService } from '@/app/services/user.service'
+import { Subscription } from 'rxjs'
+import { AuthenticationService } from '@/app/core/service/auth.service'
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-topbar',
@@ -39,27 +42,74 @@ import { UserService } from '@/app/services/user.service'; // Importa el servici
     }
   `,
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   tabItems = TabItems
   store = inject(Store)
   scrollY = 0
   
   @Output() mobileMenuButtonClicked = new EventEmitter()
 
-  userType: string = '';
-  userEmail: string = 'prueba@ejemplo.com';
+  userType: string = 'guest';
+  userName: string = '';
+  userEmail: string = '';
+  private userTypeSubscription: Subscription = new Subscription();
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(
+    private router: Router, 
+    private userService: UserService,
+    private authService: AuthenticationService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
+    // Inicializar el tipo de usuario desde el servicio
+    this.userType = this.userService.getUserType();
+    
     // Suscribirse al estado del userType
-    this.userService.userType$.subscribe((type) => {
+    this.userTypeSubscription = this.userService.userType$.subscribe((type) => {
       this.userType = type;
+      this.loadUserData();
     });
-    const currentUser = localStorage.getItem('currentUser');
-    this.userEmail = currentUser ? JSON.parse(currentUser).usuario : '';
-    
-    
+
+    // Cargar datos iniciales del usuario
+    this.loadUserData();
+  }
+
+  private loadUserData(): void {
+    if (this.userType === 'admin') {
+      this.authService.getCurrentAdmin().subscribe({
+        next: (res: any) => {
+          this.userName = res.nombre || '';
+          this.userEmail = res.correo || '';
+        },
+        error: (error) => {
+          console.error('Error al obtener datos del administrador:', error);
+          this.userName = '';
+          this.userEmail = '';
+        }
+      });
+    } else if (this.userType === 'user') {
+      this.authService.getCurrentUser().subscribe({
+        next: (res: any) => {
+          this.userName = res.nombre || '';
+          this.userEmail = res.correo || '';
+        },
+        error: (error) => {
+          console.error('Error al obtener datos del usuario:', error);
+          this.userName = '';
+          this.userEmail = '';
+        }
+      });
+    } else {
+      this.userName = '';
+      this.userEmail = '';
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.userTypeSubscription) {
+      this.userTypeSubscription.unsubscribe();
+    }
   }
 
   toggleMobileMenu() {
@@ -69,22 +119,31 @@ export class TopbarComponent implements OnInit {
   getDisplayName(): string {
     if (this.userType === 'guest') {
       return 'Invitado';
-    } else if (this.userType === 'user' || this.userType === 'admin') {
-      return this.userEmail;
     }
-    return 'Usuario';
+    return this.userName || '';
   }
 
   logout() {
+    // Limpiar la sesión en el servicio de autenticación
+    this.authService.logout();
+    
     // Cambiar el tipo de usuario a "guest"
     this.userService.setUserType('guest');
+    this.userName = '';
+    this.userEmail = '';
 
-    // Limpiar datos relevantes del localStorage
-    localStorage.removeItem('userEmail');
+    // Mostrar mensaje de éxito con un estilo más descriptivo
+    this.toastr.success(
+      'Has cerrado tu sesión correctamente. ¡Gracias por usar Fac2Go!',
+      'Sesión finalizada',
+      {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        progressBar: true
+      }
+    );
 
-    // Recargar el componente navegando a la misma ruta
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([this.router.url]);
-    });
+    // Redirigir al usuario a la página de inicio
+    this.router.navigate(['/']);
   }
 }

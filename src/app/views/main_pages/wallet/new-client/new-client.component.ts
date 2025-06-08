@@ -104,6 +104,7 @@ export class NewClientComponent implements OnInit {
   selectedMethod: 'qr' | 'manual' | null = null;
   qrValue: string | null = null;
   isPersonaMoral: boolean = false;
+  isProcessingQR: boolean = false;
   
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -137,6 +138,7 @@ export class NewClientComponent implements OnInit {
       this.selectedMethod = null;
       this.qrValue = null;
       this.clientForm.reset();
+      this.isProcessingQR = false;
     }
   }
 
@@ -171,45 +173,83 @@ export class NewClientComponent implements OnInit {
   }
 
   extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
+    if (this.isProcessingQR) return;
+
     data.subscribe((results) => {
       const qrResult = results.find((result) => result.value);
       this.qrValue = qrResult ? qrResult.value : null;
 
       if (this.qrValue) {
-        // Verificar si el QR contiene un RFC (último guion bajo "_")
+        this.isProcessingQR = true;
+        this.scanner.stop();
+
         const rfcMatch = this.qrValue.match(/_(\w+)$/);
         const rfc = rfcMatch ? rfcMatch[1] : null;
 
         if (rfc) {
           console.log('RFC extraído:', rfc);
-          this.clientForm.patchValue({ rfc });
           
-          // Determinar si es persona moral (RFC de 12 caracteres)
-          this.isPersonaMoral = rfc.length === 12;
-
-          // Obtener datos adicionales del SAT
-          this.qrService.getDataSat(this.qrValue).subscribe(
-            (res: any) => {
-              const regimenFiscalCode = res['Regimenes']?.[0]?.['RegimenFiscal']?.['code'];
+          this.authService.getClientes().subscribe(
+            (response: any) => {
+              const clientes = Array.isArray(response) ? response : [];
+              const clienteExistente = clientes.find(cliente => cliente.rfc === rfc);
               
-              this.clientForm.patchValue({
-                codigoPostal: res['CP'],
-                regimenFiscal: regimenFiscalCode
-              });
+              if (clienteExistente) {
+                this.toastr.error(`El cliente con RFC ${rfc} ya existe en tu cartera`, 'Cliente Duplicado');
+                this.goBack();
+                this.isProcessingQR = false;
+                return;
+              }
 
-              // Mostrar mensaje de éxito con los datos cargados
-              this.toastr.success(
-                `Datos fiscales cargados correctamente:
-                RFC: ${rfc}
-                Código Postal: ${res['CP']}
-                Régimen Fiscal: ${regimenFiscalCode}`,
-                '¡Éxito!'
-              );
+              this.clientForm.patchValue({ rfc });
+              
+              this.isPersonaMoral = rfc.length === 12;
+
+              if (this.qrValue) {
+                this.qrService.getDataSat(this.qrValue).subscribe(
+                  (res: any) => {
+                    const regimenFiscalCode = res['Regimenes']?.[0]?.['RegimenFiscal']?.['code'];
+                    
+                    let nombreCompleto = '';
+                    if (this.isPersonaMoral) {
+                      nombreCompleto = res['Denominación o Razón Social'] || 'Razón Social no disponible';
+                    } else {
+                      nombreCompleto = `${res['Nombre']} ${res['Apellido Paterno']} ${res['Apellido Materno']}`;
+                    }
+                    
+                    this.clientForm.patchValue({
+                      nombreCompleto,
+                      codigoPostal: res['CP'],
+                      regimenFiscal: regimenFiscalCode
+                    });
+
+                    this.selectedMethod = 'manual';
+
+                    this.toastr.success(
+                      `Datos fiscales cargados correctamente:
+                      ${this.isPersonaMoral ? 'Razón Social' : 'Nombre Completo'}: ${nombreCompleto}
+                      RFC: ${rfc}
+                      Código Postal: ${res['CP']}
+                      Régimen Fiscal: ${regimenFiscalCode}`,
+                      '¡Éxito!'
+                    );
+                    this.isProcessingQR = false;
+                  },
+                  (error) => {
+                    this.toastr.error('Error al obtener datos del SAT', 'Error');
+                    this.isProcessingQR = false;
+                  }
+                );
+              }
             },
             (error) => {
-              this.toastr.error('Error al obtener datos del SAT', 'Error');
+              this.toastr.error('Error al verificar cliente existente', 'Error');
+              this.isProcessingQR = false;
             }
           );
+        } else {
+          this.toastr.error('No se pudo extraer el RFC del código QR', 'Error');
+          this.isProcessingQR = false;
         }
       }
     });

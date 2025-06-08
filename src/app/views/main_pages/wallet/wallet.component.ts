@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthenticationService } from '@/app/core/service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 interface Client {
   id: string;
@@ -137,10 +138,10 @@ export class WalletComponent implements OnInit {
   clients: Client[] = [];
   filteredClients: Client[] = [];
   searchTerm: string = '';
-  sortBy: string = 'name';
+  sortBy: string = 'recentlyAdded';
   filterBy: string = 'all';
 
-  constructor(private router: Router, private authService: AuthenticationService) {}
+  constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.loadClients();
@@ -170,17 +171,21 @@ export class WalletComponent implements OnInit {
       (data: any) => {
         this.clients = data.map((client: any) => {
           const tipoCliente = client.rfc.length === 12 ? 'Persona Moral' : 'Persona Física';
+          const fechaRegistro = client.fecha_Registro
+            ? new Date(
+                client.fecha_Registro[0],
+                client.fecha_Registro[1] - 1,
+                client.fecha_Registro[2],
+                0, 0, 0
+              )
+            : new Date();
           return {
             id: client.id_Cliente,
             name: client.nombre_RazonSocial,
             rfc: client.rfc,
-            lastInvoice: client.fecha_Registro
-              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
-              : new Date(),
+            lastInvoice: fechaRegistro,
             invoiceCount: 0,
-            fechaRegistro: client.fecha_Registro
-              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
-              : new Date(),
+            fechaRegistro: fechaRegistro,
             tipoCliente: tipoCliente,
             iniciales: this.getInitials(client.nombre_RazonSocial, tipoCliente)
           };
@@ -246,5 +251,19 @@ export class WalletComponent implements OnInit {
 
   redirectionToNewClient(): void {
     this.router.navigate(['/new-client']);
+  }
+
+  deleteClient(client: Client): void {
+    if (confirm(`¿Está seguro que desea eliminar al cliente ${client.name}?`)) {
+      this.authService.deleteCliente(client.id).subscribe(
+        () => {
+          this.toastr.success('Cliente eliminado exitosamente', 'Éxito');
+          this.loadClients();
+        },
+        (error) => {
+          this.toastr.error('Error al eliminar el cliente', 'Error');
+        }
+      );
+    }
   }
 }

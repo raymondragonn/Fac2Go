@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { map } from 'rxjs/operators'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { map, catchError } from 'rxjs/operators'
+import { throwError } from 'rxjs'
+import { Observable } from 'rxjs'
 
 import { CookieService } from 'ngx-cookie-service'
 import { User } from '../helpers/fake-backend'
@@ -16,51 +18,157 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    const token = this.session;
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
+    });
+  }
+
   login(correo: string , contraseña: string) {
-    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }).pipe(
+    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
       map((user) => {
-        // login successful if there's a jwt token in the response
-        // if (user && user.token) {
-        //   this.user = user
-        //   // store user details and jwt in session
-        //   this.saveSession(user.token)
-        // }
         return user
       })
     )
   }
 
-  getFacturas(){
-    return this.http.get(`${API_URL}/factu`)
+  loginAdmin(correo: string, contraseña: string) {
+    return this.http.post<User>(`${API_URL}/admin/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
+      map((user: any) => {
+        if (user.token) {
+          this.saveSession(user.token);
+          this.user = user;
+        }
+        return user;
+      })
+    )
   }
 
-  getClientes() {
-    return this.http.get(`${API_URL}/clientes`);
+  loginUser(correo: string, contraseña: string) {
+    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
+      map((user: any) => {
+        if (user.token) {
+          this.saveSession(user.token);
+          this.user = user;
+        }
+        return user;
+      })
+    )
   }
 
-  newCliente(cliente: any) {
-    return this.http.post(`${API_URL}/clientes`, cliente);
+  saveSession(token: string): void {
+    this.cookieService.set(this.authSessionKey, token, { 
+      expires: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 1 día
+      path: '/',
+      secure: true,
+      sameSite: 'Strict'
+    });
   }
 
-  register(usuario: any) {
-    return this.http.post(`${API_URL}/usuarios/register`, usuario);
+  removeSession(): void {
+    this.cookieService.delete(this.authSessionKey)
   }
   
+  get session(): string {
+    return this.cookieService.get(this.authSessionKey)
+  }
+
   logout(): void {
     // remove user from cookie to log user out
     this.removeSession()
     this.user = null
   }
 
-  get session(): string {
-    return this.cookieService.get(this.authSessionKey)
+  registerAdmin(admin: any) {
+    return this.http.post(`${API_URL}/admin/register`, admin, { headers: this.getHeaders() });
   }
 
-  saveSession(token: string): void {
-    this.cookieService.set(this.authSessionKey, token)
+  registerUser(usuario: any) {
+    return this.http.post(`${API_URL}/usuarios/register`, usuario, { headers: this.getHeaders() });
   }
 
-  removeSession(): void {
-    this.cookieService.delete(this.authSessionKey)
+  getClientes() {
+    return this.http.get(`${API_URL}/clientes`, { headers: this.getHeaders() });
+  }
+
+  newCliente(cliente: any) {
+    return this.http.post(`${API_URL}/clientes`, cliente, { headers: this.getHeaders() });
+  }
+
+  deleteCliente(id: string) {
+    return this.http.delete(`${API_URL}/clientes/${id}`, { headers: this.getHeaders() });
+  }
+
+  getUsuarios() {
+    return this.http.get(`${API_URL}/usuarios`, { headers: this.getHeaders() });
+  }
+
+  getCurrentUser() {
+    const token = this.session;
+    if (!token) {
+      console.log('No hay token en la sesión');
+      return new Observable(subscriber => {
+        subscriber.error(new Error('No hay sesión activa'));
+      });
+    }
+
+    return this.http.get(`${API_URL}/usuarios/current`, { headers: this.getHeaders() }).pipe(
+      map((response: any) => {
+        if (response.status === 'success') {
+          return response;
+        }
+        throw new Error(response.message || 'Error al obtener usuario actual');
+      }),
+      catchError(error => {
+        console.error('Error al obtener usuario actual:', error);
+        return throwError(() => new Error(error.error?.message || 'Error al obtener usuario actual'));
+      })
+    );
+  }
+
+  getCurrentAdmin() {
+    const token = this.session;
+    if (!token) {
+      console.log('No hay token en la sesión para administrador');
+      return new Observable(subscriber => {
+        subscriber.error(new Error('No hay sesión activa'));
+      });
+    }
+
+    return this.http.get(`${API_URL}/admin/current`, { headers: this.getHeaders() }).pipe(
+      map((response: any) => {
+        console.log('Respuesta getCurrentAdmin:', response);
+        if (response.status === 'success') {
+          return {
+            correo: response.correo,
+            nombre: response.nombre
+          };
+        }
+        throw new Error(response.message || 'Error al obtener administrador actual');
+      }),
+      catchError(error => {
+        console.error('Error al obtener administrador actual:', error);
+        if (error.status === 401) {
+          // Token inválido o expirado
+          this.removeSession();
+          this.user = null;
+        }
+        return throwError(() => new Error(error.error?.message || 'Error al obtener administrador actual'));
+      })
+    );
+  }
+
+  deleteUsuario(id: string) {
+    return this.http.delete(`${API_URL}/usuarios/${id}`, { headers: this.getHeaders() });
+  }
+
+  updateUsuario(id: string, usuario: any) {
+    return this.http.put(`${API_URL}/usuarios/${id}`, usuario, { headers: this.getHeaders() });
   }
 }

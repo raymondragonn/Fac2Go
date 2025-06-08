@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { delay } from 'rxjs/operators';
 
-const API_URL = 'http://localhost:5050/api';
+const API_URL = 'http://localhost:8080/api';
 
 @Injectable({
   providedIn: 'root'
