@@ -30,6 +30,10 @@ export class AuthenticationService {
     )
   }
 
+  getFacturas(){
+    return this.http.get(`${API_URL}/factu`)
+  }
+
   getClientes() {
     return this.http.get(`${API_URL}/clientes`);
   }

@@ -22,6 +22,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap'
 import { FormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
+import { AuthenticationService } from '@/app/core/service/auth.service';
 
 export type SortColumn = keyof InvoiceDataType | ''
 export type SortDirection = 'asc' | 'desc' | ''
@@ -69,6 +70,7 @@ interface InvoiceDataType {
   importe: number;
   iva: number;
   total: number;
+  status: string;
 }
 
 @Component({
@@ -95,19 +97,6 @@ interface InvoiceDataType {
       font-weight: 600;
     }
 
-    .client-avatar {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1rem;
-      color: #fff;
-      background: linear-gradient(135deg, #2DC1A4, #25a08c);
-      border-radius: 50%;
-    }
-
     .avatar-xs {
       width: 2rem;
       height: 2rem;
@@ -121,8 +110,6 @@ interface InvoiceDataType {
       height: 100%;
       font-size: 1rem;
       font-weight: 500;
-      background: linear-gradient(135deg, #2DC1A4, #25a08c);
-      color: #fff;
     }
 
     .badge {
@@ -152,6 +139,7 @@ export class TransactionComponent implements OnInit {
   invoiceData: InvoiceDataType[] = []
   filteredData: InvoiceDataType[] = []
   searchTerm: string = ''
+  statusFilter: string = 'all'
   dateFilter: string = 'all'
   
   // Paginación
@@ -165,7 +153,7 @@ export class TransactionComponent implements OnInit {
 
   private modalService = inject(NgbModal)
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     this.loadInvoices()
@@ -173,99 +161,142 @@ export class TransactionComponent implements OnInit {
 
   loadInvoices(): void {
     // Simulación de datos - Reemplazar con llamada real al servicio
-    this.invoiceData = [
-      {
-        date: '2024-03-20',
-        serie: 'A',
-        folio: 'FAC-001',
-        uuid: '123e4567-e89b-12d3-a456-426614174000',
-        cliente: 'Juan Pérez García',
-        medioPago: 'Transferencia',
-        importe: 1500.00,
-        iva: 240.00,
-        total: 1740.00
-      },
-      {
-        date: '2024-03-19',
-        serie: 'A',
-        folio: 'FAC-002',
-        uuid: '123e4567-e89b-12d3-a456-426614174001',
-        cliente: 'Empresa ABC, S.A. de C.V.',
-        medioPago: 'Tarjeta',
-        importe: 3500.00,
-        iva: 560.00,
-        total: 4060.00
-      },
-      {
-        date: '2024-03-18',
-        serie: 'A',
-        folio: 'FAC-003',
-        uuid: '123e4567-e89b-12d3-a456-426614174002',
-        cliente: 'María Rodríguez López',
-        medioPago: 'Efectivo',
-        importe: 2800.00,
-        iva: 448.00,
-        total: 3248.00
-      },
-      {
-        date: '2024-03-17',
-        serie: 'A',
-        folio: 'FAC-004',
-        uuid: '123e4567-e89b-12d3-a456-426614174003',
-        cliente: 'Constructora XYZ, S.A. de C.V.',
-        medioPago: 'Transferencia',
-        importe: 8500.00,
-        iva: 1360.00,
-        total: 9860.00
-      },
-      {
-        date: '2024-03-16',
-        serie: 'A',
-        folio: 'FAC-005',
-        uuid: '123e4567-e89b-12d3-a456-426614174004',
-        cliente: 'Carlos Martínez Sánchez',
-        medioPago: 'Tarjeta',
-        importe: 4200.00,
-        iva: 672.00,
-        total: 4872.00
-      },
-      {
-        date: '2024-03-15',
-        serie: 'A',
-        folio: 'FAC-006',
-        uuid: '123e4567-e89b-12d3-a456-426614174005',
-        cliente: 'Restaurante El Buen Sabor',
-        medioPago: 'Efectivo',
-        importe: 3200.00,
-        iva: 512.00,
-        total: 3712.00
-      },
-      {
-        date: '2024-03-14',
-        serie: 'A',
-        folio: 'FAC-007',
-        uuid: '123e4567-e89b-12d3-a456-426614174006',
-        cliente: 'Clínica Dental Sonrisa',
-        medioPago: 'Transferencia',
-        importe: 6500.00,
-        iva: 1040.00,
-        total: 7540.00
-      },
-      {
-        date: '2024-03-13',
-        serie: 'A',
-        folio: 'FAC-008',
-        uuid: '123e4567-e89b-12d3-a456-426614174007',
-        cliente: 'Distribuidora Comercial del Norte',
-        medioPago: 'Tarjeta',
-        importe: 12000.00,
-        iva: 1920.00,
-        total: 13920.00
-      }
-    ]
-    this.filteredData = [...this.invoiceData]
-    this.totalItems = this.invoiceData.length
-    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage)
+    this.authService.getClientes().subscribe(
+    (data: any) => {
+      console.log(data);
+      this.invoiceData = data.map((factura: any) => {
+        return {
+          date: factura.fecha_Emision
+            ? `${factura.fecha_Emision[0]}-${String(factura.fecha_Emision[1]).padStart(2, '0')}-${String(factura.fecha_Emision[2]).padStart(2, '0')}`
+            : '',
+          serie: 'A',
+          // Asigna el valor real si lo tienes
+          folio: factura.folio, // Asigna el valor real si lo tienes
+          uuid: factura.uuid, // O usa otro campo si tienes un uuid real
+          cliente: 'Juan Pérez García',
+          medioPago: 'Efectivo',
+          importe: factura.subTotal,
+          // cliente: factura.id_Cliente, // Asigna el valor real si lo tienes
+          iva: factura.iva, // Asigna el valor real si lo tienes
+          total: factura.total, // Asigna el valor real si lo tienes
+          status: 'pagado'
+        };
+      });
+      this.filteredData = [...this.invoiceData];
+      this.totalItems = this.invoiceData.length;
+      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+    }
+  );
+
+    // this.invoiceData = [
+    //   {
+    //     date: '2024-03-20',
+    //     serie: 'A',
+    //     folio: 'FAC-001',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174000',
+    //     cliente: 'Juan Pérez García',
+    //     medioPago: 'Transferencia',
+        
+    //     importe: 1500.00,
+    //     iva: 240.00,
+    //     total: 1740.00,
+    //     status: 'pagada'
+    //   },
+    //   {
+    //     date: '2024-03-19',
+    //     serie: 'A',
+    //     folio: 'FAC-002',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174001',
+    //     cliente: 'Empresa ABC, S.A. de C.V.',
+    //     medioPago: 'Tarjeta',
+        
+    //     importe: 3500.00,
+    //     iva: 560.00,
+    //     total: 4060.00,
+    //     status: 'pendiente'
+    //   },
+    //   {
+    //     date: '2024-03-18',
+    //     serie: 'A',
+    //     folio: 'FAC-003',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174002',
+    //     cliente: 'María Rodríguez López',
+    //     medioPago: 'Efectivo',
+        
+    //     importe: 2800.00,
+    //     iva: 448.00,
+    //     total: 3248.00,
+    //     status: 'cancelada'
+    //   },
+    //   {
+    //     date: '2024-03-17',
+    //     serie: 'A',
+    //     folio: 'FAC-004',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174003',
+    //     cliente: 'Constructora XYZ, S.A. de C.V.',
+    //     medioPago: 'Transferencia',
+        
+    //     importe: 8500.00,
+    //     iva: 1360.00,
+    //     total: 9860.00,
+    //     status: 'pagada'
+    //   },
+    //   {
+    //     date: '2024-03-16',
+    //     serie: 'A',
+    //     folio: 'FAC-005',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174004',
+    //     cliente: 'Carlos Martínez Sánchez',
+    //     medioPago: 'Tarjeta',
+        
+    //     importe: 4200.00,
+    //     iva: 672.00,
+    //     total: 4872.00,
+    //     status: 'pendiente'
+    //   },
+    //   {
+    //     date: '2024-03-15',
+    //     serie: 'A',
+    //     folio: 'FAC-006',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174005',
+    //     cliente: 'Restaurante El Buen Sabor',
+    //     medioPago: 'Efectivo',
+        
+    //     importe: 3200.00,
+    //     iva: 512.00,
+    //     total: 3712.00,
+    //     status: 'pagada'
+    //   },
+    //   {
+    //     date: '2024-03-14',
+    //     serie: 'A',
+    //     folio: 'FAC-007',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174006',
+    //     cliente: 'Clínica Dental Sonrisa',
+    //     medioPago: 'Transferencia',
+        
+    //     importe: 6500.00,
+    //     iva: 1040.00,
+    //     total: 7540.00,
+    //     status: 'cancelada'
+    //   },
+    //   {
+    //     date: '2024-03-13',
+    //     serie: 'A',
+    //     folio: 'FAC-008',
+    //     uuid: '123e4567-e89b-12d3-a456-426614174007',
+    //     cliente: 'Distribuidora Comercial del Norte',
+    //     medioPago: 'Tarjeta',
+        
+    //     importe: 12000.00,
+    //     iva: 1920.00,
+    //     total: 13920.00,
+    //     status: 'pagada'
+    //   }
+    // ]
+    // this.filteredData = [...this.invoiceData]
+    // this.totalItems = this.invoiceData.length
+    // this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage)
   }
 
   searchName(event: Event): void {
@@ -278,6 +309,12 @@ export class TransactionComponent implements OnInit {
     this.updatePagination()
   }
 
+  filterByStatus(event: Event): void {
+    const status = (event.target as HTMLSelectElement).value
+    this.statusFilter = status
+    this.applyFilters()
+  }
+
   filterByDate(event: Event): void {
     const date = (event.target as HTMLSelectElement).value
     this.dateFilter = date
@@ -286,6 +323,13 @@ export class TransactionComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.invoiceData]
+
+    // Aplicar filtro de estado
+    if (this.statusFilter !== 'all') {
+      filtered = filtered.filter(invoice => 
+        invoice.status.toLowerCase() === this.statusFilter.toLowerCase()
+      )
+    }
 
     // Aplicar filtro de fecha
     if (this.dateFilter !== 'all') {
@@ -341,6 +385,21 @@ export class TransactionComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page
     }
+  }
+
+  viewInvoice(invoice: InvoiceDataType): void {
+    // Implementar lógica para ver detalles de la factura
+    console.log('Ver factura:', invoice)
+  }
+
+  downloadInvoice(invoice: InvoiceDataType): void {
+    // Implementar lógica para descargar PDF
+    console.log('Descargar factura:', invoice)
+  }
+
+  cancelInvoice(invoice: InvoiceDataType): void {
+    // Implementar lógica para cancelar factura
+    console.log('Cancelar factura:', invoice)
   }
 
   redirectionToDetail(): void {
