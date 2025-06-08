@@ -5,7 +5,6 @@ export interface InvoiceDataType {
   uuid: string;           
   cliente: string;       
   medioPago: string;      
-  concepto: string;       
   importe: number;        
   iva: number;           
   total: number;          
@@ -19,7 +18,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: '660f8400-a19b-42e4-b617-556755441111',
     cliente: 'María López',
     medioPago: 'Tarjeta de Crédito',
-    concepto: 'Transporte de Paquetes',
     importe: 700,
     iva: 112,
     total: 812,
@@ -31,7 +29,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: '660f8400-a19b-42e4-b617-556755442222',
     cliente: 'Carlos Pérez',
     medioPago: 'Efectivo',
-    concepto: 'Traslado de Persona',
     importe: 500,
     iva: 80,
     total: 580,
@@ -43,7 +40,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: '770g8400-b29c-53d5-c718-667855443333',
     cliente: 'Ana Martínez',
     medioPago: 'Transferencia Bancaria',
-    concepto: 'Movilidad de Paquetes',
     importe: 1200,
     iva: 192,
     total: 1392,
@@ -55,7 +51,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: '880h8400-c39d-64e6-d819-778955444444',
     cliente: 'Luis Fernández',
     medioPago: 'PayPal',
-    concepto: 'Traslado de Persona',
     importe: 650,
     iva: 104,
     total: 754,
@@ -67,7 +62,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: '990i8400-d49e-75f7-e920-889955445555',
     cliente: 'Sofía González',
     medioPago: 'Tarjeta de Crédito',
-    concepto: 'Transporte de Paquetes',
     importe: 850,
     iva: 136,
     total: 986,
@@ -79,7 +73,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: 'AA0j8400-e59f-86g8-f021-990955446666',
     cliente: 'Javier Torres',
     medioPago: 'Efectivo',
-    concepto: 'Servicio de Traslado de Persona',
     importe: 1000,
     iva: 160,
     total: 1160,
@@ -91,7 +84,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: 'BB1k9500-f67g-97h9-h032-112355447777',
     cliente: 'Verónica Díaz',
     medioPago: 'Transferencia Bancaria',
-    concepto: 'Movilidad de Paquetes',
     importe: 1500,
     iva: 240,
     total: 1740,
@@ -103,7 +95,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: 'CC2l0600-g78h-78j0-i043-223466448888',
     cliente: 'Pedro Sánchez',
     medioPago: 'PayPal',
-    concepto: 'Traslado de Persona',
     importe: 900,
     iva: 144,
     total: 1044,
@@ -115,7 +106,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: 'DD3m1700-h89i-89k1-j154-334577449999',
     cliente: 'Lucía Gómez',
     medioPago: 'Tarjeta de Crédito',
-    concepto: 'Transporte de Paquetes',
     importe: 600,
     iva: 96,
     total: 696,
@@ -127,7 +117,6 @@ export const invoiceData: InvoiceDataType[] = [
     uuid: 'EE4n2800-i90j-90l2-k265-445688550000',
     cliente: 'Ricardo Romero',
     medioPago: 'Efectivo',
-    concepto: 'Servicio de Traslado de Persona',
     importe: 1100,
     iva: 176,
     total: 1276,

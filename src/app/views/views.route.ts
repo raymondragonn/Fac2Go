@@ -15,7 +15,8 @@ import { FaqComponent } from './main_pages/faq/faq.component'
 import { ContactComponent } from './main_pages/contact/contact.component'
 import { PrivacyComponent } from './main_pages/privacy/privacy.component'
 import { PrincipalComponent } from './main_pages/principal/principal.component'
-import { NewClientComponent } from './main_pages/new-client/new-client.component'
+import { NewClientComponent } from './main_pages/wallet/new-client/new-client.component'
+import { ShowTicketComponent } from './main_pages/wallet/show-ticket/show-ticket.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -139,5 +140,10 @@ export const VIEW_ROUTES: Route[] = [
     path: 'new-client',
     component: NewClientComponent,
     data: { title: 'Nuevo Cliente'}
+  },
+  {
+    path: 'show-ticket',
+    component: ShowTicketComponent,
+    data: { title: 'Ticket de Compra'}
   }
 ]

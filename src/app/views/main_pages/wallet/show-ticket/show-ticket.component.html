@@ -1,0 +1,232 @@
+<div class="row py-3 justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col text-center">
+            <h4 class="card-title" style="font-size: 1.5rem;">Escaneo de Ticket</h4>
+            <span class="form-text text-muted" style="font-size: 1rem;">Escanea el código QR de tu ticket de compra</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body pt-0" *ngIf="isLoading" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.5); display: flex;justify-content: center;align-items: center;z-index: 1050;">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <div class="card-body pt-0">
+        <!-- Paso 1: Selección de método de ingreso -->
+        <div *ngIf="currentStep === 1" class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <!-- Información del cliente seleccionado -->
+            <div class="client-info mb-4" *ngIf="clienteSeleccionado">
+              <h6 class="text-center mb-3">Cliente Seleccionado</h6>
+              <div class="row">
+                <div class="col-12">
+                  <p><strong>Nombre/Razón Social:</strong> {{ clienteSeleccionado.name }}</p>
+                  <p><strong>RFC:</strong> {{ clienteSeleccionado.rfc }}</p>
+                  <p><strong>Tipo de Cliente:</strong> {{ clienteSeleccionado.tipoCliente }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center mb-4">
+              <h4 class="mb-3">¿Cómo deseas escanear el ticket?</h4>
+              <p class="text-muted">Elige el método que mejor se adapte a tus necesidades</p>
+            </div>
+            
+            <div class="row g-4">
+              <!-- Opción QR -->
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm hover-card qr-card" (click)="selectMethod('qr')" style="cursor: pointer;">
+                  <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-3">
+                      <i class="fas fa-qrcode fa-3x text-white"></i>
+                    </div>
+                    <h5 class="card-title text-white">Escaneo de QR</h5>
+                    <p class="card-text text-white-50 small">
+                      Escanea el código QR de tu ticket de compra
+                    </p>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-light">
+                        Seleccionar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Opción Manual -->
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm hover-card" (click)="selectMethod('manual')" style="cursor: pointer;">
+                  <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-3">
+                      <i class="fas fa-keyboard fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Ingreso Manual</h5>
+                    <p class="card-text text-muted small">
+                      Ingresa los datos del ticket manualmente
+                    </p>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-primary">
+                        Seleccionar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Scanner QR -->
+        <div *ngIf="currentStep === 2" class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <!-- Información del cliente seleccionado -->
+            <div class="client-info mb-4" *ngIf="clienteSeleccionado">
+              <h6 class="text-center mb-3">Cliente Seleccionado</h6>
+              <div class="row">
+                <div class="col-12">
+                  <p><strong>Nombre/Razón Social:</strong> {{ clienteSeleccionado.name }}</p>
+                  <p><strong>RFC:</strong> {{ clienteSeleccionado.rfc }}</p>
+                  <p><strong>Tipo de Cliente:</strong> {{ clienteSeleccionado.tipoCliente }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scanner QR -->
+            <div *ngIf="selectedMethod === 'qr'" class="card shadow-lg border-0 scanner-container">
+              <div class="card-body text-center">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar
+                  </button>
+                  <h5 class="mb-0">Escanea el QR de tu ticket</h5>
+                  <div style="width: 100px;"></div>
+                </div>
+                <p class="text-muted mb-4">
+                  Coloca el código QR de tu ticket frente a la cámara para capturar automáticamente los datos.
+                </p>
+                <div class="d-flex justify-content-center align-items-center mb-4">
+                  <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
+                    style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
+                    (event)="extractValue(action.data)">
+                  </ngx-scanner-qrcode>
+                </div>
+                <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
+                  (click)="action.isStart ? action.stop() : action.start()">
+                  {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
+                </button>
+                <div class="alert alert-info mt-4" *ngIf="!qrValue">
+                  <small>Esperando la captura del código QR...</small>
+                </div>
+                <div class="alert alert-success mt-4" *ngIf="qrValue">
+                  <small>QR capturado: {{ qrValue }}</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulario Manual -->
+            <div *ngIf="selectedMethod === 'manual'" class="card shadow-lg border-0">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar
+                  </button>
+                  <h5 class="mb-0">Ingreso Manual de Ticket</h5>
+                  <div style="width: 100px;"></div>
+                </div>
+                <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+                  <!-- Token -->
+                  <div class="mb-3">
+                    <label for="token" class="form-label">Token</label>
+                    <input type="text" class="form-control" id="token" formControlName="token"
+                      [ngClass]="{'is-invalid': ticketForm.get('token')?.touched && ticketForm.get('token')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="ticketForm.get('token')?.touched && ticketForm.get('token')?.errors?.['required']">
+                      Token es requerido
+                    </div>
+                  </div>
+
+                  <!-- Fecha -->
+                  <div class="mb-3">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="datetime-local" class="form-control" id="fecha" formControlName="fecha"
+                      [ngClass]="{'is-invalid': ticketForm.get('fecha')?.touched && ticketForm.get('fecha')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="ticketForm.get('fecha')?.touched && ticketForm.get('fecha')?.errors?.['required']">
+                      Fecha es requerida
+                    </div>
+                  </div>
+
+                  <!-- Tipo -->
+                  <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <input type="text" class="form-control" id="tipo" formControlName="tipo"
+                      [ngClass]="{'is-invalid': ticketForm.get('tipo')?.touched && ticketForm.get('tipo')?.invalid}">
+                    <div class="invalid-feedback" *ngIf="ticketForm.get('tipo')?.touched && ticketForm.get('tipo')?.errors?.['required']">
+                      Tipo es requerido
+                    </div>
+                  </div>
+
+                  <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-4" [disabled]="!ticketForm.valid">
+                      Procesar Ticket
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 3: Confirmación -->
+        <div *ngIf="currentStep === 3" class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <div class="card">
+              <div class="card-body text-center">
+                <img src="assets/images/extra/task.png" class="mb-3" height="60" alt="" />
+                <h4 class="mb-1 fs-16">Revisa los datos antes de proceder</h4>
+                <p class="text-muted">Confirma que toda la información es correcta</p>
+
+                <div class="text-start mt-4">
+                  <!-- Información del cliente -->
+                  <h5>Datos del Cliente:</h5>
+                  <p><strong>Nombre/Razón Social:</strong> {{ clienteSeleccionado?.name }}</p>
+                  <p><strong>RFC:</strong> {{ clienteSeleccionado?.rfc }}</p>
+                  <p><strong>Tipo de Cliente:</strong> {{ clienteSeleccionado?.tipoCliente }}</p>
+
+                  <!-- Información del ticket -->
+                  <h5 class="mt-3">Datos del Ticket:</h5>
+                  <p><strong>Token:</strong> {{ ticketForm.value.token }}</p>
+                  <p><strong>Fecha:</strong> {{ ticketForm.value.fecha }}</p>
+                  <p><strong>Tipo:</strong> {{ ticketForm.value.tipo }}</p>
+                </div>
+
+                <div class="form-check my-4" style="display: flex; justify-content: space-evenly;">
+                  <label class="form-check-label" for="confirmCheck">
+                    Confirmo que los datos ingresados son correctos
+                  </label>
+                  <div class="justify-content">
+                    <input class="form-check-input" type="checkbox" style="border: 1px solid;"
+                      id="confirmCheck" [(ngModel)]="confirmacionAceptada"
+                      [ngModelOptions]="{standalone: true}">
+                  </div>  
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center mt-4">
+              <button type="button" class="btn btn-secondary me-2" (click)="goBack()">
+                Regresar
+              </button>
+              <button type="button" class="btn btn-primary" (click)="procesarTicket()" [disabled]="!confirmacionAceptada">
+                Confirmar y Procesar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

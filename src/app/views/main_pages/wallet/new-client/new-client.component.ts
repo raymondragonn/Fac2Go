@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ScannerQRService } from '@/app/services/scanner-qr.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '@/app/core/service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-client',
@@ -95,14 +96,12 @@ import { AuthenticationService } from '@/app/core/service/auth.service';
     }
   `]
 })
-
-
-
 export class NewClientComponent implements OnInit {
   @ViewChild('action', { static: false }) scanner!: NgxScannerQrcodeComponent;
   
   clientForm!: UntypedFormGroup;
-  showQRScanner: boolean = false;
+  currentStep: number = 1;
+  selectedMethod: 'qr' | 'manual' | null = null;
   qrValue: string | null = null;
   isPersonaMoral: boolean = false;
   
@@ -110,7 +109,8 @@ export class NewClientComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private qrService: ScannerQRService,
     private toastr: ToastrService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -125,36 +125,49 @@ export class NewClientComponent implements OnInit {
       regimenFiscal: ['', [Validators.required]]
     });
   }
-  registroCliente(){
-  
-    if(this.clientForm.valid){
 
-   
+  selectMethod(method: 'qr' | 'manual') {
+    this.selectedMethod = method;
+    this.currentStep = 2;
+  }
 
-      console.log(this.clientForm.value);
-      let cliente = {
+  goBack() {
+    if (this.currentStep === 2) {
+      this.currentStep = 1;
+      this.selectedMethod = null;
+      this.qrValue = null;
+      this.clientForm.reset();
+    }
+  }
+
+  onSubmit() {
+    if (this.clientForm.valid) {
+      const cliente = {
         nombre_RazonSocial: this.clientForm.value.nombreCompleto,
         rfc: this.clientForm.value.rfc,
         codigo_Postal: this.clientForm.value.codigoPostal,
         regimenFiscal: this.clientForm.value.regimenFiscal
-      }
+      };
 
       this.authService.newCliente(cliente).subscribe(
-        (response:any) => {
+        (response: any) => {
           if (response.status === 'success') {
-            this.toastr.success(`${response.message}. Cliente: ${response.cliente.correo || ''}`, 'Exito');
+            this.toastr.success(`${response.message}. Cliente: ${response.cliente.correo || ''}`, 'Éxito');
             this.clientForm.reset();
+            this.currentStep = 1;
+            this.selectedMethod = null;
+            setTimeout(() => {
+              this.router.navigate(['/wallet']);
+            }, 1500);
           } else {
             this.toastr.error(response.message, 'Error');
-          } 
+          }
+        },
+        (error) => {
+          this.toastr.error('Error al guardar el cliente', 'Error');
         }
-      )
-
+      );
     }
-  }
-
-  toggleQRScanner() {
-    this.showQRScanner = !this.showQRScanner;
   }
 
   extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
@@ -192,9 +205,6 @@ export class NewClientComponent implements OnInit {
                 Régimen Fiscal: ${regimenFiscalCode}`,
                 '¡Éxito!'
               );
-              
-              // Cerrar el escáner después de cargar los datos
-              this.showQRScanner = false;
             },
             (error) => {
               this.toastr.error('Error al obtener datos del SAT', 'Error');
@@ -203,12 +213,5 @@ export class NewClientComponent implements OnInit {
         }
       }
     });
-  }
-
-  onSubmit() {
-    if (this.clientForm.valid) {
-      // Aquí implementar la lógica para guardar el cliente
-      console.log('Formulario válido:', this.clientForm.value);
-    }
   }
 }

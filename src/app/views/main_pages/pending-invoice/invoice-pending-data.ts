@@ -5,7 +5,6 @@ export interface InvoicePendingDataType {
     uuid: string;           
     cliente: string;       
     medioPago: string;      
-    concepto: string;       
     importe: number;        
     iva: number;           
     total: number;          
@@ -19,7 +18,6 @@ export interface InvoicePendingDataType {
       uuid: '123a4567-b89c-12d3-e456-426614110000',
       cliente: 'Elena Ramírez',
       medioPago: 'Transferencia Bancaria',
-      concepto: 'Envío Rápido de Paquetes',
       importe: 950,
       iva: 152,
       total: 1102,
@@ -31,7 +29,6 @@ export interface InvoicePendingDataType {
       uuid: '234b5678-c90d-23e4-f567-536725221111',
       cliente: 'Tomás Aguilar',
       medioPago: 'Tarjeta de Crédito',
-      concepto: 'Traslado Ejecutivo de Persona',
       importe: 1200,
       iva: 192,
       total: 1392,
@@ -43,7 +40,6 @@ export interface InvoicePendingDataType {
       uuid: '345c6789-d01e-34f5-g678-647836332222',
       cliente: 'Isabel Moreno',
       medioPago: 'Efectivo',
-      concepto: 'Entrega de Documentos Urgentes',
       importe: 400,
       iva: 64,
       total: 464,
@@ -55,7 +51,6 @@ export interface InvoicePendingDataType {
       uuid: '456d7890-e12f-45g6-h789-758947443333',
       cliente: 'Manuel Herrera',
       medioPago: 'PayPal',
-      concepto: 'Transporte Personalizado',
       importe: 750,
       iva: 120,
       total: 870,
@@ -67,7 +62,6 @@ export interface InvoicePendingDataType {
       uuid: '567e8901-f23g-56h7-i890-869058554444',
       cliente: 'Rosa Navarro',
       medioPago: 'Transferencia Bancaria',
-      concepto: 'Movilidad de Equipaje Especial',
       importe: 1100,
       iva: 176,
       total: 1276,
@@ -79,7 +73,6 @@ export interface InvoicePendingDataType {
       uuid: '678f9012-g34h-67i8-j901-970169665555',
       cliente: 'Gabriel Castro',
       medioPago: 'Tarjeta de Crédito',
-      concepto: 'Traslado Turístico',
       importe: 1300,
       iva: 208,
       total: 1508,
@@ -91,7 +84,6 @@ export interface InvoicePendingDataType {
       uuid: '789g0123-h45i-78j9-k012-081270776666',
       cliente: 'Laura Campos',
       medioPago: 'Efectivo',
-      concepto: 'Entrega Rápida de Paquetería',
       importe: 500,
       iva: 80,
       total: 580,
@@ -103,7 +95,6 @@ export interface InvoicePendingDataType {
       uuid: '890h1234-i56j-89k0-l123-192381887777',
       cliente: 'Oscar Molina',
       medioPago: 'PayPal',
-      concepto: 'Transporte Corporativo',
       importe: 980,
       iva: 157,
       total: 1137,
@@ -115,7 +106,6 @@ export interface InvoicePendingDataType {
       uuid: '901i2345-j67k-90l1-m234-203492998888',
       cliente: 'Claudia Rivera',
       medioPago: 'Transferencia Bancaria',
-      concepto: 'Servicio Exprés de Paquetería',
       importe: 860,
       iva: 138,
       total: 998,
@@ -127,7 +117,6 @@ export interface InvoicePendingDataType {
       uuid: '012j3456-k78l-01m2-n345-314503009999',
       cliente: 'Diego Salinas',
       medioPago: 'Efectivo',
-      concepto: 'Movilidad Ejecutiva',
       importe: 1050,
       iva: 168,
       total: 1218,

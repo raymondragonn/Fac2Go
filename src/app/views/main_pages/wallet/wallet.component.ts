@@ -11,6 +11,9 @@ interface Client {
   rfc: string;
   lastInvoice: Date;
   invoiceCount: number;
+  fechaRegistro: Date;
+  tipoCliente: 'Persona Física' | 'Persona Moral';
+  iniciales: string;
 }
 
 @Component({
@@ -83,6 +86,11 @@ interface Client {
       display: flex;
       align-items: center;
       justify-content: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #fff;
+      background: linear-gradient(135deg, #2DC1A4, #25a08c);
+      border-radius: 50%;
     }
 
     .badge {
@@ -138,99 +146,49 @@ export class WalletComponent implements OnInit {
     this.loadClients();
   }
 
-
+  private getInitials(name: string, tipoCliente: 'Persona Física' | 'Persona Moral'): string {
+    if (tipoCliente === 'Persona Moral') {
+      // Para personas morales, tomar las primeras dos letras del nombre
+      return name.substring(0, 2).toUpperCase();
+    } else {
+      // Para personas físicas, tomar la primera letra de cada nombre y apellido
+      const parts = name.split(' ');
+      if (parts.length >= 3) {
+        // Si tiene nombre y dos apellidos
+        return (parts[0][0] + parts[1][0] + parts[2][0]).toUpperCase();
+      } else if (parts.length === 2) {
+        // Si solo tiene nombre y un apellido
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      // Si solo tiene un nombre
+      return name.substring(0, 2).toUpperCase();
+    }
+  }
 
   loadClients(): void {
     this.authService.getClientes().subscribe(
       (data: any) => {
-        this.clients = data.map((client: any) => ({
-          id: client.id_Cliente,
-          name: client.nombre_RazonSocial,
-          rfc: client.rfc,
-          lastInvoice: client.fecha_Registro
-          ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
-          : new Date(),
-          invoiceCount: 0
-        }))
+        this.clients = data.map((client: any) => {
+          const tipoCliente = client.rfc.length === 12 ? 'Persona Moral' : 'Persona Física';
+          return {
+            id: client.id_Cliente,
+            name: client.nombre_RazonSocial,
+            rfc: client.rfc,
+            lastInvoice: client.fecha_Registro
+              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
+              : new Date(),
+            invoiceCount: 0,
+            fechaRegistro: client.fecha_Registro
+              ? new Date(client.fecha_Registro[0], client.fecha_Registro[1] - 1, client.fecha_Registro[2])
+              : new Date(),
+            tipoCliente: tipoCliente,
+            iniciales: this.getInitials(client.nombre_RazonSocial, tipoCliente)
+          };
+        });
         this.filteredClients = [...this.clients];
-        console.log(this.clients);
+        this.sortClients();
       }
-    )
-    // this.clients = [
-    //   {
-    //     id: '1',
-    //     name: 'Juan Pérez García',
-    //     rfc: 'XAXX010101000',
-    //     lastInvoice: new Date('2024-03-15'),
-    //     invoiceCount: 5
-    //   },
-    //   {
-    //     id: '2',
-    //     name: 'Empresa ABC, S.A. de C.V.',
-    //     rfc: 'XAXX020202000',
-    //     lastInvoice: new Date('2024-03-10'),
-    //     invoiceCount: 12
-    //   },
-    //   {
-    //     id: '3',
-    //     name: 'María Rodríguez López',
-    //     rfc: 'XAXX030303000',
-    //     lastInvoice: new Date('2024-03-18'),
-    //     invoiceCount: 3
-    //   },
-    //   {
-
-        
-    //     id: '4',
-    //     name: 'Tecnologías XYZ, S.A.P.I. de C.V.',
-    //     rfc: 'XAXX040404000',
-    //     lastInvoice: new Date('2024-02-28'),
-    //     invoiceCount: 8
-    //   },
-    //   {
-    //     id: '5',
-    //     name: 'Carlos Martínez Sánchez',
-    //     rfc: 'XAXX050505000',
-    //     lastInvoice: new Date('2024-03-01'),
-    //     invoiceCount: 2
-    //   },
-    //   {
-    //     id: '6',
-    //     name: 'Servicios Profesionales del Norte, S.C.',
-    //     rfc: 'XAXX060606000',
-    //     lastInvoice: new Date('2024-03-20'),
-    //     invoiceCount: 15
-    //   },
-    //   {
-    //     id: '7',
-    //     name: 'Ana González Hernández',
-    //     rfc: 'XAXX070707000',
-    //     lastInvoice: new Date('2024-02-15'),
-    //     invoiceCount: 4
-    //   },
-    //   {
-    //     id: '8',
-    //     name: 'Consultores Asociados, S.A. de C.V.',
-    //     rfc: 'XAXX080808000',
-    //     lastInvoice: new Date('2024-03-05'),
-    //     invoiceCount: 10
-    //   },
-    //   {
-    //     id: '9',
-    //     name: 'Roberto Silva Mendoza',
-    //     rfc: 'XAXX090909000',
-    //     lastInvoice: new Date('2024-03-12'),
-    //     invoiceCount: 6
-    //   },
-    //   {
-    //     id: '10',
-    //     name: 'Distribuidora Comercial del Sur, S.A. de C.V.',
-    //     rfc: 'XAXX101010000',
-    //     lastInvoice: new Date('2024-03-17'),
-    //     invoiceCount: 9
-    //   }
-    // ];
-    
+    );
   }
 
   filterClients(): void {
@@ -248,10 +206,10 @@ export class WalletComponent implements OnInit {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       filtered = filtered.filter(client => client.lastInvoice >= thirtyDaysAgo);
-    } else if (this.filterBy === 'old') {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      filtered = filtered.filter(client => client.lastInvoice < thirtyDaysAgo);
+    } else if (this.filterBy === 'personaFisica') {
+      filtered = filtered.filter(client => client.tipoCliente === 'Persona Física');
+    } else if (this.filterBy === 'personaMoral') {
+      filtered = filtered.filter(client => client.tipoCliente === 'Persona Moral');
     }
 
     this.sortClients(filtered);
@@ -268,21 +226,25 @@ export class WalletComponent implements OnInit {
       case 'rfc':
         clients.sort((a, b) => a.rfc.localeCompare(b.rfc));
         break;
+      case 'recentlyAdded':
+        clients.sort((a, b) => b.fechaRegistro.getTime() - a.fechaRegistro.getTime());
+        break;
     }
     this.filteredClients = clients;
   }
 
   selectClient(client: Client): void {
-    this.router.navigate(['/issuance/principal'], {
+    this.router.navigate(['/show-ticket'], {
       queryParams: {
         clientId: client.id,
         rfc: client.rfc,
-        name: client.name
+        name: client.name,
+        tipoCliente: client.tipoCliente
       }
     });
   }
 
-  redirectionToPrincipal(): void {
-    this.router.navigate(['/issuance/principal']);
+  redirectionToNewClient(): void {
+    this.router.navigate(['/new-client']);
   }
 }

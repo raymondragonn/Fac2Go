@@ -3,18 +3,18 @@
     <div class="row mb-4 mt-4">
         <div class="col-12">
             <div class="card bg-light shadow-sm">
-                <div class="card-header bg-light">
+                <div class="card-header bg-light pb-0">
                     <div class="row align-items-center">
                         <div class="col text-center">
-                            <h4 class="card-title" style="font-size: 1.5rem;">Facturas Emitidas</h4>
-                            <span class="form-text text-muted" style="font-size: 1rem;">Gestiona y visualiza todas tus facturas emitidas</span>
+                            <h4 class="card-title mb-1" style="font-size: 1.5rem;">Facturas Emitidas</h4>
+                            <span class="form-text text-muted mb-0" style="font-size: 1rem;">Gestiona y visualiza todas tus facturas emitidas</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-1">
                     <div class="row g-3">
                         <!-- Búsqueda -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="las la-search"></i>
@@ -23,29 +23,14 @@
                                        (input)="searchName($event)">
                             </div>
                         </div>
-                        <!-- Filtro de Estado -->
-                        <div class="col-md-3">
-                            <select class="form-select" (change)="filterByStatus($event)">
-                                <option value="all">Todos los estados</option>
-                                <option value="pagada">Pagadas</option>
-                                <option value="pendiente">Pendientes</option>
-                                <option value="cancelada">Canceladas</option>
-                            </select>
-                        </div>
                         <!-- Filtro de Fecha -->
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <select class="form-select" (change)="filterByDate($event)">
                                 <option value="all">Todas las fechas</option>
                                 <option value="today">Hoy</option>
                                 <option value="week">Esta semana</option>
                                 <option value="month">Este mes</option>
                             </select>
-                        </div>
-                        <!-- Botón Nueva Factura -->
-                        <div class="col-md-2">
-                            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addUser">
-                                <i class="las la-plus me-1"></i> Nueva Factura
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -63,15 +48,12 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th class="text-center" style="width: 100px;">Fecha</th>
-                                    <th>Folio</th>
-                                    <th>UUID</th>
                                     <th>Cliente</th>
-                                    <th>Concepto</th>
+                                    <th>Folio</th>
                                     <th class="text-end">Importe</th>
                                     <th class="text-end">IVA</th>
                                     <th class="text-end">Total</th>
-                                    <th class="text-center">Estado</th>
-                                    <th class="text-center" style="width: 120px;">Acciones</th>
+                                    <th>UUID</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,51 +62,18 @@
                                     <td class="text-center">{{ item.date | date:'dd/MM/yyyy' }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-xs me-2">
-                                                <span class="avatar-title rounded-circle bg-primary-subtle text-primary">
-                                                    <i class="las la-file-invoice"></i>
-                                                </span>
-                                            </div>
-                                            <span>{{ item.folio }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted">{{ item.uuid }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-xs me-2">
-                                                <span class="avatar-title rounded-circle bg-info-subtle text-info">
-                                                    <i class="las la-user"></i>
-                                                </span>
+                                            <div class="client-avatar me-2">
+                                                {{ item.cliente | slice:0:2 | uppercase }}
                                             </div>
                                             <span>{{ item.cliente }}</span>
                                         </div>
                                     </td>
-                                    <td>{{ item.concepto }}</td>
+                                    <td>{{ item.folio }}</td>
                                     <td class="text-end">${{ item.importe | number:'1.2-2' }}</td>
                                     <td class="text-end">${{ item.iva | number:'1.2-2' }}</td>
                                     <td class="text-end fw-bold">${{ item.total | number:'1.2-2' }}</td>
-                                    <td class="text-center">
-                                        <span class="badge" [ngClass]="{
-                                            'bg-success-subtle text-success': item.status === 'pagada',
-                                            'bg-warning-subtle text-warning': item.status === 'pendiente',
-                                            'bg-danger-subtle text-danger': item.status === 'cancelada'
-                                        }">
-                                            {{ item.status }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="dropdown">
-                                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="las la-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="javascript:void(0)" (click)="viewInvoice(item)"><i class="las la-eye me-2"></i>Ver</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)" (click)="downloadInvoice(item)"><i class="las la-download me-2"></i>Descargar</a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0)" (click)="cancelInvoice(item)"><i class="las la-times-circle me-2"></i>Cancelar</a></li>
-                                            </ul>
-                                        </div>
+                                    <td>
+                                        <span class="text-muted">{{ item.uuid }}</span>
                                     </td>
                                 </tr>
                                 }

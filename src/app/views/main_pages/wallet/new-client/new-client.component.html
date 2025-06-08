@@ -11,7 +11,8 @@
       </div>
 
       <div class="card-body pt-0">
-        <div class="row justify-content-center">
+        <!-- Paso 1: Selección de método de ingreso -->
+        <div *ngIf="currentStep === 1" class="row justify-content-center">
           <div class="col-10 col-md-8 col-lg-6">
             <div class="text-center mb-4">
               <h4 class="mb-3">¿Cómo deseas agregar al cliente?</h4>
@@ -21,7 +22,7 @@
             <div class="row g-4">
               <!-- Opción QR -->
               <div class="col-md-6">
-                <div class="card h-100 shadow-sm hover-card qr-card" (click)="toggleQRScanner()" style="cursor: pointer;">
+                <div class="card h-100 shadow-sm hover-card qr-card" (click)="selectMethod('qr')" style="cursor: pointer;">
                   <div class="card-body text-center p-4 d-flex flex-column">
                     <div class="mb-3">
                       <i class="fas fa-qrcode fa-3x text-white"></i>
@@ -41,7 +42,7 @@
 
               <!-- Opción Manual -->
               <div class="col-md-6">
-                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer;">
+                <div class="card h-100 shadow-sm hover-card" (click)="selectMethod('manual')" style="cursor: pointer;">
                   <div class="card-body text-center p-4 d-flex flex-column">
                     <div class="mb-3">
                       <i class="fas fa-keyboard fa-3x text-primary"></i>
@@ -59,43 +60,58 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Sección del Scanner QR -->
-            <div *ngIf="showQRScanner" class="mt-4">
-              <div class="card shadow-lg border-0">
-                <div class="card-body text-center">
-                  <h5 class="mb-3">Escanea el QR de la constancia fiscal</h5>
-                  <p class="text-muted mb-4">
-                    Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
-                  </p>
-                  <div class="d-flex justify-content-center align-items-center mb-4">
-                    <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
-                      style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
-                      (event)="extractValue(action.data)">
-                    </ngx-scanner-qrcode>
-                  </div>
-                  <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
-                    (click)="action.isStart ? action.stop() : action.start()">
-                    {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
+        <!-- Paso 2: Scanner QR -->
+        <div *ngIf="currentStep === 2 && selectedMethod === 'qr'" class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+              <div class="card-body text-center">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar
                   </button>
-                  <button type="button" class="btn btn-secondary w-100 rounded-pill px-4 py-2"
-                    (click)="toggleQRScanner()">
-                    Regresar
-                  </button>
-                  <div class="alert alert-info mt-4" *ngIf="!qrValue">
-                    <small>Esperando la captura del código QR...</small>
-                  </div>
-                  <div class="alert alert-success mt-4" *ngIf="qrValue">
-                    <small>QR capturado: {{ qrValue }}</small>
-                  </div>
+                  <h5 class="mb-0">Escanea el QR de la constancia fiscal</h5>
+                  <div style="width: 100px;"></div>
+                </div>
+                <p class="text-muted mb-4">
+                  Coloca el código QR frente a la cámara para capturar automáticamente los datos fiscales.
+                </p>
+                <div class="d-flex justify-content-center align-items-center mb-4">
+                  <ngx-scanner-qrcode #action="scanner" class="rounded shadow-sm"
+                    style="border: 5px solid #007bff; padding: 10px; width: 100%; max-width: 80%; height: auto;"
+                    (event)="extractValue(action.data)">
+                  </ngx-scanner-qrcode>
+                </div>
+                <button class="btn btn-primary w-100 rounded-pill px-4 py-2 mb-3"
+                  (click)="action.isStart ? action.stop() : action.start()">
+                  {{ action.isStart ? 'Detener Escaneo' : 'Iniciar Escaneo' }}
+                </button>
+                <div class="alert alert-info mt-4" *ngIf="!qrValue">
+                  <small>Esperando la captura del código QR...</small>
+                </div>
+                <div class="alert alert-success mt-4" *ngIf="qrValue">
+                  <small>QR capturado: {{ qrValue }}</small>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Formulario de datos del cliente -->
-            <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="mt-4">
-              <div class="card shadow-sm">
-                <div class="card-body">
+        <!-- Paso 2: Formulario Manual -->
+        <div *ngIf="currentStep === 2 && selectedMethod === 'manual'" class="row justify-content-center">
+          <div class="col-10 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+                    <i class="fas fa-arrow-left me-2"></i>Regresar
+                  </button>
+                  <h5 class="mb-0">Ingreso Manual de Datos</h5>
+                  <div style="width: 100px;"></div>
+                </div>
+                <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
                   <!-- Nombre Completo o Razón Social -->
                   <div class="mb-3">
                     <label for="nombreCompleto" class="form-label">
@@ -140,22 +156,22 @@
                     <select class="form-select" id="regimenFiscal" formControlName="regimenFiscal"
                       [ngClass]="{'is-invalid': clientForm.get('regimenFiscal')?.touched && clientForm.get('regimenFiscal')?.invalid}">
                       <option value="">Selecciona un régimen fiscal</option>
-                          <option value="601">General de Ley Personas Morales</option>
-                          <option value="603">Personas Morales con Fines no Lucrativos</option>
-                          <option value="605">Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
-                          <option value="606">Arrendamiento</option>
-                          <option value="608">Demás ingresos</option>
-                          <option value="611">Ingresos por Dividendos</option>
-                          <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
-                          <option value="614">Ingresos por intereses</option>
-                          <option value="616">Sin obligaciones fiscales</option>
-                          <option value="620">Sociedades Cooperativas de Producción</option>
-                          <option value="621">Incorporación Fiscal</option>
-                          <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
-                          <option value="623">Opcional para Grupos de Sociedades</option>
-                          <option value="624">Coordinados</option>
-                          <option value="625">Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas</option>
-                          <option value="626">Régimen Simplificado de Confianza</option>
+                      <option value="601">General de Ley Personas Morales</option>
+                      <option value="603">Personas Morales con Fines no Lucrativos</option>
+                      <option value="605">Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                      <option value="606">Arrendamiento</option>
+                      <option value="608">Demás ingresos</option>
+                      <option value="611">Ingresos por Dividendos</option>
+                      <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
+                      <option value="614">Ingresos por intereses</option>
+                      <option value="616">Sin obligaciones fiscales</option>
+                      <option value="620">Sociedades Cooperativas de Producción</option>
+                      <option value="621">Incorporación Fiscal</option>
+                      <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                      <option value="623">Opcional para Grupos de Sociedades</option>
+                      <option value="624">Coordinados</option>
+                      <option value="625">Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas</option>
+                      <option value="626">Régimen Simplificado de Confianza</option>
                     </select>
                     <div class="invalid-feedback" *ngIf="clientForm.get('regimenFiscal')?.touched && clientForm.get('regimenFiscal')?.errors?.['required']">
                       Régimen fiscal es requerido
@@ -163,13 +179,13 @@
                   </div>
 
                   <div class="text-center mt-4">
-                    <button (click)="registroCliente()" type="submit" class="btn btn-primary px-4" [disabled]="!clientForm.valid">
+                    <button type="submit" class="btn btn-primary px-4" [disabled]="!clientForm.valid">
                       Guardar Cliente
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
