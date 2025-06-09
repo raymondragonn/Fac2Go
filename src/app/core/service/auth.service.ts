@@ -38,6 +38,10 @@ export class AuthenticationService {
     )
   }
 
+  getidUser(){
+    return this.http.get(`${API_URL}/userid`, )
+  }
+
   loginAdmin(correo: string, contraseña: string) {
     return this.http.post<User>(`${API_URL}/admin/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
       map((user: any) => {
@@ -49,6 +53,32 @@ export class AuthenticationService {
       })
     )
   }
+  saveFacturaDatabase(factura: any) {
+    return this.http.post(`${API_URL}/factu`, factura )
+  }
+
+  getAllFacturas() {
+     return this.http.get(`${API_URL}/factu/all`);
+  }
+
+  getFacturas(correo: string) {
+  return this.http.get(`${API_URL}/factu/usuario`, {
+    params: { correo }
+  });
+
+  
+
+  
+  
+
+  
+}
+
+  
+
+  // getClientes() {
+  //   return this.http.get(`${API_URL}/clientes`);
+  // }
 
   loginUser(correo: string, contraseña: string) {
     return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
@@ -90,12 +120,19 @@ export class AuthenticationService {
   }
 
   registerUser(usuario: any) {
-    return this.http.post(`${API_URL}/usuarios/register`, usuario, { headers: this.getHeaders() });
+    return this.http.post(`${API_URL}/usuarios/register`, usuario);
   }
 
   getClientes() {
     return this.http.get(`${API_URL}/clientes`, { headers: this.getHeaders() });
   }
+
+  getClientesBycorreo(correo: any) {
+  return this.http.get(`${API_URL}/clientes/userbycorreo`, {
+    params: { correo },
+   
+  });
+}
 
   newCliente(cliente: any) {
     return this.http.post(`${API_URL}/clientes`, cliente, { headers: this.getHeaders() });

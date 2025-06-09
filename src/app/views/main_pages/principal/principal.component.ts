@@ -17,6 +17,7 @@ import { ScannerQRService } from '@/app/services/scanner-qr.service';
 import { NgxScannerQrcodeComponent, LOAD_WASM, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
 import { BehaviorSubject } from 'rxjs';
 import { FacturacionService } from '@/app/core/service/facturacion.service';
+import { AuthenticationService } from '@/app/core/service/auth.service';
 
 @Component({
   selector: 'app-principal',
@@ -200,11 +201,14 @@ export class PrincipalComponent implements OnInit {
   private facturar = inject(FacturacionService);
   isLoading: boolean = false;
 
-  constructor(private userService: UserService, private qrService: ScannerQRService) {}
+  constructor(private userService: UserService, private qrService: ScannerQRService, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.userService.setUserType('guest');
+    // this.authService.getidUser().subscribe((data: any) => {
+
+    // })
   }
 
   extractValue(data: BehaviorSubject<ScannerQRCodeResult[]>): void {
@@ -413,11 +417,25 @@ export class PrincipalComponent implements OnInit {
     Codigo_Postal: '78395', 
     usoCfdi: 'G03', 
   };
+
+  generateUUID(): string {
+  // UUID v4 generator
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  generateSerie(): string {
+  // Genera un número entre 1 y 999, con ceros a la izquierda
+    const num = Math.floor(Math.random() * 999) + 1;
+    return `A${num.toString().padStart(3, '0')}`;
+  }
   
 
   generarFactura() {
     let formData: any = {
-      email: "raymondragonn@gmail.com",
+      email: this.facturacionForm.get('email')?.value,
       rfc: this.facturacionForm.get('rfc')?.value, 
       servicio: '1', 
       token: this.facturacionForm.get('token')?.value, 
@@ -441,13 +459,16 @@ export class PrincipalComponent implements OnInit {
     // };
     console.log(this.form);
     console.log(formData);
+    let now = new Date();
+    let fechaFormateada = now.toISOString().slice(0, 19);
+    let uuidGenerado = this.generateUUID();
 
     console.log("Función facturaPrueba ejecutada");
     this.isLoading = true;
     
-    this.facturar.facturarCDFI(formData).subscribe(data => {
+    this.facturar.facturarCDFI(formData).subscribe((data: any) => {
       if(data){
-        let uuid = data;
+        let uuid = data.uuid;
         console.log(uuid);
         this.facturar.genPDF(formData).subscribe(data => {
           if(data){
@@ -455,8 +476,22 @@ export class PrincipalComponent implements OnInit {
             this.facturar.genPDFUUID(uuid).subscribe(data => {
               this.isLoading = false;
               alert(`Correo enviado en breve llegara tu factura a tu correo`);
+
               this.facturar.SendEmail().subscribe(data => {
-                window.location.reload();
+                let factura = {
+                  num_Serie: this.generateSerie(),
+                  folio: formData.token,
+                  uuid: uuidGenerado,
+                  fecha_Emision: fechaFormateada,
+                  fecha_Timbrado: fechaFormateada,
+                  id_Cliente: "b73f9c26-1231-4c0e-9d4a-e3fcb7a82db4",
+                  id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
+                  total: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000 // total aleatorio entre 1000 y 5000
+                }
+                this.authService.saveFacturaDatabase(factura).subscribe(data => {
+                  window.location.reload();
+                })
+                
               })
             })
           }

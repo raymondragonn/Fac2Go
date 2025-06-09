@@ -140,11 +140,20 @@ export class WalletComponent implements OnInit {
   searchTerm: string = '';
   sortBy: string = 'recentlyAdded';
   filterBy: string = 'all';
+  usuarioCorreo: any;
 
   constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
-    this.loadClients();
+    this.authService.getCurrentUser().subscribe(
+      (user: any) => {
+        console.log(user.correo);
+        this.usuarioCorreo = user.correo;
+        this.loadClients();
+      }
+    )
+    
+    
   }
 
   private getInitials(name: string, tipoCliente: 'Persona Física' | 'Persona Moral'): string {
@@ -167,7 +176,8 @@ export class WalletComponent implements OnInit {
   }
 
   loadClients(): void {
-    this.authService.getClientes().subscribe(
+    let correo = this.usuarioCorreo;
+    this.authService.getClientesBycorreo(correo).subscribe(
       (data: any) => {
         this.clients = data.map((client: any) => {
           const tipoCliente = client.rfc.length === 12 ? 'Persona Moral' : 'Persona Física';
