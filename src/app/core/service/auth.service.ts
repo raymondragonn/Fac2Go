@@ -38,6 +38,10 @@ export class AuthenticationService {
     )
   }
 
+  getidUser(){
+    return this.http.get(`${API_URL}/userid`, )
+  }
+
   loginAdmin(correo: string, contraseña: string) {
     return this.http.post<User>(`${API_URL}/admin/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
       map((user: any) => {
@@ -49,6 +53,9 @@ export class AuthenticationService {
       })
     )
   }
+  saveFacturaDatabase(factura: any) {
+    return this.http.post(`${API_URL}/factu`, factura )
+  }
 
   getAllFacturas() {
      return this.http.get(`${API_URL}/factu/all`);
@@ -59,6 +66,9 @@ export class AuthenticationService {
     params: { correo }
   });
 
+  
+
+  
   
 
   
