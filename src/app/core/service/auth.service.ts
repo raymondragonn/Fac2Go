@@ -50,9 +50,21 @@ export class AuthenticationService {
     )
   }
 
-  getFacturas(){
-    return this.http.get(`${API_URL}/factu`)
+  getAllFacturas() {
+     return this.http.get(`${API_URL}/factu/all`);
   }
+
+  getFacturas(correo: string) {
+  return this.http.get(`${API_URL}/factu/usuario`, {
+    params: { correo }
+  });
+
+  
+
+  
+}
+
+  
 
   // getClientes() {
   //   return this.http.get(`${API_URL}/clientes`);
@@ -98,12 +110,19 @@ export class AuthenticationService {
   }
 
   registerUser(usuario: any) {
-    return this.http.post(`${API_URL}/usuarios/register`, usuario, { headers: this.getHeaders() });
+    return this.http.post(`${API_URL}/usuarios/register`, usuario);
   }
 
   getClientes() {
     return this.http.get(`${API_URL}/clientes`, { headers: this.getHeaders() });
   }
+
+  getClientesBycorreo(correo: any) {
+  return this.http.get(`${API_URL}/clientes/userbycorreo`, {
+    params: { correo },
+   
+  });
+}
 
   newCliente(cliente: any) {
     return this.http.post(`${API_URL}/clientes`, cliente, { headers: this.getHeaders() });

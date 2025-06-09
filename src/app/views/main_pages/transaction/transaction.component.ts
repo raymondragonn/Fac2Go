@@ -147,185 +147,92 @@ export class TransactionComponent implements OnInit {
   itemsPerPage: number = 10
   totalItems: number = 0
   totalPages: number = 0
+  usuarioCorreo: any = null
 
   // Exponer Math para el template
   protected Math = Math
 
   private modalService = inject(NgbModal)
+  userType: any;
 
   constructor(private router: Router, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     // this.loadInvoices()
-    this.loadInvoices2()
+    this.userType = localStorage.getItem('userType');
+    this.authService.getCurrentUser().subscribe(
+      (user: any) => {
+        console.log(user.correo);
+        this.usuarioCorreo = user.correo;
+        
+      }
+    )
+    console.log(this.userType);
+    if(this.userType === 'admin'){
+      this.loadInvoices1()
+    }else{
+      this.loadInvoices2()
+    }
+  
+  }
+  pagedData(): InvoiceDataType[] {
+  const start = (this.currentPage - 1) * this.itemsPerPage;
+  const end = start + this.itemsPerPage;
+  return this.filteredData.slice(start, end);
+}
+
+  loadInvoices1(){
+    this.authService.getAllFacturas().subscribe(
+      (data: any) => {
+        console.log(data);
+        this.invoiceData = data.map((item: any, idx: number) => ({
+          date: item.Fecha_Emision
+            ? `${item.Fecha_Emision[0]}-${String(item.Fecha_Emision[1]).padStart(2, '0')}-${String(item.Fecha_Emision[2]).padStart(2, '0')}`
+            : '',
+          serie: item.Num_Serie || 'A',
+          folio: item.Folio || `FAC-${String(idx + 1).padStart(3, '0')}`,
+          uuid: item.UUID || item.id_Cliente || '',
+          cliente: item.Nombre_RazonSocial || '',
+          medioPago: 'Transferencia',
+          importe: Number(item.SubTotal) || 0,
+          iva: Number(item.IVA) || 0,
+          total: Number(item.total) || 0,
+          status: 'pagada'
+        }));
+    
+        this.applyFilters();
+       
+        }
+      );
+
   }
 
   loadInvoices2(){
-    this.authService.getFacturas().subscribe(
-  (data: any) => {
-    console.log(data);
-    this.invoiceData = data.map((item: any, idx: number) => ({
-      date: item.Fecha_Emision
-        ? `${item.Fecha_Emision[0]}-${String(item.Fecha_Emision[1]).padStart(2, '0')}-${String(item.Fecha_Emision[2]).padStart(2, '0')}`
-        : '',
-      serie: item.Num_Serie || 'A',
-      folio: item.Folio || `FAC-${String(idx + 1).padStart(3, '0')}`,
-      uuid: item.UUID || item.id_Cliente || '',
-      cliente: item.Nombre_RazonSocial || '',
-      medioPago: 'Transferencia',
-      importe: Number(item.SubTotal) || 0,
-      iva: Number(item.IVA) || 0,
-      total: Number(item.total) || 0,
-      status: 'pagada'
-    }));
-
-    this.filteredData = [...this.invoiceData];
-    this.totalItems = this.invoiceData.length;
-    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-  }
-);
-
-  }
-
-  loadInvoices(): void {
-    // Simulación de datos - Reemplazar con llamada real al servicio
-    this.authService.getClientes().subscribe(
-    (data: any) => {
-      console.log(data);
-      this.invoiceData = data.map((factura: any) => {
-        return {
-          date: factura.fecha_Emision
-            ? `${factura.fecha_Emision[0]}-${String(factura.fecha_Emision[1]).padStart(2, '0')}-${String(factura.fecha_Emision[2]).padStart(2, '0')}`
+    this.authService.getFacturas(this.usuarioCorreo).subscribe(
+      (data: any) => {
+        console.log(data);
+        this.invoiceData = data.map((item: any, idx: number) => ({
+          date: item.Fecha_Emision
+            ? `${item.Fecha_Emision[0]}-${String(item.Fecha_Emision[1]).padStart(2, '0')}-${String(item.Fecha_Emision[2]).padStart(2, '0')}`
             : '',
-          serie: 'A',
-          // Asigna el valor real si lo tienes
-          folio: factura.folio, // Asigna el valor real si lo tienes
-          uuid: factura.uuid, // O usa otro campo si tienes un uuid real
-          cliente: 'Juan Pérez García',
-          medioPago: 'Efectivo',
-          importe: factura.subTotal,
-          // cliente: factura.id_Cliente, // Asigna el valor real si lo tienes
-          iva: factura.iva, // Asigna el valor real si lo tienes
-          total: factura.total, // Asigna el valor real si lo tienes
-          status: 'pagado'
-        };
-      });
-      this.filteredData = [...this.invoiceData];
-      this.totalItems = this.invoiceData.length;
-      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-    }
-  );
+          serie: item.Num_Serie || 'A',
+          folio: item.Folio || `FAC-${String(idx + 1).padStart(3, '0')}`,
+          uuid: item.UUID || item.id_Cliente || '',
+          cliente: item.Nombre_RazonSocial || '',
+          medioPago: 'Transferencia',
+          importe: Number(item.SubTotal) || 0,
+          iva: Number(item.IVA) || 0,
+          total: Number(item.total) || 0,
+          status: 'pagada'
+        }));
+    
+        this.applyFilters();
+       
+        }
+      );
 
-    // this.invoiceData = [
-    //   {
-    //     date: '2024-03-20',
-    //     serie: 'A',
-    //     folio: 'FAC-001',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174000',
-    //     cliente: 'Juan Pérez García',
-    //     medioPago: 'Transferencia',
-        
-    //     importe: 1500.00,
-    //     iva: 240.00,
-    //     total: 1740.00,
-    //     status: 'pagada'
-    //   },
-    //   {
-    //     date: '2024-03-19',
-    //     serie: 'A',
-    //     folio: 'FAC-002',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174001',
-    //     cliente: 'Empresa ABC, S.A. de C.V.',
-    //     medioPago: 'Tarjeta',
-        
-    //     importe: 3500.00,
-    //     iva: 560.00,
-    //     total: 4060.00,
-    //     status: 'pendiente'
-    //   },
-    //   {
-    //     date: '2024-03-18',
-    //     serie: 'A',
-    //     folio: 'FAC-003',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174002',
-    //     cliente: 'María Rodríguez López',
-    //     medioPago: 'Efectivo',
-        
-    //     importe: 2800.00,
-    //     iva: 448.00,
-    //     total: 3248.00,
-    //     status: 'cancelada'
-    //   },
-    //   {
-    //     date: '2024-03-17',
-    //     serie: 'A',
-    //     folio: 'FAC-004',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174003',
-    //     cliente: 'Constructora XYZ, S.A. de C.V.',
-    //     medioPago: 'Transferencia',
-        
-    //     importe: 8500.00,
-    //     iva: 1360.00,
-    //     total: 9860.00,
-    //     status: 'pagada'
-    //   },
-    //   {
-    //     date: '2024-03-16',
-    //     serie: 'A',
-    //     folio: 'FAC-005',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174004',
-    //     cliente: 'Carlos Martínez Sánchez',
-    //     medioPago: 'Tarjeta',
-        
-    //     importe: 4200.00,
-    //     iva: 672.00,
-    //     total: 4872.00,
-    //     status: 'pendiente'
-    //   },
-    //   {
-    //     date: '2024-03-15',
-    //     serie: 'A',
-    //     folio: 'FAC-006',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174005',
-    //     cliente: 'Restaurante El Buen Sabor',
-    //     medioPago: 'Efectivo',
-        
-    //     importe: 3200.00,
-    //     iva: 512.00,
-    //     total: 3712.00,
-    //     status: 'pagada'
-    //   },
-    //   {
-    //     date: '2024-03-14',
-    //     serie: 'A',
-    //     folio: 'FAC-007',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174006',
-    //     cliente: 'Clínica Dental Sonrisa',
-    //     medioPago: 'Transferencia',
-        
-    //     importe: 6500.00,
-    //     iva: 1040.00,
-    //     total: 7540.00,
-    //     status: 'cancelada'
-    //   },
-    //   {
-    //     date: '2024-03-13',
-    //     serie: 'A',
-    //     folio: 'FAC-008',
-    //     uuid: '123e4567-e89b-12d3-a456-426614174007',
-    //     cliente: 'Distribuidora Comercial del Norte',
-    //     medioPago: 'Tarjeta',
-        
-    //     importe: 12000.00,
-    //     iva: 1920.00,
-    //     total: 13920.00,
-    //     status: 'pagada'
-    //   }
-    // ]
-    // this.filteredData = [...this.invoiceData]
-    // this.totalItems = this.invoiceData.length
-    // this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage)
   }
+  
 
   searchName(event: Event): void {
     const search = (event.target as HTMLInputElement).value.toLowerCase()
@@ -334,7 +241,7 @@ export class TransactionComponent implements OnInit {
       invoice.cliente.toLowerCase().includes(search) ||
       invoice.uuid.toLowerCase().includes(search)
     )
-    this.updatePagination()
+    this.updatePagination(true)
   }
 
   filterByStatus(event: Event): void {
@@ -386,11 +293,13 @@ export class TransactionComponent implements OnInit {
     this.updatePagination()
   }
 
-  updatePagination(): void {
-    this.totalItems = this.filteredData.length
-    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage)
-    this.currentPage = 1
+  updatePagination(resetPage: boolean = false): void {
+  this.totalItems = this.filteredData.length;
+  this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (resetPage) {
+    this.currentPage = 1;
   }
+}
 
   getPages(): number[] {
     const pages: number[] = []
@@ -411,7 +320,7 @@ export class TransactionComponent implements OnInit {
 
   onPageChange(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page
+      this.currentPage = page;
     }
   }
 
