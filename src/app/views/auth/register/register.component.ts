@@ -85,7 +85,7 @@ export class RegisterComponent implements OnInit {
           if(response.message === 'Administrador registrado exitosamente'){
             this.toastr.success('Administrador registrado exitosamente, redirigiendo al login...', '¡Éxito!');
             setTimeout(() => {
-              this.router.navigate(['/auth/login']);
+              this.router.navigate(['/auth/login-admin']);
             }, 2000);
           } else {
             this.toastr.error('Error al registrar el administrador')
