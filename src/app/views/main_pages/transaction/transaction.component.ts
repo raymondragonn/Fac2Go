@@ -161,19 +161,19 @@ export class TransactionComponent implements OnInit {
     // this.loadInvoices()
     this.userType = localStorage.getItem('userType');
     console.log(this.userType);
-    this.authService.getCurrentUser().subscribe(
+    if(this.userType === 'admin'){
+      this.getAdminFac()
+    }else{
+      this.authService.getCurrentUser().subscribe(
       (user: any) => {
         console.log(user.correo);
         this.usuarioCorreo = user.correo;
         console.log(this.userType);
-        if(this.userType === 'admin'){
-          this.getAdminFac()
-        }else{
-          this.getUsuarioFac()
-        }
-        
+        this.getUsuarioFac()  
       }
     )
+    }
+    
     
   
   }
