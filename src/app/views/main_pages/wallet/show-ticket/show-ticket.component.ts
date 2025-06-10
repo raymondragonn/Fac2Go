@@ -5,6 +5,7 @@ import { NgxScannerQrcodeComponent, ScannerQRCodeResult } from 'ngx-scanner-qrco
 import { BehaviorSubject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FacturacionService } from '@/app/core/service/facturacion.service';
+import { AuthenticationService } from '@/app/core/service/auth.service';
 
 interface ClienteSeleccionado {
   clientId: string;
@@ -128,12 +129,15 @@ export class ShowTicketComponent implements OnInit {
   ticketForm!: UntypedFormGroup;
   confirmacionAceptada: boolean = false;
   isProcessingQR: boolean = false;
+  usuarioSesion: any;
+  usuarioID: any;
 
   constructor(
     public router: Router,
     private route: ActivatedRoute,
     private formBuilder: UntypedFormBuilder,
-    private facturar: FacturacionService
+    private facturar: FacturacionService,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -147,6 +151,19 @@ export class ShowTicketComponent implements OnInit {
         tipoCliente: params['tipoCliente']
       };
     });
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    console.log(currentUser)
+    this.usuarioSesion = currentUser.usuario;
+    console.log(this.usuarioSesion);
+
+    this.authService.getUseridByCorreo(this.usuarioSesion).subscribe((data: any) => {
+      if(data){
+        
+        this.usuarioID = data.id;
+        console.log(this.usuarioID);
+      }
+    })
   }
 
   initForm() {
@@ -189,9 +206,26 @@ export class ShowTicketComponent implements OnInit {
     }
   }
 
+  generateSerie(): string {
+  const num = Math.floor(Math.random() * 999) + 1;
+  return `A${num.toString().padStart(3, '0')}`;
+}
+
+generateFolio(): string {
+  const num = Math.floor(Math.random() * 9999) + 1;
+  return `FAC-${num.toString().padStart(4, '0')}`;
+}
+
+generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
   generarFactura() {
     let formData: any = {
-      email: "raymondragonn@gmail.com",
+      email: this.usuarioSesion,
       rfc: this.clienteSeleccionado?.rfc,
       servicio: '1',
       token: this.ticketForm.get('token')?.value,
@@ -199,8 +233,30 @@ export class ShowTicketComponent implements OnInit {
       nombreCompleto: this.clienteSeleccionado?.name,
       regimenFiscal: '601',
       Codigo_Postal: '78395',
-      usoCfdi: 'G03'
+      usoCfdi: 'G03',
+      
     };
+    let now = new Date();
+    let fechaTimbrado = now.toISOString().slice(0, 19);
+
+    
+    let FacturacionInterna: any = {
+      num_Serie: this.generateSerie(),
+      folio: this.generateFolio(),
+      uuid: this.generateUUID(),
+      fecha_Emision: this.ticketForm.get('fecha')?.value,
+      fecha_Timbrado: fechaTimbrado,
+      id_Cliente: this.clienteSeleccionado?.clientId,
+      id_Usuario: this.usuarioID,
+      email: this.usuarioSesion,
+      total: (Math.random() * (5000 - 1000) + 1000).toFixed(2)
+    };
+
+    this.authService.facturacionInterna(FacturacionInterna).subscribe((data: any) => {
+      if(data){
+        console.log("facturacion interna guardada correctamente")
+      }
+    })
 
     console.log("Iniciando proceso de facturación");
     this.isLoading = true;

@@ -105,6 +105,8 @@ export class NewClientComponent implements OnInit {
   qrValue: string | null = null;
   isPersonaMoral: boolean = false;
   isProcessingQR: boolean = false;
+  usuaarioEnSesion: any;
+  idUsuario: any;
   
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -116,6 +118,15 @@ export class NewClientComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    console.log(currentUser.usuario);
+    this.usuaarioEnSesion = currentUser.usuario;
+    this.authService.getUseridByCorreo(this.usuaarioEnSesion).subscribe(
+      (response: any) => {
+        this.idUsuario = response.id;
+        console.log(this.idUsuario);
+      }
+    )
   }
 
   initForm() {
@@ -148,7 +159,8 @@ export class NewClientComponent implements OnInit {
         nombre_RazonSocial: this.clientForm.value.nombreCompleto,
         rfc: this.clientForm.value.rfc,
         codigo_Postal: this.clientForm.value.codigoPostal,
-        regimenFiscal: this.clientForm.value.regimenFiscal
+        regimenFiscal: this.clientForm.value.regimenFiscal,
+        id_Usuario: this.idUsuario
       };
 
       this.authService.newCliente(cliente).subscribe(

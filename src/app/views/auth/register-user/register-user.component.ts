@@ -98,7 +98,7 @@ export class RegisterUserComponent implements OnInit {
       this.authService.registerUser(userData).subscribe(
         (response: any) => {
           console.log('Registro exitoso:', response);
-          if(response.message === 'Usuario registrado exitosamente'){
+          if(response.message === 'Usuario creado exitosamente'){
             this.toastr.success('Usuario registrado exitosamente, redirigiendo al login...', '¡Éxito!');
             setTimeout(() => {
               this.router.navigate(['auth/login-user']);

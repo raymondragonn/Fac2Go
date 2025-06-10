@@ -147,7 +147,7 @@ export class TransactionComponent implements OnInit {
   itemsPerPage: number = 10
   totalItems: number = 0
   totalPages: number = 0
-  usuarioCorreo: any = null
+  usuarioCorreo: any;
 
   // Exponer Math para el template
   protected Math = Math
@@ -160,19 +160,21 @@ export class TransactionComponent implements OnInit {
   ngOnInit(): void {
     // this.loadInvoices()
     this.userType = localStorage.getItem('userType');
+    console.log(this.userType);
     this.authService.getCurrentUser().subscribe(
       (user: any) => {
         console.log(user.correo);
         this.usuarioCorreo = user.correo;
+        console.log(this.userType);
+        if(this.userType === 'admin'){
+          this.getAdminFac()
+        }else{
+          this.getUsuarioFac()
+        }
         
       }
     )
-    console.log(this.userType);
-    if(this.userType === 'admin'){
-      this.loadInvoices1()
-    }else{
-      this.loadInvoices2()
-    }
+    
   
   }
   pagedData(): InvoiceDataType[] {
@@ -181,14 +183,12 @@ export class TransactionComponent implements OnInit {
   return this.filteredData.slice(start, end);
 }
 
-  loadInvoices1(){
+  getAdminFac(){
     this.authService.getAllFacturas().subscribe(
       (data: any) => {
         console.log(data);
         this.invoiceData = data.map((item: any, idx: number) => ({
-          date: item.Fecha_Emision
-            ? `${item.Fecha_Emision[0]}-${String(item.Fecha_Emision[1]).padStart(2, '0')}-${String(item.Fecha_Emision[2]).padStart(2, '0')}`
-            : '',
+          date: item.Fecha_Emision || '',
           serie: item.Num_Serie || 'A',
           folio: item.Folio || `FAC-${String(idx + 1).padStart(3, '0')}`,
           uuid: item.UUID || item.id_Cliente || '',
@@ -207,7 +207,8 @@ export class TransactionComponent implements OnInit {
 
   }
 
-  loadInvoices2(){
+  getUsuarioFac(){
+    console.log(this.usuarioCorreo)
     this.authService.getFacturas(this.usuarioCorreo).subscribe(
       (data: any) => {
         console.log(data);

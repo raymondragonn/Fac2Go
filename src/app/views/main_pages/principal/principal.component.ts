@@ -200,6 +200,7 @@ export class PrincipalComponent implements OnInit {
   private router = inject(Router);
   private facturar = inject(FacturacionService);
   isLoading: boolean = false;
+  clienteId: any;
 
   constructor(private userService: UserService, private qrService: ScannerQRService, private authService: AuthenticationService) {}
 
@@ -431,6 +432,15 @@ export class PrincipalComponent implements OnInit {
     const num = Math.floor(Math.random() * 999) + 1;
     return `A${num.toString().padStart(3, '0')}`;
   }
+
+  generateFolio(): string {
+  const num = Math.floor(Math.random() * 9999) + 1;
+  return `FAC-${num.toString().padStart(4, '0')}`;
+  }
+
+
+
+  
   
 
   generarFactura() {
@@ -446,19 +456,29 @@ export class PrincipalComponent implements OnInit {
       usoCfdi: this.facturacionForm.get('usoCfdi')?.value
     }
     
-    // let formData: any = {
-    //   email: "eduardoavilat2002@gmail.com",
-    //   rfc: 'AMI780504F88', 
-    //   servicio: '1', 
-    //   token: 'TOKEN_123456', 
-    //   fechaHora: "10/09/2024", 
-    //   nombreCompleto: 'AISLANTES MINERALES', 
-    //   regimenFiscal: '601', 
-    //   Codigo_Postal: '78395', 
-    //   usoCfdi: 'G03', 
-    // };
-    console.log(this.form);
-    console.log(formData);
+    let cliente = {
+      nombre_RazonSocial: this.facturacionForm.get('nombreCompleto')?.value,
+      rfc: this.facturacionForm.get('rfc')?.value,
+      codigo_Postal: this.facturacionForm.get('Codigo_Postal')?.value, 
+      // usoCFDI: this.facturacionForm.get('usoCfdi')?.value,
+      regimenFiscal: this.facturacionForm.get('regimenFiscal')?.value, 
+      id_Usuario: 'cb66cccb-62b8-4918-a307-8db0bb7bceb7'
+
+
+    }
+    this.authService.newCliente(cliente).subscribe((data: any) => {
+      console.log(data);
+      if(data){
+        this.clienteId = data.idCliente;
+        console.log('ID del cliente:', this.clienteId);
+      }else{
+        this.clienteId = '7dc646be-8bb2-4d78-8494-604825458a72'
+      }
+    })
+
+    
+    
+    
     let now = new Date();
     let fechaFormateada = now.toISOString().slice(0, 19);
     let uuidGenerado = this.generateUUID();
@@ -484,12 +504,18 @@ export class PrincipalComponent implements OnInit {
                   uuid: uuidGenerado,
                   fecha_Emision: fechaFormateada,
                   fecha_Timbrado: fechaFormateada,
-                  id_Cliente: "b73f9c26-1231-4c0e-9d4a-e3fcb7a82db4",
+                  id_Cliente: this.clienteId,
                   id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
                   total: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000 // total aleatorio entre 1000 y 5000
                 }
                 this.authService.saveFacturaDatabase(factura).subscribe(data => {
-                  window.location.reload();
+                  if(data){
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 3000);
+                    
+                  }
+                  
                 })
                 
               })

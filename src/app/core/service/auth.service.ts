@@ -24,9 +24,6 @@ export class AuthenticationService {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
     });
   }
 
@@ -81,7 +78,7 @@ export class AuthenticationService {
   // }
 
   loginUser(correo: string, contraseña: string) {
-    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }, { headers: this.getHeaders() }).pipe(
+    return this.http.post<User>(`${API_URL}/usuarios/login`, { correo, contraseña }).pipe(
       map((user: any) => {
         if (user.token) {
           this.saveSession(user.token);
@@ -120,7 +117,7 @@ export class AuthenticationService {
   }
 
   registerUser(usuario: any) {
-    return this.http.post(`${API_URL}/usuarios/register`, usuario);
+    return this.http.post(`${API_URL}/usuarios`, usuario);
   }
 
   getClientes() {
@@ -135,7 +132,7 @@ export class AuthenticationService {
 }
 
   newCliente(cliente: any) {
-    return this.http.post(`${API_URL}/clientes`, cliente, { headers: this.getHeaders() });
+    return this.http.post(`${API_URL}/clientes`, cliente);
   }
 
   deleteCliente(id: string) {
@@ -145,6 +142,16 @@ export class AuthenticationService {
   getUsuarios() {
     return this.http.get(`${API_URL}/usuarios`, { headers: this.getHeaders() });
   }
+
+  facturacionInterna(form: any){
+    return this.http.post(`${API_URL}/factu`, form);
+  }
+
+  getUseridByCorreo(correo: string) {
+    return this.http.get(`${API_URL}/usuarios/idByCorreo`, {
+      params: { correo }
+  });
+}
 
   getCurrentUser() {
     const token = this.session;
