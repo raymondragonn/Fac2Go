@@ -67,12 +67,13 @@
                                     </td>
                                     <td>
                                         <span class="badge" [ngClass]="{
-                                            'bg-primary': item.accion === 'Facturo',
-                                            'bg-success': item.accion === 'Inicio Session',
-                                            'bg-warning': item.accion === 'Actualizo',
-                                            'bg-danger': item.accion === 'Elimino',
-                                            'bg-info': item.accion === 'Creo'
-                                        }">{{ item.accion }}</span>
+                                            'bg-success': item.accion === 'Facturo' || item.accion === 'Creo',
+                                            'bg-info': item.accion === 'Inicio de Sesión',
+                                            'bg-warning': item.accion === 'Actualizo' || item.accion === 'Elimino'
+                                          }">
+                                            {{ item.accion }}
+                                          </span>
+
                                     </td>
                                     <td>
                                         <ng-container *ngIf="item.clienteName && item.clienteName !== ''">

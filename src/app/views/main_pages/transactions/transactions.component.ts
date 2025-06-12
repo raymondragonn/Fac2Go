@@ -7,7 +7,7 @@ import { AuthenticationService } from '@/app/core/service/auth.service';
 interface TransactionType {
   id_Auditoria: string;
   accion: string;
-  fechaMovimiento: number[];
+  fechaMovimiento: string;
   id_Usuario: string;
   usuarioName: string;
   id_Cliente: string;
@@ -100,46 +100,33 @@ export class TransactionsComponent implements OnInit {
     
     if (userType === 'admin') {
       // Si es admin, cargar todas las transacciones
-      this.authService.getAllAuditoria().subscribe(
-        (data: any) => {
-          console.log('Datos de auditoría:', data);
-          this.transactions = data;
+      this.authService.getAuditoria().subscribe(
+        (response: any) => {
+          console.log('Datos de auditoría:', response);
+          this.transactions = response.data;
           this.applyFilters();
         },
         (error) => {
           console.error('Error al cargar auditoría:', error);
         }
       );
-    } else {
-      // Si es usuario normal, cargar solo sus transacciones
-      this.authService.getCurrentUser().subscribe(
-        (user: any) => {
-          if (user && user.correo) {
-            this.authService.getAuditoria(user.correo).subscribe(
-              (data: any) => {
-                console.log('Datos de auditoría del usuario:', data);
-                this.transactions = data;
-                this.applyFilters();
-              },
-              (error) => {
-                console.error('Error al cargar auditoría del usuario:', error);
-              }
-            );
-          }
-        },
-        (error) => {
-          console.error('Error al obtener usuario actual:', error);
-        }
-      );
     }
   }
 
-  formatDate(dateArray: number[]): string {
-    if (!dateArray || dateArray.length !== 3) return '';
-    const [year, month, day] = dateArray;
-    return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+  formatDate(fecha: string): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
   }
-
+  
   pagedData(): TransactionType[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
@@ -164,17 +151,17 @@ export class TransactionsComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.transactions];
-
+  
     if (this.dateFilter !== 'all') {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - today.getDay());
       const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-
+  
       filtered = filtered.filter(transaction => {
-        const [year, month, day] = transaction.fechaMovimiento;
-        const transactionDate = new Date(year, month - 1, day);
+        const transactionDate = new Date(transaction.fechaMovimiento);
+  
         switch (this.dateFilter) {
           case 'today':
             return transactionDate >= today;
@@ -187,10 +174,11 @@ export class TransactionsComponent implements OnInit {
         }
       });
     }
-
+  
     this.filteredData = filtered;
     this.updatePagination();
   }
+  
 
   updatePagination(resetPage: boolean = false): void {
     this.totalItems = this.filteredData.length;

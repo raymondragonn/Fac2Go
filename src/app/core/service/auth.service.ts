@@ -64,21 +64,8 @@ export class AuthenticationService {
 
   getFacturas(correo: string) {
   return this.http.get(`${API_URL}/factu/usuario`, {
-    params: { correo }
-  });
-
-
-  
-
-  
-
-  
-  
-
-  
-}
-
-  
+    params: { correo }});
+  }
 
   // getClientes() {
   //   return this.http.get(`${API_URL}/clientes`);
@@ -227,14 +214,7 @@ export class AuthenticationService {
     return this.http.put(`${API_URL}/usuarios/${id}`, usuario, { headers: this.getHeaders() });
   }
 
-  getAllAuditoria() {
-    return this.http.get(`${API_URL}/auditoria/all`, { headers: this.getHeaders() });
-  }
-
-  getAuditoria(correo: string) {
-    return this.http.get(`${API_URL}/auditoria/usuario`, {
-      params: { correo },
-      headers: this.getHeaders()
-    });
+  getAuditoria() {
+    return this.http.get(`${API_URL}/auditoria`, { headers: this.getHeaders() });
   }
 }

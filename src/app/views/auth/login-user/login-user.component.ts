@@ -13,7 +13,6 @@ import { AlertsComponent } from '../../ui/alerts/alerts.component'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { AuthService } from '@/app/services/auth.service'
 import { UserService } from '@/app/services/user.service'
 import { ToastrService } from 'ngx-toastr'
 
@@ -31,7 +30,6 @@ export class LoginUserComponent implements OnInit {
   showAlert: boolean = false
 
   constructor(
-    private authServicePrueba: AuthService,
     private authService: AuthenticationService,
     private userService: UserService,
     private toastr: ToastrService
@@ -67,7 +65,7 @@ export class LoginUserComponent implements OnInit {
             this.userService.setUserType('user');
             console.log(data);
             let auditoria = {
-              accion: 'Inicio Session',
+              accion: 'Inicio de Sesión',
               id_Usuario: data.id,
               usuarioName: data.nombre,
               id_Cliente: "",
