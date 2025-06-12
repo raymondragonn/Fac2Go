@@ -281,7 +281,7 @@ generateUUID(): string {
                 this.authService.saveFacturaDatabase(FacturacionInterna).subscribe((data: any)=> {
                   if(data){
                     let auditoria = {
-                      accion: 'Ticket Mostrado',
+                      accion: 'Factura Emitida',
                       id_Usuario: FacturacionInterna.id_usuario,
                       usuarioName: this.nombreUsuario,
                       id_Cliente: FacturacionInterna.id_Cliente,

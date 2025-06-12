@@ -65,7 +65,7 @@ export class LoginUserComponent implements OnInit {
             this.userService.setUserType('user');
             console.log(data);
             let auditoria = {
-              accion: 'Inicio de Sesión',
+              accion: 'Usuario Autenticado',
               id_Usuario: data.id,
               usuarioName: data.nombre,
               id_Cliente: "",
