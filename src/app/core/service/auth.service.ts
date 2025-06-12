@@ -139,6 +139,10 @@ export class AuthenticationService {
     return this.http.delete(`${API_URL}/clientes/${id}`, { headers: this.getHeaders() });
   }
 
+  getClienteById(id: any){
+    return this.http.get(`${API_URL}/clientes/${id}`);
+  }
+
   getUsuarios() {
     return this.http.get(`${API_URL}/usuarios`, { headers: this.getHeaders() });
   }

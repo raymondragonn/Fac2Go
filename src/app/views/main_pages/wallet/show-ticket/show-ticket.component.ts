@@ -131,6 +131,7 @@ export class ShowTicketComponent implements OnInit {
   isProcessingQR: boolean = false;
   usuarioSesion: any;
   usuarioID: any;
+  usuario: any;
 
   constructor(
     public router: Router,
@@ -151,6 +152,8 @@ export class ShowTicketComponent implements OnInit {
         tipoCliente: params['tipoCliente']
       };
     });
+    console.log(this.clienteSeleccionado);
+
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     console.log(currentUser)
@@ -162,6 +165,10 @@ export class ShowTicketComponent implements OnInit {
         
         this.usuarioID = data.id;
         console.log(this.usuarioID);
+        this.authService.getClienteById(this.clienteSeleccionado?.clientId).subscribe((data: any) => {
+          console.log(data);
+          this.usuario = data;
+        })
       }
     })
   }
@@ -225,17 +232,19 @@ generateUUID(): string {
 
   generarFactura() {
     let formData: any = {
-      email: this.usuarioSesion,
+      email: 'eduardoavilat2002@gmail.com',//this.usuarioSesion
       rfc: this.clienteSeleccionado?.rfc,
       servicio: '1',
       token: this.ticketForm.get('token')?.value,
       fechaHora: this.ticketForm.get('fecha')?.value,
       nombreCompleto: this.clienteSeleccionado?.name,
       regimenFiscal: '601',
-      Codigo_Postal: '78395',
-      usoCfdi: 'G03',
+      Codigo_Postal: this.usuario?.codigo_Postal,
+      usoCfdi: this.usuario?.usoCfdi || 'G01',
       
     };
+
+    console.log(formData);
     let now = new Date();
     let fechaTimbrado = now.toISOString().slice(0, 19);
 
@@ -248,19 +257,14 @@ generateUUID(): string {
       fecha_Timbrado: fechaTimbrado,
       id_Cliente: this.clienteSeleccionado?.clientId,
       id_Usuario: this.usuarioID,
-      email: this.usuarioSesion,
-      total: (Math.random() * (5000 - 1000) + 1000).toFixed(2)
+      total: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000
     };
 
-    this.authService.facturacionInterna(FacturacionInterna).subscribe((data: any) => {
-      if(data){
-        console.log("facturacion interna guardada correctamente")
-      }
-    })
 
     console.log("Iniciando proceso de facturación");
     this.isLoading = true;
     
+    console.log(FacturacionInterna)
     this.facturar.facturarCDFI(formData).subscribe(data => {
       if(data){
         let uuid = data;
@@ -272,7 +276,14 @@ generateUUID(): string {
               this.isLoading = false;
               alert(`Correo enviado en breve llegara tu factura a tu correo`);
               this.facturar.SendEmail().subscribe(data => {
-                window.location.reload();
+                this.authService.saveFacturaDatabase(FacturacionInterna).subscribe((data: any)=> {
+                  if(data){
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 3000);
+                    
+                  }
+                })
               })
             })
           }

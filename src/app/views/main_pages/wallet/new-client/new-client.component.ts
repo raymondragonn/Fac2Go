@@ -160,7 +160,8 @@ export class NewClientComponent implements OnInit {
         rfc: this.clientForm.value.rfc,
         codigo_Postal: this.clientForm.value.codigoPostal,
         regimenFiscal: this.clientForm.value.regimenFiscal,
-        id_Usuario: this.idUsuario
+        id_Usuario: this.idUsuario,
+        usoCFDI: 'G03'
       };
 
       this.authService.newCliente(cliente).subscribe(
