@@ -132,6 +132,7 @@ export class ShowTicketComponent implements OnInit {
   usuarioSesion: any;
   usuarioID: any;
   usuario: any;
+  nombreUsuario: any;
 
   constructor(
     public router: Router,
@@ -164,6 +165,7 @@ export class ShowTicketComponent implements OnInit {
       if(data){
         
         this.usuarioID = data.id;
+        this.nombreUsuario = data.name;
         console.log(this.usuarioID);
         this.authService.getClienteById(this.clienteSeleccionado?.clientId).subscribe((data: any) => {
           console.log(data);
@@ -278,10 +280,18 @@ generateUUID(): string {
               this.facturar.SendEmail().subscribe(data => {
                 this.authService.saveFacturaDatabase(FacturacionInterna).subscribe((data: any)=> {
                   if(data){
-                    setTimeout(() => {
-                      window.location.reload();
-                    }, 3000);
-                    
+                    let auditoria = {
+                      accion: 'Facturacion de Ticket',
+                      id_Usuario: FacturacionInterna.id_usuario,
+                      usuarioName: this.nombreUsuario,
+                      id_Cliente: FacturacionInterna.id_Cliente,
+                      clienteName: this.clienteSeleccionado?.name
+                    }
+                    this.authService.setAuditoria(auditoria).subscribe((data: any) => {
+                      // setTimeout(() => {
+                      // window.location.reload();
+                      // }, 3000);
+                    })
                   }
                 })
               })
