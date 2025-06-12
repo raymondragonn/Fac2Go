@@ -234,7 +234,7 @@ generateUUID(): string {
 
   generarFactura() {
     let formData: any = {
-      email: 'eduardoavilat2002@gmail.com',//this.usuarioSesion
+      email: 'raymondragonn@gmail.com',//this.usuarioSesion
       rfc: this.clienteSeleccionado?.rfc,
       servicio: '1',
       token: this.ticketForm.get('token')?.value,
