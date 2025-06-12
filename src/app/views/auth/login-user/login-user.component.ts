@@ -62,12 +62,27 @@ export class LoginUserComponent implements OnInit {
           console.log(res);
           const { token, usuario } = res as { token: string; usuario: string };
           localStorage.setItem('currentUser', JSON.stringify({ usuario, token, tipo: 'user' }));
+          this.authService.getUseridByCorreo(res.usuario).subscribe((data: any)=> {
+            // Establece el userType como 'user'
+            this.userService.setUserType('user');
+            console.log(data);
+            let auditoria = {
+              accion: 'Inicio Session',
+              id_Usuario: data.id,
+              usuarioName: data.nombre,
+              id_Cliente: "",
+              clienteName: ""
+            }
+  
+            this.authService.setAuditoria(auditoria).subscribe((data: any) => {
+              console.log(data);
+              this.toastr.success('¡Bienvenido al Panel de Usuarios!', 'Inicio de sesión exitoso');
+              this.router.navigate(['/wallet']);
+            })
+          })
+          
 
-          // Establece el userType como 'user'
-          this.userService.setUserType('user');
-
-          this.toastr.success('¡Bienvenido al Panel de Usuarios!', 'Inicio de sesión exitoso');
-          this.router.navigate(['/wallet']);
+          
         },
         error: (error) => {
           console.log(error);

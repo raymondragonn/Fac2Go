@@ -58,10 +58,17 @@ export class AuthenticationService {
      return this.http.get(`${API_URL}/factu/all`);
   }
 
+  setAuditoria(auditoria: any){
+    return this.http.post(`${API_URL}/auditoria`, auditoria)
+  }
+
   getFacturas(correo: string) {
   return this.http.get(`${API_URL}/factu/usuario`, {
     params: { correo }
   });
+
+
+  
 
   
 
