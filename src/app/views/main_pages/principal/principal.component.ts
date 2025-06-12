@@ -439,11 +439,6 @@ export class PrincipalComponent implements OnInit {
   return `FAC-${num.toString().padStart(4, '0')}`;
   }
 
-
-
-  
-  
-
   generarFactura() {
     let formData: any = {
       email: this.facturacionForm.get('email')?.value,
@@ -549,10 +544,8 @@ export class PrincipalComponent implements OnInit {
               })
             })
           }
-          
         })
       }
-      
     });
   }
 

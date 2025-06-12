@@ -147,6 +147,9 @@
                     <div class="invalid-feedback" *ngIf="ticketForm.get('token')?.touched && ticketForm.get('token')?.errors?.['required']">
                       Token es requerido
                     </div>
+                    <div class="invalid-feedback" *ngIf="ticketForm.get('token')?.touched && ticketForm.get('token')?.errors?.['pattern']">
+                      El token debe tener el formato TOKEN_231345
+                    </div>
                   </div>
 
                   <!-- Fecha -->

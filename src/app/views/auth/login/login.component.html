@@ -38,6 +38,10 @@
                         placeholder="Ingresa tu correo"
                       />
                     </div>
+                    <div *ngIf="formValues['email'].touched && formValues['email'].errors" class="text-danger mt-1">
+                      <small *ngIf="formValues['email'].errors['required']">El correo es requerido</small>
+                      <small *ngIf="formValues['email'].errors['email'] || formValues['email'].errors['pattern']">Ingresa un correo válido</small>
+                    </div>
                   </div>
 
                   <div class="form-group mb-3">
@@ -47,13 +51,23 @@
                         <i class="fas fa-lock"></i>
                       </span>
                       <input
-                        type="password"
+                        [type]="showPassword ? 'text' : 'password'"
                         class="form-control border-start-0"
                         name="password"
                         formControlName="password"
                         id="userpassword"
                         placeholder="Ingresa tu contraseña"
                       />
+                      <button 
+                        class="btn btn-outline-secondary" 
+                        type="button"
+                        (click)="togglePasswordVisibility()"
+                      >
+                        <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="formValues['password'].touched && formValues['password'].errors" class="text-danger mt-1">
+                      <small *ngIf="formValues['password'].errors['required']">La contraseña es requerida</small>
                     </div>
                   </div>
 

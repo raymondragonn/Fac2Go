@@ -1,5 +1,4 @@
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { AuthService } from '@/app/services/auth.service'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import {
@@ -28,7 +27,7 @@ export class ConfirmRegisterClientComponent {
 
   public fb = inject(UntypedFormBuilder)
 
-  constructor(private servicioAuth: AuthenticationService, private serviceAuth: AuthService, private router: Router) {
+  constructor(private servicioAuth: AuthenticationService, private router: Router) {
     this.signupForm = this.fb.group(
       {
         name: ['', [Validators.required]],
@@ -67,7 +66,7 @@ export class ConfirmRegisterClientComponent {
 
       this.servicioAuth.registerUser(usuario).subscribe((res: any) =>{
           let Auditoria = {
-            accion: 'Creacion Usuario',
+            accion: 'Usuario Registrado',
             id_Usuario: res.idUsuario,
             usuarioName: usuario.nombre,
             id_Cliente: "",

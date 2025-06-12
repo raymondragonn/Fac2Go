@@ -29,7 +29,6 @@ interface User {
   rfc: string;
   regimenFiscal: string;
   codigoPostal: string;
-  rol: string;
   apellidoPaterno: string;
   apellidoMaterno: string;
   iniciales: string;
@@ -162,8 +161,7 @@ export class UsersComponent implements OnInit {
     correo: '',
     rfc: '',
     regimenFiscal: '',
-    codigoPostal: '',
-    rol: ''
+    codigoPostal: ''
   };
 
   ngOnInit(): void {
@@ -196,7 +194,6 @@ export class UsersComponent implements OnInit {
             rfc: user.rfc || '',
             regimenFiscal: user.regimen_Fiscal || '',
             codigoPostal: user.codigo_Postal || '',
-            rol: user.rol || 'Usuario',
             apellidoPaterno: user.apellidoPaterno || '',
             apellidoMaterno: user.apellidoMaterno || '',
             iniciales: this.getInitials(user.nombre, user.apellidoPaterno || ''),
@@ -244,8 +241,7 @@ export class UsersComponent implements OnInit {
       correo: user.email,
       rfc: user.rfc,
       regimenFiscal: user.regimenFiscal,
-      codigoPostal: user.codigoPostal,
-      rol: user.rol
+      codigoPostal: user.codigoPostal
     };
     this.open(this.editModal);
   }
@@ -259,7 +255,6 @@ export class UsersComponent implements OnInit {
       rfc: this.editForm.rfc,
       regimen_Fiscal: this.editForm.regimenFiscal,
       codigo_Postal: this.editForm.codigoPostal,
-      rol: this.editForm.rol,
       contraseña: this.selectedUser.contraseña
     };
 

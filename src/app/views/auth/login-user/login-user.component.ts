@@ -28,6 +28,7 @@ export class LoginUserComponent implements OnInit {
   submitted: boolean = false
   private token: string = ''
   showAlert: boolean = false
+  showPassword: boolean = false
 
   constructor(
     private authService: AuthenticationService,
@@ -41,13 +42,21 @@ export class LoginUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.signInForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [
+        Validators.required, 
+        Validators.email,
+        Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+      ]],
       password: ['', [Validators.required]],
     })
   }
 
   get formValues() {
     return this.signInForm.controls
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   login() {
@@ -65,7 +74,7 @@ export class LoginUserComponent implements OnInit {
             this.userService.setUserType('user');
             console.log(data);
             let auditoria = {
-              accion: 'Inicio de Sesión',
+              accion: 'Usuario Autenticado',
               id_Usuario: data.id,
               usuarioName: data.nombre,
               id_Cliente: "",

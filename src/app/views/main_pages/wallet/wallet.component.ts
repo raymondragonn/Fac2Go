@@ -273,7 +273,7 @@ export class WalletComponent implements OnInit {
     if (confirm(`¿Está seguro que desea eliminar al cliente ${client.name}?`)) {
       this.authService.deleteCliente(client.id).subscribe((data: any) => {
       let auditoria = {
-          accion: 'Usuario elimino Cliente',
+          accion: 'Cliente Eliminado',
           id_Usuario: this.idUsuario,
           usuarioName: this.idNombreUsuario,
           id_Cliente: client.id,

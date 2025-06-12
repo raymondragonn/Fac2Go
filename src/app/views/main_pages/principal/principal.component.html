@@ -184,7 +184,7 @@
                                               style="font-size: 1rem;">Correo</label>
                                           <div class="col-sm-9">
                                               <input class="form-control form-control-lg" type="email"
-                                                  placeholder="john@gmail.com" id="email" formControlName="email"
+                                                  placeholder="Ingresa tu correo electrónico" id="email" formControlName="email"
                                                   [ngClass]="{
                           'is-invalid': facturacionForm.get('email')?.touched && facturacionForm.get('email')?.invalid
                         }" />
@@ -207,7 +207,7 @@
                                               style="font-size: 1rem;">RFC</label>
                                           <div class="col-sm-9">
                                               <input class="form-control form-control-lg" type="text"
-                                                  placeholder="SUJJ900615HXX" id="rfc" formControlName="rfc"
+                                                  placeholder="Ingresa tu RFC" id="rfc" formControlName="rfc"
                                                   [ngClass]="{
                           'is-invalid': facturacionForm.get('rfc')?.touched && facturacionForm.get('rfc')?.invalid
                         }" />
@@ -253,7 +253,7 @@
                                               style="font-size: 1rem;">Token</label>
                                           <div class="col-sm-9">
                                               <input class="form-control form-control-lg" type="text"
-                                                  placeholder="AB12-34CD-5678" id="token" formControlName="token"
+                                                  placeholder="Ingresa el token de tu compra" id="token" formControlName="token"
                                                   [ngClass]="{
                           'is-invalid': facturacionForm.get('token')?.touched && facturacionForm.get('token')?.invalid
                         }" />
@@ -263,7 +263,7 @@
                                               </div>
                                               <div class="invalid-feedback"
                                                   *ngIf="facturacionForm.get('token')?.touched && facturacionForm.get('token')?.errors?.['pattern']">
-                                                  Token válido es requerido (formato: AB12-34CD-5678)
+                                                  Token válido es requerido (formato: TOKEN_231344)
                                               </div>
                                           </div>
                                       </div>
@@ -330,7 +330,7 @@
         type="text"
         id="nombreCompleto"
         formControlName="nombreCompleto"
-        placeholder="{{ isPersonaMoral ? 'TECHNOPROBE SPA' : 'Fray Sebastián de Aparicio' }}"
+        placeholder="{{ isPersonaMoral ? 'Ingresa la razón social' : 'Ingresa tu nombre completo' }}"
         [ngClass]="{
           'is-invalid': facturacionForm.get('nombreCompleto')?.touched && facturacionForm.get('nombreCompleto')?.invalid
         }"
@@ -380,7 +380,7 @@
                                           <div class="col-sm-9">
                                               <input class="form-control form-control-lg" type="text"
                                                   id="Codigo_Postal" formControlName="Codigo_Postal"
-                                                  placeholder="72000" [ngClass]="{
+                                                  placeholder="Ingresa el código postal" [ngClass]="{
                           'is-invalid': facturacionForm.get('Codigo_Postal')?.touched && facturacionForm.get('Codigo_Postal')?.invalid
                         }" />
                                               <div class="invalid-feedback"

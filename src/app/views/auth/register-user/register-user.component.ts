@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common'
 import { Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core'
 import {
@@ -35,6 +34,8 @@ export class RegisterUserComponent implements OnInit {
   showQRScanner: boolean = false
   isPersonaMoral: boolean = false
   qrValue: string | null = null
+  showPassword: boolean = false
+  showConfirmPassword: boolean = false
 
   constructor(private authService: AuthenticationService) {
 
@@ -69,9 +70,22 @@ export class RegisterUserComponent implements OnInit {
   ngOnInit(): void {
     this.signupForm = this.fb.group({
       // Paso 1: Datos personales
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      name: ['', [
+        Validators.required,
+        Validators.pattern('^[A-Za-z]+ [A-Za-z]+ [A-Za-z]+$'),
+        Validators.minLength(5),
+        Validators.maxLength(100)
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+      ]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$')
+      ]],
       confirmpwd: ['', [Validators.required]],
       // Paso 2: Datos fiscales
       rfc: ['', [Validators.required, Validators.pattern('^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$')]],
@@ -79,11 +93,32 @@ export class RegisterUserComponent implements OnInit {
       regimenFiscal: ['', [Validators.required]]
     }, {
       validator: this.mustMatch('password', 'confirmpwd')
-    })
+    });
+
+    // Marcar todos los campos como touched cuando se envía el formulario
+    this.signupForm.valueChanges.subscribe(() => {
+      if (this.submitted) {
+        Object.keys(this.signupForm.controls).forEach(key => {
+          const control = this.signupForm.get(key);
+          if (control) {
+            control.markAsTouched();
+          }
+        });
+      }
+    });
   }
 
   registerUser() {
     this.submitted = true;
+    
+    // Marcar todos los campos como touched
+    Object.keys(this.signupForm.controls).forEach(key => {
+      const control = this.signupForm.get(key);
+      if (control) {
+        control.markAsTouched();
+      }
+    });
+
     if (this.signupForm.valid) {
       const userData = {
         nombre: this.signupForm.value.name,
@@ -92,33 +127,19 @@ export class RegisterUserComponent implements OnInit {
         rfc: this.signupForm.value.rfc,
         codigo_Postal: this.signupForm.value.codigoPostal,
         regimen_Fiscal: this.signupForm.value.regimenFiscal,
-        rol: 'user' // Establecer rol como user
+        rol: 'user'
       };
 
       this.authService.registerUser(userData).subscribe(
         (response: any) => {
-
-          console.log('Registro exitoso:', response);
           if(response.message === 'Usuario creado exitosamente'){
-            this.toastr.success('Usuario registrado exitosamente, redirigiendo al login...', '¡Éxito!');
+            this.toastr.success('Usuario registrado exitosamente.', '¡Éxito!');
             setTimeout(() => {
               this.router.navigate(['auth/login-user']);
             }, 2000);
           } else {
             this.toastr.error('Error al registrar el usuario');
           }
-
-          // let auditoria = {
-          //     accion: 'Creacion Usuario',
-          //     id_Usuario: response.idUsuario,
-          //     usuarioName: userData.nombre,
-          //     id_Cliente: "",
-          //     clienteName: ""
-          //   }
-          // this.authService.setAuditoria(auditoria).subscribe((data: any) => {
-            
-          // })
-          
         },
         (error) => {
           console.error('Error en el registro:', error);
@@ -127,12 +148,6 @@ export class RegisterUserComponent implements OnInit {
       );
     } else {
       this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación');
-      Object.keys(this.signupForm.controls).forEach(key => {
-        const control = this.signupForm.get(key);
-        if (control?.invalid) {
-          control.markAsTouched();
-        }
-      });
     }
   }
 
@@ -155,10 +170,69 @@ export class RegisterUserComponent implements OnInit {
     }
   }
 
-  
+  getErrorMessage(controlName: string): string {
+    const control = this.signupForm.get(controlName);
+    if (!control) return '';
 
-  changetype() {
-    this.fieldTextType = !this.fieldTextType
+    if (control.hasError('required')) {
+      return 'Este campo es requerido';
+    }
+
+    if (controlName === 'name') {
+      if (control.hasError('pattern')) {
+        return 'El nombre debe contener solo letras y espacios (sin acentos ni caracteres especiales)';
+      }
+      if (control.hasError('minlength')) {
+        return 'El nombre debe tener al menos 5 caracteres';
+      }
+      if (control.hasError('maxlength')) {
+        return 'El nombre no debe exceder los 100 caracteres';
+      }
+    }
+
+    if (controlName === 'email') {
+      if (control.hasError('email')) {
+        return 'El formato del correo electrónico no es válido';
+      }
+      if (control.hasError('pattern')) {
+        return 'El correo electrónico debe tener un formato válido (ejemplo: usuario@dominio.com)';
+      }
+    }
+
+    if (controlName === 'password') {
+      if (control.hasError('minlength')) {
+        return 'La contraseña debe tener al menos 8 caracteres';
+      }
+      if (control.hasError('pattern')) {
+        return 'La contraseña debe contener al menos una letra y un número';
+      }
+    }
+
+    if (controlName === 'confirmpwd') {
+      if (control.hasError('mustMatch')) {
+        return 'Las contraseñas no coinciden';
+      }
+    }
+
+    if (controlName === 'rfc') {
+      if (control.hasError('pattern')) {
+        return 'El RFC debe tener un formato válido (ejemplo: XAXX010101000 para personas físicas o XAXX010101000 para personas morales)';
+      }
+    }
+
+    if (controlName === 'codigoPostal') {
+      if (control.hasError('pattern')) {
+        return 'El código postal debe contener exactamente 5 dígitos numéricos';
+      }
+    }
+
+    if (controlName === 'regimenFiscal') {
+      if (control.hasError('required')) {
+        return 'Debe seleccionar un régimen fiscal';
+      }
+    }
+
+    return '';
   }
 
   toggleQRScanner() {
@@ -228,19 +302,20 @@ export class RegisterUserComponent implements OnInit {
   nextStep() {
     if (this.currentStep === 1) {
       // Validar campos del paso 1
-      const step1Controls = ['name', 'email', 'password', 'confirmpwd']
-      const isValid = step1Controls.every(control => this.signupForm.get(control)?.valid)
+      const step1Controls = ['name', 'email', 'password', 'confirmpwd'];
+      const isValid = step1Controls.every(control => this.signupForm.get(control)?.valid);
       
       if (isValid) {
-        this.currentStep = 2
+        this.currentStep = 2;
       } else {
-        this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación')
+        this.submitted = true;
+        this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación');
         step1Controls.forEach(control => {
-          const formControl = this.signupForm.get(control)
+          const formControl = this.signupForm.get(control);
           if (formControl?.invalid) {
-            formControl.markAsTouched()
+            formControl.markAsTouched();
           }
-        })
+        });
       }
     }
   }
@@ -249,19 +324,11 @@ export class RegisterUserComponent implements OnInit {
     this.currentStep = 1
   }
 
-  onSubmit() {
-    this.submitted = true
-    if (this.signupForm.valid) {
-      this.store.dispatch({ type: '[Auth] Register', payload: this.signupForm.value })
-      this.toastr.success('Registro exitoso', '¡Bienvenido!')
-    } else {
-      this.toastr.error('Por favor, completa todos los campos correctamente', 'Error de validación')
-      Object.keys(this.signupForm.controls).forEach(key => {
-        const control = this.signupForm.get(key)
-        if (control?.invalid) {
-          control.markAsTouched()
-        }
-      })
-    }
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }
