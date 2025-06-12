@@ -107,6 +107,7 @@ export class NewClientComponent implements OnInit {
   isProcessingQR: boolean = false;
   usuaarioEnSesion: any;
   idUsuario: any;
+  idNombreUsuario: any;
   
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -124,6 +125,7 @@ export class NewClientComponent implements OnInit {
     this.authService.getUseridByCorreo(this.usuaarioEnSesion).subscribe(
       (response: any) => {
         this.idUsuario = response.id;
+        this.idNombreUsuario = response.nombre;
         console.log(this.idUsuario);
       }
     )
@@ -167,13 +169,24 @@ export class NewClientComponent implements OnInit {
       this.authService.newCliente(cliente).subscribe(
         (response: any) => {
           if (response.status === 'success') {
-            this.toastr.success(`${response.message}. Cliente: ${response.cliente.correo || ''}`, 'Éxito');
-            this.clientForm.reset();
-            this.currentStep = 1;
-            this.selectedMethod = null;
-            setTimeout(() => {
-              this.router.navigate(['/wallet']);
-            }, 1500);
+            let auditoria = {
+              accion: 'Usuario creo cliente',
+              id_Usuario: this.idUsuario,
+              usuarioName: this.idNombreUsuario,
+              id_Cliente: cliente.id_Usuario,
+              clienteName: cliente.nombre_RazonSocial
+            }
+            this.authService.setAuditoria(auditoria).subscribe((data: any) => {
+              console.log(data);
+              this.toastr.success(`${response.message}. Cliente: ${response.cliente.correo || ''}`, 'Éxito');
+              this.clientForm.reset();
+              this.currentStep = 1;
+              this.selectedMethod = null;
+              setTimeout(() => {
+                this.router.navigate(['/wallet']);
+              }, 1500);
+            })
+            
           } else {
             this.toastr.error(response.message, 'Error');
           }

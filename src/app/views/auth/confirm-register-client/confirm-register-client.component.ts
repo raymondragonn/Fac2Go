@@ -63,18 +63,25 @@ export class ConfirmRegisterClientComponent {
 
       }
       
-      console.log("Formulario Valido")
+      console.log(usuario)
 
-      this.servicioAuth.register(usuario).subscribe({
-        next: (res) => {
-          console.log(res);
-          this.signupForm.reset()
-          this.showAlert = true
-          setTimeout(() => {
-           this.showAlert = false;
-           this.router.navigate(['']);
-         }, 3000);
-        }
+      this.servicioAuth.registerUser(usuario).subscribe((res: any) =>{
+          let Auditoria = {
+            accion: 'Creacion Usuario',
+            id_Usuario: res.idUsuario,
+            usuarioName: usuario.nombre,
+            id_Cliente: "",
+            clienteName: ""
+          }
+          this.servicioAuth.setAuditoria(Auditoria).subscribe((res: any) => {
+            console.log(res);
+            this.signupForm.reset()
+            this.showAlert = true
+            setTimeout(() => {
+             this.showAlert = false;
+             this.router.navigate(['']);
+           }, 3000);
+          })
       })
       // this.serviceAuth.registerUser({username: this.signupForm.value.username, password: this.signupForm.value.password}).subscribe((res => {
       //   this.signupForm.reset();

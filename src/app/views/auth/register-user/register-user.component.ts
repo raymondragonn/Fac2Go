@@ -97,6 +97,7 @@ export class RegisterUserComponent implements OnInit {
 
       this.authService.registerUser(userData).subscribe(
         (response: any) => {
+
           console.log('Registro exitoso:', response);
           if(response.message === 'Usuario creado exitosamente'){
             this.toastr.success('Usuario registrado exitosamente, redirigiendo al login...', '¡Éxito!');
@@ -106,6 +107,18 @@ export class RegisterUserComponent implements OnInit {
           } else {
             this.toastr.error('Error al registrar el usuario');
           }
+
+          // let auditoria = {
+          //     accion: 'Creacion Usuario',
+          //     id_Usuario: response.idUsuario,
+          //     usuarioName: userData.nombre,
+          //     id_Cliente: "",
+          //     clienteName: ""
+          //   }
+          // this.authService.setAuditoria(auditoria).subscribe((data: any) => {
+            
+          // })
+          
         },
         (error) => {
           console.error('Error en el registro:', error);

@@ -141,17 +141,22 @@ export class WalletComponent implements OnInit {
   sortBy: string = 'recentlyAdded';
   filterBy: string = 'all';
   usuarioCorreo: any;
+  idUsuario: any;
+  idNombreUsuario: any;
 
   constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
-    this.authService.getCurrentUser().subscribe(
-      (user: any) => {
-        console.log(user.correo);
-        this.usuarioCorreo = user.correo;
-        this.loadClients();
-      }
-    )
+    this.authService.getCurrentUser().subscribe((user: any) => {
+      console.log(user.correo);
+      this.usuarioCorreo = user.correo;
+      this.loadClients();
+      this.authService.getUseridByCorreo(this.usuarioCorreo).subscribe((data: any) => {
+        this.idUsuario = data.id;
+        this.idNombreUsuario = data.nombre;
+      })
+    })
+    
     
     
   }
@@ -264,15 +269,23 @@ export class WalletComponent implements OnInit {
   }
 
   deleteClient(client: Client): void {
+    
     if (confirm(`¿Está seguro que desea eliminar al cliente ${client.name}?`)) {
-      this.authService.deleteCliente(client.id).subscribe(
-        () => {
+      this.authService.deleteCliente(client.id).subscribe((data: any) => {
+      let auditoria = {
+          accion: 'Usuario elimino Cliente',
+          id_Usuario: this.idUsuario,
+          usuarioName: this.idNombreUsuario,
+          id_Cliente: client.id,
+          clienteName: client.name 
+        }
+        this.authService.setAuditoria(auditoria).subscribe((data: any) => {
           this.toastr.success('Cliente eliminado exitosamente', 'Éxito');
           this.loadClients();
-        },
-        (error) => {
-          this.toastr.error('Error al eliminar el cliente', 'Error');
-        }
+        });
+        
+      }
+        
       );
     }
   }
