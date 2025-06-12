@@ -129,6 +129,11 @@ export class AuthenticationService {
     return this.http.post(`${API_URL}/clientes`, cliente);
   }
 
+
+  isClienteRegistered(cliente: any){
+    return this.http.post(`${API_URL}/clientes/isclientRegister`, cliente);
+  }
+
   deleteCliente(id: string) {
     return this.http.delete(`${API_URL}/clientes/${id}`, { headers: this.getHeaders() });
   }

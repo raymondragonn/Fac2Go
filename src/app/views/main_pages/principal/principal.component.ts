@@ -201,6 +201,7 @@ export class PrincipalComponent implements OnInit {
   private facturar = inject(FacturacionService);
   isLoading: boolean = false;
   clienteId: any;
+  nombreUsuario: any;
 
   constructor(private userService: UserService, private qrService: ScannerQRService, private authService: AuthenticationService) {}
 
@@ -466,15 +467,31 @@ export class PrincipalComponent implements OnInit {
 
 
     }
-    this.authService.newCliente(cliente).subscribe((data: any) => {
-      console.log(data);
-      if(data){
-        this.clienteId = data.idCliente;
-        console.log('ID del cliente:', this.clienteId);
+
+    this.authService.isClienteRegistered(cliente).subscribe((data: any) => {
+      if(data.status === 'exists'){
+        this.clienteId = data.clienteID;
+        this.nombreUsuario = data.nombreUsuario;
       }else{
-        this.clienteId = '7dc646be-8bb2-4d78-8494-604825458a72'
+        this.clienteId = data.clienteID
+        this.nombreUsuario = data.nombreUsuario;
       }
     })
+
+    // this.authService.newCliente(cliente).subscribe((data: any) => {
+    //   console.log(data);
+    //   if(data){
+    //     this.clienteId = data.clienteID;
+    //     this.nombreUsuario = data.nombreUsuario.
+    //     console.log('ID del cliente:', this.clienteId);
+    //   }else{
+    //     this.clienteId = '7dc646be-8bb2-4d78-8494-604825458a72'
+    //     this.nombreUsuario = 'Usuario Invitado';
+    //   }
+    // })
+
+
+
 
     
     
@@ -505,14 +522,25 @@ export class PrincipalComponent implements OnInit {
                   fecha_Emision: fechaFormateada,
                   fecha_Timbrado: fechaFormateada,
                   id_Cliente: this.clienteId,
-                  id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
+                  // id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
                   total: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000 // total aleatorio entre 1000 y 5000
                 }
                 this.authService.saveFacturaDatabase(factura).subscribe(data => {
                   if(data){
-                    setTimeout(() => {
-                      window.location.reload();
-                    }, 3000);
+
+                    let auditoria = {
+                      accion: 'Facturacion Por Invitado',
+                      // id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
+                      usuarioName: "Usuario Invitado",
+                      id_Cliente: this.clienteId,
+                      clienteName: this.nombreUsuario
+                    }
+                    this.authService.setAuditoria(auditoria).subscribe((data: any) => {
+                      // setTimeout(() => {
+                      // window.location.reload();
+                      // }, 3000);
+                    })
+                    
                     
                   }
                   
