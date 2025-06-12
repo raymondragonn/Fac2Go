@@ -74,7 +74,7 @@ interface InvoiceDataType {
 }
 
 @Component({
-  selector: 'app-transaction',
+  selector: 'app-invoice-history',
   standalone: true,
   imports: [
     CommonModule,
@@ -82,10 +82,9 @@ interface InvoiceDataType {
     FormsModule,
     NgbModalModule,
     NgbDropdownModule,
-    DatePipe,
     RouterModule
   ],
-  templateUrl: './transaction.component.html',
+  templateUrl: './invoice-history.component.html',
   styles: [`
     .table > :not(caption) > * > * {
       padding: 1rem 0.75rem;
@@ -132,7 +131,7 @@ interface InvoiceDataType {
   `],
   providers: [DecimalPipe],
 })
-export class TransactionComponent implements OnInit {
+export class InvoiceHistoryComponent implements OnInit {
   @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>
   
   // Datos

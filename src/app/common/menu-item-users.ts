@@ -16,7 +16,7 @@ export const MENU_ITEMS_USERS: MenuItem[] = [
     key: 'ver-facturas',
     icon: 'las la-file-alt', // Facturas Emitidas
     label: 'Facturas Emitidas',
-    url: 'transactions',
+    url: 'invoice-history',
   },
   {
     key: 'general',

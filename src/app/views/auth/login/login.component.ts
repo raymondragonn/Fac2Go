@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
             // El token ya se guarda en el servicio de autenticación
             this.userService.setUserType('admin');
             this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
-            this.router.navigate(['/transactions']);
+            this.router.navigate(['/invoice-history']);
           } else {
             this.showAlert = true;
             this.toastr.error(res.message || 'Error en el inicio de sesión', 'Error de autenticación');

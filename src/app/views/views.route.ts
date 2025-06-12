@@ -3,8 +3,7 @@ import { Route } from '@angular/router'
 import { PaymentComponent } from './main_pages/payment/payment.component'
 
 import { PendingInvoiceComponentGeneral } from './main_pages/pending-invoice/pending-invoice.component'
-import { TransactionComponent } from './main_pages/transaction/transaction.component'
-
+import { InvoiceHistoryComponent } from './main_pages/invoice-history/invoice-history.component'
 import { TaxesComponent } from './main_pages/taxes/taxes.component'
 import { ClientsComponent } from './main_pages/clients/clients.component'
 import { UsersComponent } from './main_pages/users/users.component'
@@ -17,6 +16,7 @@ import { PrivacyComponent } from './main_pages/privacy/privacy.component'
 import { PrincipalComponent } from './main_pages/principal/principal.component'
 import { NewClientComponent } from './main_pages/wallet/new-client/new-client.component'
 import { ShowTicketComponent } from './main_pages/wallet/show-ticket/show-ticket.component'
+import { TransactionsComponent } from './main_pages/transactions/transactions.component'
 
 export const VIEW_ROUTES: Route[] = [
   {
@@ -92,9 +92,14 @@ export const VIEW_ROUTES: Route[] = [
     data: { title: 'Facturas Pendientes' },
   },
   {
-    path: 'transactions',
-    component: TransactionComponent,
+    path: 'invoice-history',
+    component: InvoiceHistoryComponent,
     data: { title: 'Facturas Emitidas' },
+  },
+  {
+    path: 'transactions',
+    component: TransactionsComponent,
+    data: { title: 'Transacciones' },
   },
   {
     path: 'taxes',

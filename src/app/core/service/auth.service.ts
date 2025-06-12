@@ -219,4 +219,15 @@ export class AuthenticationService {
   updateUsuario(id: string, usuario: any) {
     return this.http.put(`${API_URL}/usuarios/${id}`, usuario, { headers: this.getHeaders() });
   }
+
+  getAllAuditoria() {
+    return this.http.get(`${API_URL}/auditoria/all`, { headers: this.getHeaders() });
+  }
+
+  getAuditoria(correo: string) {
+    return this.http.get(`${API_URL}/auditoria/usuario`, {
+      params: { correo },
+      headers: this.getHeaders()
+    });
+  }
 }
