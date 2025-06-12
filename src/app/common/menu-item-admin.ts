@@ -16,13 +16,19 @@ export const MENU_ITEMS_ADMIN: MenuItem[] = [
     key: 'ver-facturas',
     icon: 'las la-file-alt', // Facturas Emitidas
     label: 'Facturas Emitidas',
-    url: 'transactions',
+    url: 'invoice-history',
   },
   {
     key: 'calendario',
     icon: 'iconoir-calendar', // Calendario
     label: 'Calendario',
     url: '/apps/calendar',
+  },
+  {
+    key: 'transacciones',
+    icon: 'las la-file-alt', // Facturas Emitidas
+    label: 'Transacciones',
+    url: 'transactions',
   },
   // {
   //   key: 'registro-pagos',

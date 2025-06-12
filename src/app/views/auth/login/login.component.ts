@@ -13,7 +13,6 @@ import { AlertsComponent } from '../../ui/alerts/alerts.component'
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap'
 import { CommonModule } from '@angular/common'
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { AuthService } from '@/app/services/auth.service'
 import { UserService } from '@/app/services/user.service'
 import { ToastrService } from 'ngx-toastr'
 
@@ -30,7 +29,6 @@ export class LoginComponent implements OnInit {
   showAlert: boolean = false
 
   constructor(
-    private authServicePrueba: AuthService,
     private authService: AuthenticationService,
     private userService: UserService,
     private toastr: ToastrService
@@ -63,7 +61,7 @@ export class LoginComponent implements OnInit {
             // El token ya se guarda en el servicio de autenticación
             this.userService.setUserType('admin');
             this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
-            this.router.navigate(['/transactions']);
+            this.router.navigate(['/invoice-history']);
           } else {
             this.showAlert = true;
             this.toastr.error(res.message || 'Error en el inicio de sesión', 'Error de autenticación');

@@ -1,0 +1,94 @@
+<div class="container-fluid">
+    <!-- Header de la página -->
+    <div class="row mb-4 mt-4">
+        <div class="col-12">
+            <div class="card bg-light shadow-sm">
+                <div class="card-header bg-light pb-0">
+                    <div class="row align-items-center">
+                        <div class="col text-center">
+                            <h4 class="card-title mb-1" style="font-size: 1.5rem;">Facturas Emitidas</h4>
+                            <span class="form-text text-muted mb-0" style="font-size: 1rem;">Gestiona y visualiza todas tus facturas emitidas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-1">
+                    <div class="row g-3">
+                        <!-- Búsqueda -->
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="las la-search"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Buscar por folio, cliente o UUID..." 
+                                       (input)="searchName($event)">
+                            </div>
+                        </div>
+                        <!-- Filtro de Fecha -->
+                        <div class="col-md-6">
+                            <select class="form-select" (change)="filterByDate($event)">
+                                <option value="all">Todas las fechas</option>
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta semana</option>
+                                <option value="month">Este mes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Facturas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center" style="width: 100px;">Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Folio</th>
+                                    <th class="text-end">Importe</th>
+                                    <th class="text-end">IVA</th>
+                                    <th class="text-end">Total</th>
+                                    <th>UUID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of pagedData(); let i = index">
+                                    <td class="text-center">{{ item.date  }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="client-avatar me-2">
+                                                {{ item.cliente | slice:0:2 | uppercase }}
+                                            </div>
+                                            <span>{{ item.cliente }}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.folio }}</td>
+                                    <td class="text-end">${{ item.importe }}</td>
+                                    <td class="text-end">${{ item.iva }}</td>
+                                    <td class="text-end fw-bold">${{ item.total }}</td>
+                                    <td>
+                                        <span class="text-muted">{{ item.uuid }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div class="row mt-4">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info">
+                                Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} a {{ Math.min(currentPage * itemsPerPage, totalItems) }} de {{ totalItems }} registros
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

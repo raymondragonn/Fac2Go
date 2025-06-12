@@ -6,8 +6,8 @@
                 <div class="card-header bg-light pb-0">
                     <div class="row align-items-center">
                         <div class="col text-center">
-                            <h4 class="card-title mb-1" style="font-size: 1.5rem;">Facturas Emitidas</h4>
-                            <span class="form-text text-muted mb-0" style="font-size: 1rem;">Gestiona y visualiza todas tus facturas emitidas</span>
+                            <h4 class="card-title mb-1" style="font-size: 1.5rem;">Registro de Transacciones</h4>
+                            <span class="form-text text-muted mb-0" style="font-size: 1rem;">Auditoría de todas las acciones realizadas en el sistema</span>
                         </div>
                     </div>
                 </div>
@@ -19,8 +19,8 @@
                                 <span class="input-group-text bg-light">
                                     <i class="las la-search"></i>
                                 </span>
-                                <input type="text" class="form-control" placeholder="Buscar por folio, cliente o UUID..." 
-                                       (input)="searchName($event)">
+                                <input type="text" class="form-control" placeholder="Buscar por usuario o acción..." 
+                                       (input)="searchTransactions($event)">
                             </div>
                         </div>
                         <!-- Filtro de Fecha -->
@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <!-- Tabla de Facturas -->
+    <!-- Tabla de Transacciones -->
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm">
@@ -48,31 +48,48 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th class="text-center" style="width: 100px;">Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Folio</th>
-                                    <th class="text-end">Importe</th>
-                                    <th class="text-end">IVA</th>
-                                    <th class="text-end">Total</th>
-                                    <th>UUID</th>
+                                    <th>Usuario</th>
+                                    <th>Acción</th>
+                                    <th>Detalles</th>
+                                    <th>ID Auditoría</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of pagedData(); let i = index">
-                                    <td class="text-center">{{ item.date  }}</td>
+                                <tr *ngFor="let item of pagedData()">
+                                    <td class="text-center">{{ formatDate(item.fechaMovimiento) }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="client-avatar me-2">
-                                                {{ item.cliente | slice:0:2 | uppercase }}
+                                                {{ item.usuarioName | slice:0:2 | uppercase }}
                                             </div>
-                                            <span>{{ item.cliente }}</span>
+                                            <span>{{ item.usuarioName }}</span>
                                         </div>
                                     </td>
-                                    <td>{{ item.folio }}</td>
-                                    <td class="text-end">${{ item.importe }}</td>
-                                    <td class="text-end">${{ item.iva }}</td>
-                                    <td class="text-end fw-bold">${{ item.total }}</td>
                                     <td>
-                                        <span class="text-muted">{{ item.uuid }}</span>
+                                        <span class="badge" [ngClass]="{
+                                            'bg-success': item.accion === 'Facturo' || item.accion === 'Creo',
+                                            'bg-info': item.accion === 'Inicio de Sesión',
+                                            'bg-warning': item.accion === 'Actualizo' || item.accion === 'Elimino'
+                                          }">
+                                            {{ item.accion }}
+                                          </span>
+
+                                    </td>
+                                    <td>
+                                        <ng-container *ngIf="item.clienteName && item.clienteName !== ''">
+                                            <div class="d-flex align-items-center">
+                                                <div class="client-avatar me-2">
+                                                    {{ item.clienteName | slice:0:2 | uppercase }}
+                                                </div>
+                                                <span>{{ item.clienteName }}</span>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf="!item.clienteName || item.clienteName === ''">
+                                            <span class="text-muted">-</span>
+                                        </ng-container>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">{{ item.id_Auditoria }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -84,23 +101,6 @@
                         <div class="col-sm-12 col-md-5">
                             <div class="dataTables_info">
                                 Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} a {{ Math.min(currentPage * itemsPerPage, totalItems) }} de {{ totalItems }} registros
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-7">
-                            <div class="dataTables_paginate paging_simple_numbers">
-                                <ul class="pagination justify-content-end">
-                                    <li class="paginate_button previous" [class.disabled]="currentPage === 1">
-                                        <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage - 1)">Anterior</a>
-                                    </li>
-                                    <ng-container *ngFor="let page of getPages(); let i = index">
-                                        <li class="paginate_button" [class.active]="page === currentPage">
-                                            <a class="page-link" href="javascript:void(0)" (click)="onPageChange(page)">{{ page }}</a>
-                                        </li>
-                                    </ng-container>
-                                    <li class="paginate_button next" [class.disabled]="currentPage === totalPages">
-                                        <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage + 1)">Siguiente</a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
