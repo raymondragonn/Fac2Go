@@ -177,7 +177,7 @@ export class ShowTicketComponent implements OnInit {
 
   initForm() {
     this.ticketForm = this.formBuilder.group({
-      token: ['', [Validators.required]],
+      token: ['', [Validators.required, Validators.pattern('^TOKEN_\\d{6}$')]],
       fecha: ['', [Validators.required]],
       tipo: ['', [Validators.required]]
     });
@@ -282,15 +282,13 @@ generateUUID(): string {
                   if(data){
                     let auditoria = {
                       accion: 'Factura Emitida',
-                      id_Usuario: FacturacionInterna.id_usuario,
+                      id_Usuario: FacturacionInterna.id_Usuario,
                       usuarioName: this.nombreUsuario,
                       id_Cliente: FacturacionInterna.id_Cliente,
                       clienteName: this.clienteSeleccionado?.name
                     }
                     this.authService.setAuditoria(auditoria).subscribe((data: any) => {
-                      // setTimeout(() => {
-                      // window.location.reload();
-                      // }, 3000);
+                      this.router.navigate(['/wallet']);
                     })
                   }
                 })

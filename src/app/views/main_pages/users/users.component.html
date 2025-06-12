@@ -53,7 +53,6 @@
                                     <th>RFC</th>
                                     <th>Régimen Fiscal</th>
                                     <th>Código Postal</th>
-                                    <th>Rol</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
@@ -78,11 +77,6 @@
                                     <td>{{ item.rfc }}</td>
                                     <td>{{ item.regimenFiscal }}</td>
                                     <td>{{ item.codigoPostal }}</td>
-                                    <td>
-                                        <span class="badge rounded bg-primary-subtle text-primary">
-                                            {{ item.rol }}
-                                        </span>
-                                    </td>
                                     <td class="text-end">
                                         <button class="btn btn-sm btn-light me-1" title="Editar" (click)="editUser(item)">
                                             <i class="fas fa-edit"></i>
@@ -236,15 +230,6 @@
             <div class="mb-3">
                 <label for="codigoPostal" class="form-label">Código Postal</label>
                 <input type="text" class="form-control" id="codigoPostal" [(ngModel)]="editForm.codigoPostal" name="codigoPostal" required>
-            </div>
-            <div class="mb-3">
-                <label for="rol" class="form-label">Rol</label>
-                <select class="form-select" id="rol" [(ngModel)]="editForm.rol" name="rol" required>
-                    <option value="">Seleccione un rol</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Contador">Contador</option>
-                    <option value="Usuario">Usuario</option>
-                </select>
             </div>
         </form>
     </div>

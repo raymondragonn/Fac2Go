@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   submitted: boolean = false
   private token: string = ''
   showAlert: boolean = false
+  showPassword: boolean = false
 
   constructor(
     private authService: AuthenticationService,
@@ -40,13 +41,21 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.signInForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [
+        Validators.required, 
+        Validators.email,
+        Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+      ]],
       password: ['', [Validators.required]],
     })
   }
 
   get formValues() {
     return this.signInForm.controls
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   login() {
@@ -58,7 +67,6 @@ export class LoginComponent implements OnInit {
         next: (res: any) => {
           console.log('Respuesta del login:', res);
           if (res.status === 'success' && res.token) {
-            // El token ya se guarda en el servicio de autenticación
             this.userService.setUserType('admin');
             this.toastr.success('¡Bienvenido al Panel de Administración!', 'Inicio de sesión exitoso');
             this.router.navigate(['/invoice-history']);
@@ -70,7 +78,7 @@ export class LoginComponent implements OnInit {
         error: (error) => {
           console.error('Error en el login:', error);
           this.showAlert = true;
-          this.toastr.error(error.error?.message || 'Credenciales inválidas', 'Error de autenticación');
+          this.toastr.error('Credenciales inválidas', 'Error de autenticación');
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);

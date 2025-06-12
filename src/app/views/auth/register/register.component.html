@@ -33,16 +33,25 @@
                         type="text"
                         formControlName="name"
                         [ngClass]="{
-                          'is-invalid': submitted && form['name'].errors,
+                          'is-invalid': submitted && form['name'].errors
                         }"
                         class="form-control border-start-0"
                         id="name"
                         name="name"
-                        placeholder="Ingresa tu nombre completo"
+                        placeholder="Ingresa tu nombre completo (sin acentos)"
                       />
                     </div>
-                    <div class="invalid-feedback">
-                      Nombre Completo es requerido
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors?.['required']">
+                      El nombre completo es requerido
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors?.['pattern']">
+                      El nombre debe contener tus dos apellidos, solo letras y espacios (sin acentos ni caracteres especiales)
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors?.['minlength']">
+                      El nombre debe tener al menos 5 caracteres
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors?.['maxlength']">
+                      El nombre no debe exceder los 100 caracteres
                     </div>
                   </div>
 
@@ -56,7 +65,7 @@
                         type="email"
                         formControlName="email"
                         [ngClass]="{
-                          'is-invalid': submitted && form['email'].errors,
+                          'is-invalid': submitted && form['email'].errors
                         }"
                         class="form-control border-start-0"
                         id="useremail"
@@ -64,7 +73,15 @@
                         placeholder="Ingresa un correo electrónico"
                       />
                     </div>
-                    <div class="invalid-feedback">Correo válido es requerido</div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors?.['required']">
+                      El correo electrónico es requerido
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors?.['email']">
+                      El formato del correo electrónico no es válido
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors?.['pattern']">
+                      El correo electrónico debe tener un formato válido (ejemplo: usuario&#64;dominio.com)
+                    </div>
                   </div>
                   <!--end form-group-->
 
@@ -75,35 +92,32 @@
                         <i class="fas fa-lock"></i>
                       </span>
                       <input
-                        type="password"
+                        [type]="showPassword ? 'text' : 'password'"
                         class="form-control border-start-0"
                         formControlName="password"
-                        [type]="fieldTextType ? 'text' : 'password'"
                         [ngClass]="{
-                          'is-invalid': submitted && form['password'].errors,
+                          'is-invalid': submitted && form['password'].errors
                         }"
                         name="password"
                         id="userpassword"
-                        placeholder="Ingresa una contraseña"
+                        placeholder="Mínimo 8 caracteres, letras y números"
                       />
-                    </div>
-                    @if (
-                      (signupForm.get('confirmpwd')?.touched &&
-                        signupForm.errors?.['notSame']) ||
-                      (!submitted && form['password'].errors)
-                    ) {
-                      <span
-                        class="position-absolute top-50 text-muted end-0 translate-middle-y p-0 mt-2"
+                      <button 
+                        class="btn btn-outline-secondary" 
+                        type="button"
+                        (click)="togglePasswordVisibility()"
                       >
-                        <i
-                          class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
-                          [ngClass]="{ 'fa-eye': fieldTextType }"
-                          (click)="changetype()"
-                        ></i>
-                      </span>
-                    }
-                    <div class="invalid-feedback">
-                      Contraseña es requerida
+                        <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['password'].errors?.['required']">
+                      La contraseña es requerida
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['password'].errors?.['minlength']">
+                      La contraseña debe tener al menos 8 caracteres
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['password'].errors?.['pattern']">
+                      La contraseña debe contener al menos una letra y un número
                     </div>
                   </div>
 
@@ -114,33 +128,29 @@
                         <i class="fas fa-lock"></i>
                       </span>
                       <input
-                        [type]="fieldTextType1 ? 'text' : 'password'"
+                        [type]="showConfirmPassword ? 'text' : 'password'"
                         formControlName="confirmpwd"
                         [ngClass]="{
-                          'is-invalid':
-                            signupForm.get('confirmpwd')?.touched &&
-                            signupForm.errors?.['notSame'],
+                          'is-invalid': submitted && (form['confirmpwd'].errors || signupForm.errors?.['notSame'])
                         }"
-                        type="password"
                         class="form-control border-start-0"
                         name="password"
                         id="Confirmpassword"
                         placeholder="Ingresa nuevamente la contraseña"
                       />
-                    </div>
-                    @if (!submitted && form['confirmpwd'].errors) {
-                      <span
-                        class="position-absolute top-50 end-0 text-muted translate-middle-y p-0 mt-2"
+                      <button 
+                        class="btn btn-outline-secondary" 
+                        type="button"
+                        (click)="toggleConfirmPasswordVisibility()"
                       >
-                        <i
-                          class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"
-                          [ngClass]="{ 'fa-eye': fieldTextType1 }"
-                          (click)="fieldTextType1 = !fieldTextType1"
-                        ></i>
-                      </span>
-                    }
-                    <div class="invalid-feedback">
-                      No coinciden las contraseñas
+                        <i class="fas" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && form['confirmpwd'].errors?.['required']">
+                      La confirmación de contraseña es requerida
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="submitted && signupForm.errors?.['notSame']">
+                      Las contraseñas no coinciden
                     </div>
                   </div>
                   <!--end form-group-->

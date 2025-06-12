@@ -60,20 +60,19 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="client-avatar me-2">
-                                                {{ item.usuarioName | slice:0:2 | uppercase }}
+                                                {{ item.usuarioName ? (item.usuarioName | slice:0:2 | uppercase) : 'NA' }}
                                             </div>
-                                            <span>{{ item.usuarioName }}</span>
+                                            <span>{{ item.usuarioName || 'Usuario no disponible' }}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <span class="badge" [ngClass]="{
-                                            'bg-success': item.accion === 'Facturo' || item.accion === 'Creo',
-                                            'bg-info': item.accion === 'Inicio de Sesión',
-                                            'bg-warning': item.accion === 'Actualizo' || item.accion === 'Elimino'
+                                            'bg-success text-white': item.accion === 'Usuario Autenticado' || item.accion === 'Usuario Registrado',
+                                            'bg-info text-white': item.accion === 'Cliente Agregado' || item.accion === 'Cliente Eliminado',
+                                            'bg-warning text-white': item.accion === 'Factura Emitida'
                                           }">
                                             {{ item.accion }}
                                           </span>
-
                                     </td>
                                     <td>
                                         <ng-container *ngIf="item.clienteName && item.clienteName !== ''">

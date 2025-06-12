@@ -438,11 +438,6 @@ export class PrincipalComponent implements OnInit {
   return `FAC-${num.toString().padStart(4, '0')}`;
   }
 
-
-
-  
-  
-
   generarFactura() {
     let formData: any = {
       email: this.facturacionForm.get('email')?.value,
@@ -455,33 +450,6 @@ export class PrincipalComponent implements OnInit {
       Codigo_Postal: this.facturacionForm.get('Codigo_Postal')?.value, 
       usoCfdi: this.facturacionForm.get('usoCfdi')?.value
     }
-    
-    let cliente = {
-      nombre_RazonSocial: this.facturacionForm.get('nombreCompleto')?.value,
-      rfc: this.facturacionForm.get('rfc')?.value,
-      codigo_Postal: this.facturacionForm.get('Codigo_Postal')?.value, 
-      // usoCFDI: this.facturacionForm.get('usoCfdi')?.value,
-      regimenFiscal: this.facturacionForm.get('regimenFiscal')?.value, 
-      id_Usuario: 'cb66cccb-62b8-4918-a307-8db0bb7bceb7'
-
-
-    }
-    this.authService.newCliente(cliente).subscribe((data: any) => {
-      console.log(data);
-      if(data){
-        this.clienteId = data.idCliente;
-        console.log('ID del cliente:', this.clienteId);
-      }else{
-        this.clienteId = '7dc646be-8bb2-4d78-8494-604825458a72'
-      }
-    })
-
-    
-    
-    
-    let now = new Date();
-    let fechaFormateada = now.toISOString().slice(0, 19);
-    let uuidGenerado = this.generateUUID();
 
     console.log("Función facturaPrueba ejecutada");
     this.isLoading = true;
@@ -498,33 +466,12 @@ export class PrincipalComponent implements OnInit {
               alert(`Correo enviado en breve llegara tu factura a tu correo`);
 
               this.facturar.SendEmail().subscribe(data => {
-                let factura = {
-                  num_Serie: this.generateSerie(),
-                  folio: formData.token,
-                  uuid: uuidGenerado,
-                  fecha_Emision: fechaFormateada,
-                  fecha_Timbrado: fechaFormateada,
-                  id_Cliente: this.clienteId,
-                  id_Usuario: "cb66cccb-62b8-4918-a307-8db0bb7bceb7",
-                  total: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000 // total aleatorio entre 1000 y 5000
-                }
-                this.authService.saveFacturaDatabase(factura).subscribe(data => {
-                  if(data){
-                    setTimeout(() => {
-                      window.location.reload();
-                    }, 3000);
-                    
-                  }
-                  
-                })
-                
+                window.location.reload();
               })
             })
           }
-          
         })
       }
-      
     });
   }
 
