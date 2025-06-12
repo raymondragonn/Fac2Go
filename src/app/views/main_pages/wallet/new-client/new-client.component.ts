@@ -170,7 +170,7 @@ export class NewClientComponent implements OnInit {
         (response: any) => {
           if (response.status === 'success') {
             let auditoria = {
-              accion: 'Usuario creo cliente',
+              accion: 'Cliente Agregado',
               id_Usuario: this.idUsuario,
               usuarioName: this.idNombreUsuario,
               id_Cliente: cliente.id_Usuario,
